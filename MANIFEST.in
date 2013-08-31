@@ -1,0 +1,2 @@
+include MANIFEST.in CHANGES.txt LICENSE.txt
+include doc/Makefile doc/*.rst doc/*.html

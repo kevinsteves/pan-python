@@ -1,0 +1,662 @@
+#!/usr/bin/env python
+
+# $Id: panxapi.py,v 1.19 2013/08/18 18:36:05 stevesk Exp $
+
+#
+# Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+#
+# Permission to use, copy, modify, and distribute this software for any
+# purpose with or without fee is hereby granted, provided that the above
+# copyright notice and this permission notice appear in all copies.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+# ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+# ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+# OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+
+from __future__ import print_function
+import sys
+import os
+import getopt
+import re
+import json
+import pprint
+
+libpath = os.path.dirname(os.path.abspath(__file__))
+sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
+import pan.xapi
+import pan.commit
+
+debug = 0
+
+def main():
+    set_encoding()
+    options = parse_opts()
+
+    try:
+        xapi = pan.xapi.PanXapi(debug=options['debug'],
+                                timeout=options['timeout'],
+                                tag=options['tag'],
+                                use_http=options['use_http'],
+                                use_get=options['use_get'],
+                                api_username=options['api_username'],
+                                api_password=options['api_password'],
+                                api_key=options['api_key'],
+                                hostname=options['hostname'],
+                                port=options['port'],
+                                serial=options['serial'],
+                                cafile=options['cafile'],
+                                capath=options['capath'])
+
+    except pan.xapi.PanXapiError as msg:
+        print('pan.xapi.PanXapi:', msg, file=sys.stderr)
+        sys.exit(1)
+
+    if options['debug'] > 2:
+        print('xapi.__str__()===>\n', xapi, '\n<===',
+              sep='', file=sys.stderr)
+
+    try:
+        if options['ad_hoc'] is not None:
+            action = 'ad_hoc'
+            xapi.ad_hoc(qs=options['ad_hoc'],
+                        xpath=options['xpath'],
+                        modify_qs=options['modify'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['keygen']:
+            action = 'keygen'
+            xapi.keygen()
+            print_status(xapi, action)
+            print_response(xapi, options)
+            print('API key:  "%s"' % xapi.api_key)
+
+        if options['show']:
+            action = 'show'
+            xapi.show(xpath=options['xpath'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['get']:
+            action = 'get'
+            xapi.get(xpath=options['xpath'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['delete']:
+            action = 'delete'
+            xapi.delete(xpath=options['xpath'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['edit']:
+            action = 'edit'
+            xapi.edit(xpath=options['xpath'],
+                      element=options['element'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['set']:
+            action = 'set'
+            xapi.set(xpath=options['xpath'],
+                     element=options['element'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['dynamic-update']:
+            action = 'dynamic-update'
+            kwargs = {
+                'cmd': options['cmd'],
+                }
+            if len(options['vsys']):
+                kwargs['vsys'] = options['vsys'][0]
+            xapi.user_id(**kwargs)
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['move'] is not None:
+            action = 'move'
+            xapi.move(xpath=options['xpath'],
+                      where=options['move'],
+                      dst=options['dst'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['rename']:
+            action = 'rename'
+            xapi.rename(xpath=options['xpath'],
+                        newname=options['dst'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['clone']:
+            action = 'clone'
+            xapi.clone(xpath=options['xpath'],
+                       xpath_from=options['src'],
+                       newname=options['dst'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['export'] is not None:
+            action = 'export'
+            xapi.export(category=options['export'],
+                        from_name=options['src'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+            if options['pcap_listing']:
+                pcap_listing(xapi, options)
+            save_pcap(xapi, options)
+
+        if options['log'] is not None:
+            action = 'log'
+            xapi.log(log_type=options['log'],
+                     nlogs=options['nlogs'],
+                     skip=options['skip'],
+                     filter=options['filter'],
+#                     sleep=None,
+                     timeout=None)
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if options['op'] is not None:
+            action = 'op'
+            kwargs = {
+                'cmd': options['op'],
+                'cmd_xml': options['cmd_xml'],
+                }
+            if len(options['vsys']):
+                kwargs['vsys'] = options['vsys'][0]
+            xapi.op(**kwargs)
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if (options['commit'] or options['commit_all']):
+            if options['cmd']:
+                cmd = options['cmd']
+                if options['cmd_xml']:
+                    cmd = xapi.cmd_xml(cmd)
+            else:
+                c = pan.commit.PanCommit(debug=options['debug'],
+                                         force=options['force'],
+                                         commit_all=options['commit_all'],
+                                         merge_with_candidate=\
+                                             options['merge'])
+
+                for part in options['partial']:
+                    if part == 'device-and-network-excluded':
+                        c.device_and_network_excluded()
+                    elif part == 'policy-and-objects-excluded':
+                        c.policy_and_objects_excluded()
+                    elif part == 'shared-object-excluded':
+                        c.shared_object_excluded()
+                    elif part == 'no-vsys':
+                        c.no_vsys()
+                    elif part == 'vsys':
+                        c.vsys(options['vsys'])
+
+                if options['serial'] is not None:
+                    c.device(options['serial'])
+                if options['group'] is not None:
+                    c.device_group(options['group'])
+                if options['commit_all'] and options['vsys']:
+                    c.vsys(options['vsys'][0])
+
+                cmd = c.cmd()
+
+            kwargs = {
+                'cmd': cmd,
+                }
+            if options['commit_all']:
+                kwargs['action'] = 'all'
+
+            action = 'commit'
+            xapi.commit(**kwargs)
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+    except pan.xapi.PanXapiError as msg:
+        print_status(xapi, action, msg)
+        print_response(xapi, options)
+        sys.exit(1)
+
+    sys.exit(0)
+
+def parse_opts():
+    options = {
+        'delete': False,
+        'edit': False,
+        'get': False,
+        'keygen': False,
+        'show': False,
+        'set': False,
+        'dynamic-update': False,
+        'commit': False,
+        'force': False,
+        'partial': [],
+        'vsys': [],
+        'commit_all': False,
+        'ad_hoc': None,
+        'modify': False,
+        'op': None,
+        'export': None,
+        'log': None,
+        'src': None,
+        'dst': None,
+        'move': None,
+        'rename': False,
+        'clone': False,
+        'api_username': None,
+        'api_password': None,
+        'hostname': None,
+        'port': None,
+        'serial': None,
+        'group': None,
+        'merge': False,
+        'nlogs': None,
+        'skip': None,
+        'filter': None,
+        'api_key': None,
+        'cafile': None,
+        'capath': None,
+        'print_xml': False,
+        'print_result': False,
+        'print_python': False,
+        'print_json': False,
+        'cmd_xml': False,
+        'pcap_listing': False,
+        'recursive': False,
+        'use_http': False,
+        'use_get': False,
+        'debug': 0,
+        'tag': None,
+        'xpath': None,
+        'element': None,
+        'cmd': None,
+        'timeout': None,
+        }
+
+    valid_where = ['after', 'before', 'top', 'bottom']
+
+    short_options = 'de:gksS:U:C:A:o:l:h:P:K:xpjrXHGDt:T:'
+    long_options = ['help', 'ad-hoc=', 'modify', 'force', 'partial=',
+                    'vsys=', 'src=', 'dst=', 'move=', 'rename',
+                    'clone', 'export=', 'log=', 'recursive',
+                    'cafile=', 'capath=', 'ls', 'serial=',
+                    'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
+                    ]
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:],
+                                   short_options,
+                                   long_options)
+    except getopt.GetoptError as error:
+        print(error, file=sys.stderr)
+        sys.exit(1)
+
+    for opt, arg in opts:
+        if opt == '-d':
+            options['delete'] = True
+        elif opt == '-e':
+            options['edit'] = True
+            options['element'] = get_element(arg)
+        elif opt == '-g':
+            options['get'] = True
+        elif opt == '-k':
+            options['keygen'] = True
+        elif opt == '-s':
+            options['show'] = True
+        elif opt == '-S':
+            options['set'] = True
+            options['element'] = get_element(arg)
+        elif opt == '-U':
+            options['dynamic-update'] = True
+            options['cmd'] = get_element(arg)
+        elif opt == '-C':
+            options['commit'] = True
+            options['cmd'] = get_element(arg)
+        elif opt == '--force':
+            options['force'] = True
+        elif opt == '--partial':
+            if arg:
+                l = get_parts(arg)
+                [options['partial'].append(s) for s in l]
+        elif opt == '--vsys':
+            if arg:
+                l = get_vsys(arg)
+                [options['vsys'].append(s) for s in l]
+        elif opt == '-A':
+            options['commit_all'] = True
+            options['cmd'] = get_element(arg)
+        elif opt == '--ad-hoc':
+            options['ad_hoc'] = arg
+        elif opt == '--modify':
+            options['modify'] = True
+        elif opt == '-o':
+            options['op'] = get_element(arg)
+        elif opt == '--export':
+            options['export'] = arg
+        elif opt == '--log':
+            options['log'] = arg
+        elif opt == '--src':
+            options['src'] = arg
+        elif opt == '--dst':
+            options['dst'] = arg
+        elif opt == '--move':
+            if arg not in valid_where:
+                print('Invalid where: "%s"' % arg, file=sys.stderr)
+                sys.exit(1)
+            options['move'] = arg
+        elif opt == '--rename':
+            options['rename'] = True
+        elif opt == '--clone':
+            options['clone'] = True
+        elif opt == '-l':
+            try:
+                (options['api_username'],
+                 options['api_password']) = arg.split(':', 1)
+            except ValueError:
+                print('Invalid api_username:api_password: "%s"' % \
+                      arg, file=sys.stderr)
+                sys.exit(1)
+        elif opt == '-P':
+            options['port'] = arg
+        elif opt == '--serial':
+            options['serial'] = arg
+        elif opt == '--group':
+            options['group'] = arg
+        elif opt == '--merge':
+            options['merge'] = True
+        elif opt == '--nlogs':
+            options['nlogs'] = arg
+        elif opt == '--skip':
+            options['skip'] = arg
+        elif opt == '--filter':
+            options['filter'] = arg
+        elif opt == '-h':
+            options['hostname'] = arg
+        elif opt == '-K':
+            options['api_key'] = arg
+        elif opt == '--cafile':
+            options['cafile'] = arg
+        elif opt == '--capath':
+            options['capath'] = arg
+        elif opt == '-x':
+            options['print_xml'] = True
+        elif opt == '-p':
+            options['print_python'] = True
+        elif opt == '-j':
+            options['print_json'] = True
+        elif opt == '-r':
+            options['print_result'] = True
+        elif opt == '-X':
+            options['cmd_xml'] = True
+        elif opt == '--ls':
+            options['pcap_listing'] = True
+        elif opt == '--recursive':
+            options['recursive'] = True
+        elif opt == '-H':
+            options['use_http'] = True
+        elif opt == '-G':
+            options['use_get'] = True
+        elif opt == '-D':
+            if not options['debug'] < 3:
+                print('Maximum debug level is 3', file=sys.stderr)
+                sys.exit(1)
+            global debug
+            debug += 1
+            options['debug'] = debug
+        elif opt == '-t':
+            if arg:
+                options['tag'] = arg
+        elif opt == '-T':
+            options['timeout'] = arg
+        elif opt == '--help':
+            usage()
+            sys.exit(0)
+        else:
+            assert False, 'unhandled option %s' % opt
+
+    if len(args) > 0:
+        s = get_element(args[0])
+        options['xpath'] = s.rstrip('\r\n')
+
+    if options['debug'] > 2:
+        s = pprint.pformat(options, indent=4)
+        print(s, file=sys.stderr)
+
+    return options
+
+def get_vsys(s):
+    list = []
+    vsys = s.split(',')
+    for v in vsys:
+        if v:
+            if v.isdigit():
+                list.append('vsys' + v)
+            else:
+                list.append(v)
+    return list
+
+def get_parts(s):
+    list = []
+    parts = s.split(',')
+    for part in parts:
+        if part:
+            if not pan.commit.valid_part(part):
+                print('Invalid part: "%s"' % part, file=sys.stderr)
+                sys.exit(1)
+            list.append(part)
+    return list
+
+def get_element(s):
+    stdin_char = '-'
+
+    if s == stdin_char:
+        element = sys.stdin.readlines()
+    elif os.path.isfile(s):
+        try:
+            f = open(s)
+        except IOError as msg:
+            print('open %s: %s' % (s, msg), file=sys.stderr)
+            sys.exit(1)
+        element = f.readlines()
+        f.close()
+    else:
+        element = s
+
+    element = ''.join(element)
+    if debug > 1:
+        print('element: \"%s\"' % element, file=sys.stderr)
+
+    return element
+
+def print_status(xapi, action, exception_msg=None):
+    print(action, end='', file=sys.stderr)
+    if xapi.status_code is not None:
+        code = ' [code=\"%s\"]' % xapi.status_code
+    else:
+        code = ''
+    if xapi.status is not None:
+        print(': %s%s' % (xapi.status, code), end='', file=sys.stderr)
+    if exception_msg is not None:
+        print(': "%s"' % exception_msg, end='', file=sys.stderr)
+    elif xapi.status_detail is not None:
+        print(': %s' % xapi.status_detail, end='', file=sys.stderr)
+    print(file=sys.stderr)
+
+def print_response(xapi, options):
+    if options['print_xml']:
+        if options['print_result']:
+            s = xapi.xml_result()
+        else:
+            s = xapi.xml_root()
+        if s is not None:
+            print(s)
+
+    if options['print_python'] or options['print_json']:
+        d = xapi.xml_python(options['print_result'])
+
+        if d:
+            if options['print_python']:
+                print('var1 =', pprint.pformat(d))
+            if options['print_json']:
+                print(json.dumps(d, sort_keys=True, indent=2))
+
+def save_pcap(xapi, options):
+    if xapi.export_result is None or options['src'] is None:
+        return
+
+    src_dir, src_file = os.path.split(options['src'])
+
+    path = ''
+    path_done = False
+
+    if options['dst'] is not None:
+        path = options['dst']
+        if not os.path.isdir(path):
+            path_done = True
+
+    if not path_done:
+        if (options['recursive'] and src_dir and
+            re.search(r'^\d{8,8}$', src_dir)):
+            path = os.path.join(path, src_dir)
+            if not os.path.isdir(path):
+                try:
+                    os.mkdir(path)
+                except OSError as msg:
+                    print('mkdir %s: %s' % (path, msg),
+                          file=sys.stderr)
+                    # fallthrough, return on open fail
+        path = os.path.join(path, src_file)
+
+    try:
+        f = open(path, 'wb')
+    except IOError as msg:
+        print('open %s: %s' % (path, msg), file=sys.stderr)
+        return
+
+    try:
+        f.write(xapi.export_result['content'])
+    except IOError as msg:
+        print('write %s: %s' % (path, msg), file=sys.stderr)
+        f.close()
+        return
+
+    f.close()
+    print('exported %s: %s' % (xapi.export_result['category'], path),
+          file=sys.stderr)
+
+def pcap_listing(xapi, options):
+    d = xapi.xml_python(result=True)
+
+    if d and 'pcap-listing' in d and 'category' in d['pcap-listing']:
+        pcap_listing = d['pcap-listing']
+        category = pcap_listing['category']
+        if 'file' in pcap_listing:
+            file = pcap_listing['file']
+            if type(file) == type(''):
+                file = [file]
+            size = len(file)
+            print('%d %s files:' % (size, category))
+            for item in sorted(file):
+                print('    %s' % item)
+        elif 'dir' in pcap_listing:
+            dir = pcap_listing['dir']
+            if type(dir) == type(''):
+                dir = [dir]
+            size = len(dir)
+            print('%d %s directories:' % (size, category))
+            for item in sorted(dir):
+                print('    %s/' % item)
+
+def set_encoding():
+    #
+    # XXX UTF-8 won't encode to latin-1/ISO8859-1:
+    #   UnicodeEncodeError: 'latin-1' codec can't encode character '\u2019'
+    #
+    # do PYTHONIOENCODING=utf8 equivalent
+    #
+    encoding = 'utf-8'
+
+    if hasattr(sys.stdin, 'detach'):
+        # >= 3.1
+        import io
+
+        for s in ('stdin', 'stdout', 'stderr'):
+            line_buffering = getattr(sys, s).line_buffering
+#            print(s, line_buffering, file=sys.stderr)
+            setattr(sys, s, io.TextIOWrapper(getattr(sys, s).detach(),
+                                             encoding=encoding,
+                                             line_buffering=line_buffering))
+
+    else:
+        import codecs
+
+        sys.stdin = codecs.getreader(encoding)(sys.stdin)
+        sys.stdout = codecs.getwriter(encoding)(sys.stdout)
+        sys.stderr = codecs.getwriter(encoding)(sys.stderr)
+
+def usage():
+    usage = '''%s [options] [xpath]
+    -d                    delete object at xpath
+    -e element            edit XML element at xpath
+    -g                    get candidate config at xpath
+    -k                    generate API key
+    -s                    show active config at xpath
+    -S element            set XML element at xpath
+    -U cmd                execute dynamic update command
+    -C cmd                commit candidate configuration
+    --force               force commit when conflict
+    --partial part        commit specified part
+    -A cmd                commit-all (Panorama)
+    --ad-hoc query        perform ad hoc request
+    --modify              insert known fields in ad hoc query
+    -o cmd                execute operational command
+    --export category     export PCAP files
+    --log log-type        retrieve log files
+    --src src             clone source node xpath
+                          export source file/path/directory
+    --dst dst             move/clone destination node name
+                          rename new name
+                          export destination file/path/directory
+    --move where          move after, before, bottom or top
+    --rename              rename object at xpath to dst
+    --clone               clone object at xpath, src xpath
+    --vsys vsys           VSYS for dynamic update/partial commit/
+                          operational command
+    -l api_username:api_password
+    -h hostname
+    -P port               URL port number
+    --serial number       serial number for Panorama redirection/
+                          commit-all
+    --group name          device group for commit-all
+    --merge               merge with candidate for commit-all
+    --nlogs num           retrieve num logs
+    --skip num            skip num logs
+    --filter filter       log selection filter
+    -K api_key
+    -x                    print XML response to stdout
+    -p                    print XML response in Python to stdout
+    -j                    print XML response in JSON to stdout
+    -r                    print result content when printing response
+    -X                    convert text command to XML
+    --ls                  print formatted pcap-listing to stdout
+    --recursive           recursive export
+    -H                    use http URL scheme (default https)
+    -G                    use HTTP GET method (default POST)
+    -D                    enable debug (multiple up to -DDD)
+    -t tag                .panrc tagname
+    -T seconds            urlopen() timeout
+    --cafile              file containing CA certificates
+    --capath              directory of hashed certificate files
+    --help                display usage
+'''
+    print(usage % os.path.basename(sys.argv[0]), end='')
+
+if __name__ == '__main__':
+    main()

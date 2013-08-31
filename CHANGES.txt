@@ -1,0 +1,35 @@
+2013-08-18
+
+  - Add support for log retrieval (type=log) to pan.xapi (see the
+    log() method) and panxapi.py (see the --log option).
+
+2013-07-05
+
+  - pan.xapi: use both code and reason from URLError exception for
+    error message.
+
+2013-06-18
+
+  - panxapi.py: in print_status() give priority to exception message
+    over status_detail.
+
+2013-05-20
+
+  - pan.xapi: fix 'pylint: Unused import unquote'
+
+2013-04-28
+
+  - pan.xapi: be consistent and use explicit vs. implicit string
+    concatenation.
+
+2013-04-16
+
+  - pan.xapi: handle response with <msg><line><line>xxx</line></line>...
+
+  - panxapi.py: missing newline in debug.
+
+2013-03-06
+
+  - initial release
+
+$Id: CHANGES.txt,v 1.9 2013/08/18 18:36:05 stevesk Exp $
