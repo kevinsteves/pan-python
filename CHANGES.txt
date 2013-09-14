@@ -1,5 +1,8 @@
 2013-09-14
 
+  - panxapi.rst: add example to retrieve report using the --ad-hoc
+    option.
+
   - reStructuredText cleanup; don't indent list item in bullet list
     and ensure blank line before list.
 

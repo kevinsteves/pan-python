@@ -576,6 +576,24 @@ EXAMPLES
         <entry logid="5910273572261068816">
   [...]
 
+ Retrieve report using the **--ad-hoc** option.
+ ::
+
+  $ panxapi.py -x --modify --ad-hoc 'type=report&reporttype=dynamic&reportname=acc-summary'
+  ad_hoc: success
+  <response status="success"><report logtype="appstat" reportname="acc-summary">
+      <result end="2013/09/13 23:59:59" end-epoch="1379141999" generated-at="2013/09/14 10:34:31" generated-at-epoch="1379180071" logtype="appstat" name="acc summary" range="Friday, September 13, 2013" start="2013/09/13 00:00:00" start-epoch="1379055600">
+        <entry>
+          <name>paloalto-wildfire-cloud</name>
+          <risk-of-name>1</risk-of-name>
+          <nbytes>9005951</nbytes>
+          <nthreats>0</nthreats>
+          <nsess>723</nsess>
+          <npkts>20924</npkts>
+        </entry>
+  [...]
+
+
 SEE ALSO
 ========
 
