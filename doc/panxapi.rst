@@ -164,11 +164,12 @@ DESCRIPTION
   Commit or exclude the specified *part* of the configuration.
 
   *part* can be:
-   - device-and-network-excluded
-   - policy-and-objects-excluded
-   - shared-object-excluded
-   - no-vsys
-   - vsys
+
+  - device-and-network-excluded
+  - policy-and-objects-excluded
+  - shared-object-excluded
+  - no-vsys
+  - vsys
 
   **device-and-network-excluded** applies when the device is in
   single-vsys mode and **shared-object-excluded** applies when the device
@@ -204,11 +205,11 @@ DESCRIPTION
 
   The known fields that can be inserted are:
 
-   - xpath
-   - key (api_key)
-   - user (api_username)
-   - password (api_password)
-   - target (--serial)
+  - xpath
+  - key (api_key)
+  - user (api_username)
+  - password (api_password)
+  - target (--serial)
 
  ``-o`` *cmd*
   Perform the ``type=op`` operational command API request with the
@@ -222,22 +223,24 @@ DESCRIPTION
   Perform the ``action=export`` export packet capture (PCAP) API request.
 
   *category* specifies the type of PCAP to export or list:
-   - application-pcap
-   - threat-pcap
-   - filter-pcap
+
+  - application-pcap
+  - threat-pcap
+  - filter-pcap
 
  ``--log`` *log-type*
   Perform the ``type=log`` retrieve log API request with the **log-type**
   argument.
 
   *log-type* specifies the type of log to retrieve and can be:
-   - config
-   - hipmatch
-   - system
-   - threat
-   - traffic
-   - url
-   - wildfire
+
+  - config
+  - hipmatch
+  - system
+  - threat
+  - traffic
+  - url
+  - wildfire
 
   Also see the **--nlogs**, **--skip** and **--filter** options.
 
@@ -246,14 +249,16 @@ DESCRIPTION
   the source XPath for **--clone**.
 
   The **src** argument is used to specify:
-   - date directory for application-pcap and threat-pcap PCAP file listing
-   - PCAP file path for exporting application-pcap and threat-pcap
-   - file name for exporting filter-pcap
+
+  - date directory for application-pcap and threat-pcap PCAP file listing
+  - PCAP file path for exporting application-pcap and threat-pcap
+  - file name for exporting filter-pcap
 
  ``--dst`` *dst*
   The **--dst** argument is used with **--export** to specify:
-   - a destination directory for exported file (retains original file name)
-   - a file or path for exported file (file saved with new file name)
+
+  - a destination directory for exported file (retains original file name)
+  - a file or path for exported file (file saved with new file name)
 
   The **--dst** argument is used with **--move**, **--rename** and
   **--clone** to specify destination node name (e.g., rule10).
@@ -374,13 +379,13 @@ DESCRIPTION
   double quoted arguments as text after removing the quotes.  For
   example:
 
-   - show system info
+  - show system info
 
-     * <show><system><info></info></system></show>
+    * <show><system><info></info></system></show>
 
-   - show interface "ethernet1/1"
+  - show interface "ethernet1/1"
 
-     * <show><interface>ethernet1/1</interface></show>
+    * <show><interface>ethernet1/1</interface></show>
 
  ``--ls``
   Print formatted PCAP listing to *stdout*.  For use with **--export**.

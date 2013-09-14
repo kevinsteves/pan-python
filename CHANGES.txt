@@ -1,3 +1,8 @@
+2013-09-14
+
+  - reStructuredText cleanup; don't indent list item in bullet list
+    and ensure blank line before list.
+
 2013-08-18
 
   - Add support for log retrieval (type=log) to pan.xapi (see the

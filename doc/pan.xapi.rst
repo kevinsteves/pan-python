@@ -64,13 +64,13 @@ DESCRIPTION
 
  PanXapi provides an interface to the following API request types:
 
-  - key generation: ``type=keygen``
-  - device configuration: ``type=config``
-  - commit configuration: ``type=commit``
-  - operational command: ``type=op``
-  - export file: ``type=export``
-  - dynamic object update: ``type=user-id``
-  - log retrieval: ``type=log``
+ - key generation: ``type=keygen``
+ - device configuration: ``type=config``
+ - commit configuration: ``type=commit``
+ - operational command: ``type=op``
+ - export file: ``type=export``
+ - dynamic object update: ``type=user-id``
+ - log retrieval: ``type=log``
 
 pan.xapi Constructor and Exception Class
 ----------------------------------------
@@ -184,11 +184,11 @@ ad_hoc(qs=None, xpath=None, modify_qs=False)
  insert known fields into the query string; the known fields that can
  be inserted are:
 
-  - xpath
-  - key (api_key)
-  - user (api_username)
-  - password (api_password)
-  - target (serial)
+ - xpath
+ - key (api_key)
+ - user (api_username)
+ - password (api_password)
+ - target (serial)
 
  ad_hoc() can be used to construct API requests that are not
  directly supported by PanXapi.
@@ -298,13 +298,13 @@ op(cmd=None, vsys=None, cmd_xml=False)
  start and end elements and treating double quoted arguments as text
  after removing the quotes.  For example:
 
-  - show system info
+ - show system info
 
-    * <show><system><info></info></system></show>
+   * <show><system><info></info></system></show>
 
-  - show interface "ethernet1/1"
+ - show interface "ethernet1/1"
 
-    * <show><interface>ethernet1/1</interface></show>
+   * <show><interface>ethernet1/1</interface></show>
 
 export(category=None, from_name=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -315,9 +315,9 @@ export(category=None, from_name=None)
  **export_result** data attribute is a dictionary containing the
  following keys:
 
-  - file: content-disposition response header filename
-  - content: file contents
-  - category: export category string
+ - file: content-disposition response header filename
+ - content: file contents
+ - category: export category string
 
  The **category** argument specifies the type of file to export.  The
  **from_name** argument is used to specify the source for a file list
@@ -329,60 +329,61 @@ log(self, log_type=None, nlogs=None, skip=None, filter=None, sleep=_job_sleep, t
  The log() method performs the ``type=log`` retrieve log API request
  with the **log-type** argument.
 
-  **log-type** specifies the type of log to retrieve and can be:
-   - config
-   - hipmatch
-   - system
-   - threat
-   - traffic
-   - url
-   - wildfire
+ **log-type** specifies the type of log to retrieve and can be:
+
+ - config
+ - hipmatch
+ - system
+ - threat
+ - traffic
+ - url
+ - wildfire
 
  Additional API request arguments include:
 
-  - **nlogs**
+ - **nlogs**
 
-   Specify the number of logs to retrieve.
+  Specify the number of logs to retrieve.
 
-   The default is 20 and the maximum is 5000.
+  The default is 20 and the maximum is 5000.
 
-   **pan.xapi** currently loads the entire XML document into memory
-   using the **ElementTree** module.  A large number of log entries can
-   cause a memory exception which may not be possible to catch.  If you
-   see exceptions when using a large **nlog** value try reducing it.
+  **pan.xapi** currently loads the entire XML document into memory
+  using the **ElementTree** module.  A large number of log entries can
+  cause a memory exception which may not be possible to catch.  If you
+  see exceptions when using a large **nlog** value try reducing it.
 
-  - **skip**
+ - **skip**
 
-   Specify the number of logs to skip. This can be used to retieve log
-   entries in batches by skipping previously retrieved logs.
+  Specify the number of logs to skip. This can be used to retieve log
+  entries in batches by skipping previously retrieved logs.
 
-   The default is 0.
+  The default is 0.
 
-  - **filter**
+ - **filter**
 
-   Specify the log query selection filter.  This is a set of log
-   filter expressions as can be specified in the Monitor tab in the
-   Web UI.
+  Specify the log query selection filter.  This is a set of log
+  filter expressions as can be specified in the Monitor tab in the
+  Web UI.
 
-   This is the **query** argument in the API request.
+  This is the **query** argument in the API request.
 
  The XML API schedules a job to create the log data; the log() method
  will then periodically perform an API request to determine if the
  job ID returned in the initial request is complete and receive the log
  data.  Additional arguments to control the polling include:
 
-  - **sleep**
+ - **sleep**
 
-   A floating point number specifying the number of seconds to sleep
-   between each non-finished job status request.
+  A floating point number specifying the number of seconds to sleep
+  between each non-finished job status request.
 
-   The default is 0.5.
+  The default is 0.5.
 
-  - **timeout**
+ - **timeout**
 
-   The maximum number of seconds to wait for the job to finish.
+  The maximum number of seconds to wait for the job to finish.
 
-   The default is to try forever (**timeout** is set to *None* or 0).
+  The default is to try forever (**timeout** is set to *None* or 0).
 
 xml_root()
 ~~~~~~~~~~
@@ -403,9 +404,9 @@ status
  attribute received from the previous API request.  Possible values
  are:
 
-  - success
-  - error
-  - unauth
+ - success
+ - error
+ - unauth
 
 status_code
 ~~~~~~~~~~~
@@ -427,9 +428,9 @@ export_result
  result of the previous export() method request and contains the
  following keys:
 
-  - file: content-disposition response header filename
-  - content: file contents
-  - category: export category string
+ - file: content-disposition response header filename
+ - content: file contents
+ - category: export category string
 
 set and edit
 ------------
@@ -437,14 +438,16 @@ set and edit
  set and edit are similar, and have subtle differences.
 
  set can be described as a merge operation at the XPath node:
-  - set will create new objects
-  - set will update existing objects
-  - set will not delete existing objects
+
+ - set will create new objects
+ - set will update existing objects
+ - set will not delete existing objects
 
  edit can be described as a replace operation at the Xpath node:
-  - edit will create new objects
-  - edit will update existing objects
-  - edit will delete existing objects
+
+ - edit will create new objects
+ - edit will update existing objects
+ - edit will delete existing objects
 
 get and show
 ------------
@@ -455,13 +458,15 @@ get and show
  XPath matching for get and show has differences.
 
  get:
-  - return values even if the XPath matches multiple nodes
-  - return values only if the resulting nodes are not text nodes and
-    are actual elements in the XML
+
+ - return values even if the XPath matches multiple nodes
+ - return values only if the resulting nodes are not text nodes and
+   are actual elements in the XML
 
  show:
-  - return values only if the XPath results in exactly one node
-  - return the result even if the matched node is a text node
+
+ - return values only if the XPath results in exactly one node
+ - return the result even if the matched node is a text node
 
 .panrc
 ------
@@ -514,11 +519,11 @@ Recognized varname Values
 
  The following *varname* values are recognized:
 
-  - **hostname**
-  - **port**
-  - **api_username**
-  - **api_password**
-  - **api_key**
+ - **hostname**
+ - **port**
+ - **api_username**
+ - **api_password**
+ - **api_key**
 
 .panrc Locations and Variable Merging
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
