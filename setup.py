@@ -8,7 +8,7 @@ from distutils.core import setup
 
 version='20130818'
 
-setup(name='PAN-python',
+setup(name='pan-python',
       version=version,
       description='Python package for PAN-OS',
       long_description='Python interface to the PAN-OS XML API',

@@ -1,13 +1,10 @@
-PAN-python is a Python package for Palo Alto Networks' Next-Generation
+pan-python is a Python package for Palo Alto Networks' Next-Generation
 Firewalls, and provides a Python and command line interface to the
 PAN-OS and Panorama XML API.
 
-It provides similar functionality to the PAN-perl panxapi program and
-PAN::XAPI module.
-
 Python versions 2.7 and 3.2 are supported with a single code base
 (3.3 is expected to work but is untested at this time).  There
-are no external modules required to use PAN-python.
+are no external modules required to use pan-python.
 
 The pan package contains the following modules:
 
@@ -28,8 +25,8 @@ Install:
   You can install the package or just run the programs from within
   the package source directory:
 
-    $ tar xzf PAN-python-2013mmdd.tgz
-    $ cd PAN-python-2013mmdd
+    $ tar xzf pan-python-2013mmdd.tgz
+    $ cd pan-python-2013mmdd
 
     $ cd bin
     $ ./panxapi.py
