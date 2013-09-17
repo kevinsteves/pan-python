@@ -1,3 +1,8 @@
+2013-09-17
+
+  - Add __version__ attribute to pan.xapi and --version option to
+    panxapi.py; use version in setup.py.
+
 2013-09-16
 
   - Change name of distribution from PAN-python to pan-python.

@@ -25,8 +25,8 @@ Install:
   You can install the package or just run the programs from within
   the package source directory:
 
-    $ tar xzf pan-python-2013mmdd.tgz
-    $ cd pan-python-2013mmdd
+    $ tar xzf pan-python-1.0.0.tar.gz
+    $ cd pan-python-1.0.0
 
     $ cd bin
     $ ./panxapi.py

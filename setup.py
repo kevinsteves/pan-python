@@ -6,7 +6,17 @@
 
 from distutils.core import setup
 
-version='20130818'
+version = 'snapshot'
+version = None
+
+if version is None:
+    import sys
+    sys.path[:0] = ['lib']
+    from pan.xapi import __version__
+    version = __version__
+elif version == 'snapshot':
+    import time
+    version = 'snapshot-' + time.strftime('%Y%m%d')
 
 setup(name='pan-python',
       version=version,

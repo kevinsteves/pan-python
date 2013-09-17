@@ -283,7 +283,8 @@ def parse_opts():
     valid_where = ['after', 'before', 'top', 'bottom']
 
     short_options = 'de:gksS:U:C:A:o:l:h:P:K:xpjrXHGDt:T:'
-    long_options = ['help', 'ad-hoc=', 'modify', 'force', 'partial=',
+    long_options = ['version', 'help',
+                    'ad-hoc=', 'modify', 'force', 'partial=',
                     'vsys=', 'src=', 'dst=', 'move=', 'rename',
                     'clone', 'export=', 'log=', 'recursive',
                     'cafile=', 'capath=', 'ls', 'serial=',
@@ -415,6 +416,9 @@ def parse_opts():
                 options['tag'] = arg
         elif opt == '-T':
             options['timeout'] = arg
+        elif opt == '--version':
+            print(pan.xapi.__version__)
+            sys.exit(0)
         elif opt == '--help':
             usage()
             sys.exit(0)
@@ -654,6 +658,7 @@ def usage():
     -T seconds            urlopen() timeout
     --cafile              file containing CA certificates
     --capath              directory of hashed certificate files
+    --version             display version
     --help                display usage
 '''
     print(usage % os.path.basename(sys.argv[0]), end='')

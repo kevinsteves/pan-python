@@ -42,6 +42,8 @@ except ImportError:
 import xml.etree.ElementTree as etree
 import pan.rc
 
+__version__ = '1.0.0'
+
 _encoding = 'utf-8'
 _tags_forcelist = set(['entry', 'member'])
 _job_sleep = 0.5
@@ -95,6 +97,7 @@ class PanXapi:
 
         if self.debug3:
             print('Python version:', sys.version, file=sys.stderr)
+            print('pan.xapi version:', __version__, file=sys.stderr)
             print('xml.etree.ElementTree version:', etree.VERSION,
                   file=sys.stderr)
 

@@ -72,6 +72,12 @@ DESCRIPTION
  - dynamic object update: ``type=user-id``
  - log retrieval: ``type=log``
 
+pan.xapi Attributes
+-------------------
+
+ **__version__**
+  Module version string.
+
 pan.xapi Constructor and Exception Class
 ----------------------------------------
 
@@ -94,7 +100,7 @@ class pan.xapi.PanXapi()
                          capath=None)
 
  **debug**
-  debug level.  Can be 0-3; 0 specifies no debugging output and 1-3
+  Debug level.  Can be 0-3; 0 specifies no debugging output and 1-3
   specifies increasing debugging output written to *stderr*.
 
  **tag**

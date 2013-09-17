@@ -87,6 +87,7 @@ SYNOPSIS
     -T seconds            urlopen() timeout
     --cafile              file containing CA certificates
     --capath              directory of hashed certificate files
+    --version             display version
     --help                display usage
 
 DESCRIPTION
@@ -423,6 +424,9 @@ DESCRIPTION
   directory of hashed certificate files to be used for SSL server
   certificate verification. By default the SSL server certificate is
   not verified.
+
+ ``--version``
+  Display version.
 
  ``--help``
   Display command options.
