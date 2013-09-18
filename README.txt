@@ -17,8 +17,15 @@ API and is built using the pan.xapi and pan.commit modules.
 
 Documentation:
 
-  doc/panxapi.html
-  doc/pan.xapi.html
+  Rendered reStructuredText from Git repository:
+
+    https://github.com/kevinsteves/pan-python/blob/master/doc/panxapi.rst
+    https://github.com/kevinsteves/pan-python/blob/master/doc/pan.xapi.rst
+
+  HTML from source distribution:
+
+    doc/panxapi.html
+    doc/pan.xapi.html
 
 Install:
 
@@ -35,6 +42,10 @@ Install:
 
     $ sudo ./setup.py install
     $ panxapi.py
+
+Git Repository:
+
+  https://github.com/kevinsteves/pan-python
 
 Author:
 

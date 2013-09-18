@@ -24,7 +24,7 @@ setup(name='pan-python',
       long_description='Python interface to the PAN-OS XML API',
       author='Kevin Steves',
       author_email='kevin.steves@pobox.com',
-      url='http://pobox.com/~kevin.steves/',
+      url='https://github.com/kevinsteves/pan-python',
       license='ISC',
 #
       package_dir = {'': 'lib'},
