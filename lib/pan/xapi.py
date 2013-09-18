@@ -42,7 +42,7 @@ except ImportError:
 import xml.etree.ElementTree as etree
 import pan.rc
 
-__version__ = '1.0.0'
+__version__ = '0.0.0'
 
 _encoding = 'utf-8'
 _tags_forcelist = set(['entry', 'member'])
