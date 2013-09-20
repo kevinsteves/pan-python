@@ -1,5 +1,3 @@
-# $Id: rc.py,v 1.5 2013/03/02 17:57:42 stevesk Exp $
-
 #
 # Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
 #

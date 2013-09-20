@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# $Id: panxapi.py,v 1.19 2013/08/18 18:36:05 stevesk Exp $
-
 #
 # Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
 #

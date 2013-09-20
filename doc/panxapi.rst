@@ -1,6 +1,4 @@
 ..
- $Id: panxapi.rst,v 1.3 2013/08/18 18:36:05 stevesk Exp $
-
  NOTE: derived from documentation in PAN-perl
 
  Copyright (c) 2011 Palo Alto Networks, Inc. <info@paloaltonetworks.com>

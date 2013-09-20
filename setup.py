@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# $Id: setup.py,v 1.5 2013/08/18 18:49:45 stevesk Exp $
-
 # $ ./setup.py sdist
 
 from distutils.core import setup

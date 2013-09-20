@@ -2,6 +2,8 @@
 
   - Move __version__ to __init__.py.
 
+  - Nuke CVS $Id$.
+
 2013-09-18
 
   - Add GitHub references to README and setup.py.
@@ -56,5 +58,3 @@
 2013-03-06
 
   - initial release
-
-$Id: CHANGES.txt,v 1.9 2013/08/18 18:36:05 stevesk Exp $

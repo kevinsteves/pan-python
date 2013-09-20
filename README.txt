@@ -50,5 +50,3 @@ Git Repository:
 Author:
 
   Kevin Steves <kevin.steves@pobox.com>
-
-$Id: README.txt,v 1.3 2013/03/06 23:42:04 stevesk Exp $

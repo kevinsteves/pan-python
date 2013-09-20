@@ -1,5 +1,3 @@
-# $Id: commit.py,v 1.6 2013/03/05 19:09:51 stevesk Exp $
-
 #
 # Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
 #

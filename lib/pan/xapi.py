@@ -1,5 +1,3 @@
-# $Id: xapi.py,v 1.22 2013/08/18 18:36:06 stevesk Exp $
-
 #
 # Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
 #
