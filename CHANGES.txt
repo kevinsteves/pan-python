@@ -1,3 +1,7 @@
+2013-09-20
+
+  - Move __version__ to __init__.py.
+
 2013-09-18
 
   - Add GitHub references to README and setup.py.

@@ -76,7 +76,7 @@ pan.xapi Attributes
 -------------------
 
  **__version__**
-  Module version string.
+  pan package version string.
 
 pan.xapi Constructor and Exception Class
 ----------------------------------------

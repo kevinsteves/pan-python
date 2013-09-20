@@ -40,9 +40,8 @@ except ImportError:
     _legacy_urllib = True
 
 import xml.etree.ElementTree as etree
+from . import __version__
 import pan.rc
-
-__version__ = '0.0.0'
 
 _encoding = 'utf-8'
 _tags_forcelist = set(['entry', 'member'])
@@ -97,9 +96,9 @@ class PanXapi:
 
         if self.debug3:
             print('Python version:', sys.version, file=sys.stderr)
-            print('pan.xapi version:', __version__, file=sys.stderr)
             print('xml.etree.ElementTree version:', etree.VERSION,
                   file=sys.stderr)
+            print('pan-python version:', __version__, file=sys.stderr)
 
         if self.port is not None:
             try:
@@ -888,7 +887,7 @@ class PanXapi:
                 time.sleep(sleep)
 
 if __name__ == '__main__':
-    # python xapi.py [tag] [xpath] [0-3]
+    # python -m pan.xapi [tag] [xpath] [0-3]
     import pan.xapi
 
     tag = None
@@ -907,7 +906,6 @@ if __name__ == '__main__':
                                 tag=tag)
         xapi.show(xpath=xpath)
     except pan.xapi.PanXapiError as msg:
-        print('show:', xapi.status, file=sys.stderr)
         print('pan.xapi.PanXapi:', msg, file=sys.stderr)
         sys.exit(1)
     print('show:', xapi.status, file=sys.stderr)
