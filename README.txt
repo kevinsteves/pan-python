@@ -13,7 +13,7 @@ The pan package contains the following modules:
     pan.rc:     pan.rc.PanRc class (internal)
 
 bin/panxapi.py is a command line program for accessing the XML
-API and is built using the pan.xapi and pan.commit modules.
+API and uses the pan.xapi and pan.commit modules.
 
 Documentation:
 
