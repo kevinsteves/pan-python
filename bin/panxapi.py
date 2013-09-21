@@ -415,7 +415,7 @@ def parse_opts():
         elif opt == '-T':
             options['timeout'] = arg
         elif opt == '--version':
-            print(pan.xapi.__version__)
+            print('pan-python', pan.xapi.__version__)
             sys.exit(0)
         elif opt == '--help':
             usage()
