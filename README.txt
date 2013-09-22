@@ -17,7 +17,7 @@ API and uses the pan.xapi and pan.commit modules.
 
 Documentation:
 
-  Rendered reStructuredText from Git repository:
+  Rendered reStructuredText from GitHub:
 
     https://github.com/kevinsteves/pan-python/blob/master/doc/panxapi.rst
     https://github.com/kevinsteves/pan-python/blob/master/doc/pan.xapi.rst
@@ -43,7 +43,7 @@ Install:
     $ sudo ./setup.py install
     $ panxapi.py
 
-Git Repository:
+Remote Git Repository:
 
   https://github.com/kevinsteves/pan-python
 
