@@ -27,5 +27,5 @@ setup(name='pan-python',
 #
       package_dir = {'': 'lib'},
       packages=['pan'],
-      scripts=['bin/panxapi.py']
+      scripts=['bin/panxapi.py', 'bin/panconf.py']
      )

@@ -599,7 +599,7 @@ EXAMPLES
 SEE ALSO
 ========
 
- pan.xapi
+ pan.xapi, panconf.py
 
 AUTHORS
 =======
