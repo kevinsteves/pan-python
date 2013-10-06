@@ -33,7 +33,8 @@ class PanConfigError(Exception):
 class PanConfig:
     def __init__(self,
                  debug=0,
-                 config=None):
+                 config=None,
+                 tags_forcelist=_tags_forcelist):
         self.debug = debug
         self.debug1, self.debug2, self.debug3 = False, False, False
         if self.debug > 0:
@@ -42,7 +43,6 @@ class PanConfig:
             self.debug2 = True
         if self.debug > 2:
             self.debug3 = True
-        self.config = config
         self._config_version = 0 # 0 indicates not yet set
         self._config_panorama = None
         self._config_multi_vsys = None
@@ -59,14 +59,16 @@ class PanConfig:
         if config is None:
             raise PanConfigError('no config')
         if self.debug2:
-            print(type(self.config), file=sys.stderr)
-#            print(self.config, end='', file=sys.stderr)
+            print(type(config), file=sys.stderr)
 
-        try:
-            self.config_root = etree.fromstring(self.config)
-        except etree.ParseError as msg:
-            raise PanConfigError('ElementTree.fromstring ParseError: %s'
-                                 % msg)
+        if hasattr(config, 'tag'):
+            self.config_root = config
+        else:
+            try:
+                self.config_root = etree.fromstring(config)
+            except etree.ParseError as msg:
+                raise PanConfigError('ElementTree.fromstring ParseError: %s'
+                                     % msg)
         if self.debug1:
             print('config_root:', self.config_root, file=sys.stderr)
 
