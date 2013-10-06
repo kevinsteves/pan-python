@@ -501,7 +501,11 @@ def print_response(xapi, options):
             print(s)
 
     if options['print_python'] or options['print_json']:
-        d = xapi.xml_python(options['print_result'])
+        try:
+            d = xapi.xml_python(options['print_result'])
+        except pan.xapi.PanXapiError as msg:
+            print('pan.xapi.PanXapi:', msg, file=sys.stderr)
+            sys.exit(1)
 
         if d:
             if options['print_python']:

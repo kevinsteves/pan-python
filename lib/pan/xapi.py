@@ -42,7 +42,6 @@ from . import __version__
 import pan.rc
 
 _encoding = 'utf-8'
-_tags_forcelist = set(['entry', 'member'])
 _job_sleep = 0.5
 
 class PanXapiError(Exception):
@@ -389,7 +388,14 @@ class PanXapi:
                   file=sys.stderr)
         return s.decode(_encoding)
 
+    # XXX xml_python() is not documented
+    # XXX not sure this should be here
     def xml_python(self, result=False):
+        try:
+            import pan.config
+        except ImportError:
+            raise PanXapiError('xml_python() no pan.config')
+
         if result:
             if (self.element_result is None or
                 not len(self.element_result)):
@@ -400,80 +406,13 @@ class PanXapi:
                 return None
             elem = self.element_root
 
-        d = {}
-        self.__serialize_py(elem, d)
-        return d
+        try:
+            conf = pan.config.PanConfig(debug=self.debug,
+                                        config=elem)
+        except pan.config.PanConfigError as msg:
+            raise PanXapiError('pan.config.PanConfigError: %s' % msg)
 
-    def __serialize_py(self, elem, obj, forcelist=False):
-        tag = elem.tag
-        text = elem.text
-        tail = elem.tail # unused
-        text_strip = None
-        if text:
-            text_strip = text.strip()
-        attrs = elem.items()
-
-        if self.debug3:
-            print('TAG(forcelist=%s): "%s"' % (forcelist, tag),
-                  file=sys.stderr)
- 
-        if forcelist:
-            if tag not in obj:
-                obj[tag] = []
-            if not len(elem) and not text_strip and not attrs:
-                obj[tag].append(None)
-                return
-            if not len(elem) and text_strip and not attrs:
-                obj[tag].append(text)
-                return
-
-            obj[tag].append({})
-            o = obj[tag][-1]
-
-        else:
-            if not len(elem) and not text_strip and not attrs:
-                obj[tag] = None
-                return
-            if not len(elem) and text_strip and not attrs:
-                if text_strip == 'yes':
-                    obj[tag] = True
-                elif text_strip == 'no':
-                    obj[tag] = False
-                else:
-                    obj[tag] = text
-                return
-
-            obj[tag] = {}
-            o = obj[tag]
-      
-        for k, v in attrs:
-#            o['@' + k] = v
-            o[k] = v
-
-        if text_strip:
-            o[tag] = text
-
-        if len(elem):
-            tags = {}
-            for e in elem:
-                if e.tag in tags:
-                    tags[e.tag] += 1
-                else:
-                    tags[e.tag] = 1
-            for e in elem:
-                forcelist = False
-                if e.tag in _tags_forcelist or tags[e.tag] > 1:
-                    forcelist = True
-                self.__serialize_py(e, o, forcelist)
-
-    # alternate
-    def _xml_result(self):
-        regexp = r'^<response[^>]*><result[^>]*>(.*)</result></response>$'
-        s = None
-        result = re.search(regexp, self.xml_document, flags = re.DOTALL)
-        if result:
-            s = result.group(1)
-        return s
+        return conf.python()
 
     def __api_request(self, query):
         # type=keygen request will urlencode key if needed so don't
