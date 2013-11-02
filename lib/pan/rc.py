@@ -91,7 +91,7 @@ class PanRc:
 
         if panrcs:
             self.__merge_panrcs(panrcs)
-        
+
     def __parse_file(self, path):
         try:
             f = open(path, 'r')
@@ -128,7 +128,7 @@ class PanRc:
         for panrc in panrcs:
             for key in panrc.keys():
                 self.panrc[key] = panrc[key]
-    
+
 if __name__ == '__main__':
     # python rc.py [tag] [0-3]
     import pan.rc

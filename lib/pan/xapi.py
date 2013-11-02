@@ -136,11 +136,11 @@ class PanXapi:
         except pan.rc.PanRcError as msg:
             raise PanXapiError(str(msg))
 
-	# If we get a api_username and api_password in the constructor
-	# and no api_key, delete api_key inherited from .panrc if any.
-	# Prevent confusion when you specify a api_username and
-	# api_password but they are not used due to existence of
-	# api_key in .panrc.
+        # If we get a api_username and api_password in the constructor
+        # and no api_key, delete api_key inherited from .panrc if any.
+        # Prevent confusion when you specify a api_username and
+        # api_password but they are not used due to existence of
+        # api_key in .panrc.
         if ('api_key' in panrc.panrc and
             api_username is not None and
             api_password is not None and
@@ -509,7 +509,7 @@ class PanXapi:
     def keygen(self):
         self.__clear_response()
 
-        if (self.api_username is None or 
+        if (self.api_username is None or
             self.api_password is None):
             raise PanXapiError('api_username and api_password ' +
                                'arguments required')

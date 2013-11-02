@@ -83,7 +83,7 @@ class PanConfig:
             try:
                 nodes = self.config_root.findall(xpath)
             except SyntaxError as msg:
-                raise PanConfigError('ElementTree.find SyntaxError: %s' %msg)
+                raise PanConfigError('ElementTree.find SyntaxError: %s' % msg)
         else:
             nodes = [self.config_root]
 
@@ -113,7 +113,7 @@ class PanConfig:
                 self._config_panorama = True
             else:
                 self._config_panorama = False
-    
+
         return self._config_panorama
 
     def config_multi_vsys(self):
@@ -175,7 +175,7 @@ class PanConfig:
         if self.debug3:
             print('TAG(forcelist=%s): "%s"' % (forcelist, tag),
                   file=sys.stderr)
- 
+
         if forcelist:
             if tag not in obj:
                 obj[tag] = []
@@ -204,7 +204,7 @@ class PanConfig:
 
             obj[tag] = {}
             o = obj[tag]
-      
+
         for k, v in attrs:
 #            o['@' + k] = v
             o[k] = v

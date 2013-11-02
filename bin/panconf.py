@@ -118,7 +118,7 @@ def main():
                 print('var1 =', pprint.pformat(d))
             if options['print_json']:
                 if options['compact']:
-                    print(json.dumps(d, separators=(',',':')))
+                    print(json.dumps(d, separators=(',', ':')))
                 else:
                     print(json.dumps(d, sort_keys=True, indent=2))
 

@@ -70,7 +70,7 @@ class PanCommit:
     def device_and_network_excluded(self):
         part = 'device-and-network-excluded'
         self.partial.add(part)
-        
+
     def policy_and_objects_excluded(self):
         part = 'policy-and-objects-excluded'
         self.partial.add(part)
