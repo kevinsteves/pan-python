@@ -23,12 +23,14 @@ from . import __version__
 _encoding = 'utf-8'
 _tags_forcelist = set(['entry', 'member'])
 
+
 class PanConfigError(Exception):
     def __init__(self, msg):
         self.msg = msg
 
     def __str__(self):
         return self.msg
+
 
 class PanConfig:
     def __init__(self,

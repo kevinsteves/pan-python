@@ -38,8 +38,10 @@ _part_xml = {
         '<member>%s</member>',
     }
 
+
 def valid_part(part):
     return part in _valid_part
+
 
 class PanCommit:
     def __init__(self,

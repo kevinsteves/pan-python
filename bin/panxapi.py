@@ -31,6 +31,7 @@ import pan.commit
 
 debug = 0
 
+
 def main():
     set_encoding()
     options = parse_opts()
@@ -223,6 +224,7 @@ def main():
         sys.exit(1)
 
     sys.exit(0)
+
 
 def parse_opts():
     options = {
@@ -433,6 +435,7 @@ def parse_opts():
 
     return options
 
+
 def get_vsys(s):
     list = []
     vsys = s.split(',')
@@ -444,6 +447,7 @@ def get_vsys(s):
                 list.append(v)
     return list
 
+
 def get_parts(s):
     list = []
     parts = s.split(',')
@@ -454,6 +458,7 @@ def get_parts(s):
                 sys.exit(1)
             list.append(part)
     return list
+
 
 def get_element(s):
     stdin_char = '-'
@@ -477,6 +482,7 @@ def get_element(s):
 
     return element
 
+
 def print_status(xapi, action, exception_msg=None):
     print(action, end='', file=sys.stderr)
     if xapi.status_code is not None:
@@ -490,6 +496,7 @@ def print_status(xapi, action, exception_msg=None):
     elif xapi.status_detail is not None:
         print(': %s' % xapi.status_detail, end='', file=sys.stderr)
     print(file=sys.stderr)
+
 
 def print_response(xapi, options):
     if options['print_xml']:
@@ -512,6 +519,7 @@ def print_response(xapi, options):
                 print('var1 =', pprint.pformat(d))
             if options['print_json']:
                 print(json.dumps(d, sort_keys=True, indent=2))
+
 
 def save_pcap(xapi, options):
     if xapi.export_result is None or options['src'] is None:
@@ -557,6 +565,7 @@ def save_pcap(xapi, options):
     print('exported %s: %s' % (xapi.export_result['category'], path),
           file=sys.stderr)
 
+
 def pcap_listing(xapi, options):
     d = xapi.xml_python(result=True)
 
@@ -579,6 +588,7 @@ def pcap_listing(xapi, options):
             print('%d %s directories:' % (size, category))
             for item in sorted(dir):
                 print('    %s/' % item)
+
 
 def set_encoding():
     #
@@ -606,6 +616,7 @@ def set_encoding():
         sys.stdin = codecs.getreader(encoding)(sys.stdin)
         sys.stdout = codecs.getwriter(encoding)(sys.stdout)
         sys.stderr = codecs.getwriter(encoding)(sys.stderr)
+
 
 def usage():
     usage = '''%s [options] [xpath]

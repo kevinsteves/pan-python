@@ -32,12 +32,14 @@ _valid_varnames = set([
 
 _indent = 2
 
+
 class PanRcError(Exception):
     def __init__(self, msg):
         self.msg = msg
 
     def __str__(self):
         return self.msg
+
 
 class PanRc:
     def __init__(self,

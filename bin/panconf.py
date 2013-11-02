@@ -28,6 +28,7 @@ libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
 import pan.config
 
+
 def main():
     signal.signal(signal.SIGPIPE, signal.SIG_DFL)
 
@@ -123,6 +124,7 @@ def main():
 
     sys.exit(0)
 
+
 def conf_flat(conf, path, xpath=None):
     try:
         o = conf.flat(path, xpath)
@@ -132,6 +134,7 @@ def conf_flat(conf, path, xpath=None):
 
     return o
 
+
 def conf_set(conf, path, xpath, member_list):
     try:
         o = conf.set_cli(path, xpath, member_list)
@@ -140,6 +143,7 @@ def conf_set(conf, path, xpath, member_list):
         sys.exit(1)
 
     return o
+
 
 def parse_opts():
     options = {
@@ -211,6 +215,7 @@ def parse_opts():
 
     return options
 
+
 def read_file(path):
     if path == '-':
         lines = sys.stdin.readlines()
@@ -224,6 +229,7 @@ def read_file(path):
         f.close()
 
     return ''.join(lines)
+
 
 def usage():
     usage = '''%s [options] [pseudo-xpath]

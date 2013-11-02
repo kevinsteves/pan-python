@@ -25,6 +25,7 @@ from __future__ import print_function
 import sys
 import re
 import time
+
 try:
     # 3.2
     from urllib.request import Request, urlopen
@@ -38,11 +39,13 @@ except ImportError:
     _legacy_urllib = True
 
 import xml.etree.ElementTree as etree
+
 from . import __version__
 import pan.rc
 
 _encoding = 'utf-8'
 _job_sleep = 0.5
+
 
 class PanXapiError(Exception):
     def __init__(self, msg):
@@ -52,6 +55,7 @@ class PanXapiError(Exception):
         if self.msg is None:
             return ''
         return self.msg
+
 
 class PanXapi:
     def __init__(self,
