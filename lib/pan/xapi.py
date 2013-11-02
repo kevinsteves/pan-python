@@ -117,7 +117,7 @@ class PanXapi:
             except ValueError:
                 raise PanXapiError('Invalid timeout: %s' % self.timeout)
 
-        init_panrc = {} # .panrc args from constructor
+        init_panrc = {}  # .panrc args from constructor
         if api_username is not None:
             init_panrc['api_username'] = api_username
         if api_password is not None:
@@ -292,7 +292,7 @@ class PanXapi:
             return False
 
         self.element_root = element
-        self.element_result = self.element_root.find('result') # can be None
+        self.element_result = self.element_root.find('result')  # can be None
 
         if self.debug3:
             print('xml_document:', self.xml_document)
@@ -404,7 +404,7 @@ class PanXapi:
             if (self.element_result is None or
                 not len(self.element_result)):
                 return None
-            elem = list(self.element_result)[0] # XXX
+            elem = list(self.element_result)[0]  # XXX
         else:
             if self.element_root is None:
                 return None

@@ -45,7 +45,7 @@ class PanConfig:
             self.debug2 = True
         if self.debug > 2:
             self.debug3 = True
-        self._config_version = 0 # 0 indicates not yet set
+        self._config_version = 0  # 0 indicates not yet set
         self._config_panorama = None
         self._config_multi_vsys = None
 
@@ -166,7 +166,7 @@ class PanConfig:
     def __serialize_py(self, elem, obj, forcelist=False):
         tag = elem.tag
         text = elem.text
-        tail = elem.tail # unused
+        tail = elem.tail  # unused
         text_strip = None
         if text:
             text_strip = text.strip()
@@ -239,7 +239,7 @@ class PanConfig:
     def __serialize_flat(self, elem, path, obj):
         tag = elem.tag
         text = elem.text
-        tail = elem.tail # unused
+        tail = elem.tail  # unused
         text_strip = None
         if text:
             text_strip = text.strip()
@@ -295,7 +295,7 @@ class PanConfig:
     def __serialize_set_cli(self, elem, path, obj, member_list=False):
         tag = elem.tag
         text = elem.text
-        tail = elem.tail # unused
+        tail = elem.tail  # unused
         text_strip = None
         if text:
             text_strip = text.strip()
@@ -442,7 +442,7 @@ class PanConfig:
         xpaths_panorama = xpaths_panorama_4_1
 
         if self.config_version() is not None and \
-                self.config_version() == '5.0.0': # XXX
+                self.config_version() == '5.0.0':  # XXX
             xpaths_panos = xpaths_panos_5_0
             xpaths_panorama = xpaths_panorama_5_0
 

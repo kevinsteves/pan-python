@@ -88,7 +88,7 @@ def main():
         member_list = options['mlist']
         if conf.config_version() is not None:
             version = conf.config_version().split('.')
-            if int(version[0]) >= 5: # XXX ValueError
+            if int(version[0]) >= 5:  # XXX ValueError
                 member_list = True
         if options['xpath']:
             o = conf_set(conf, path, xpath=options['xpath'],

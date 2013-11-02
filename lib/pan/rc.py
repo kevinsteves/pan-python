@@ -78,8 +78,8 @@ class PanRc:
                               s, file=sys.stderr)
                     panrcs.append(self.init_panrc)
             else:
-                path = os.path.expanduser(basename) # ~, ~user
-                path = os.path.expandvars(path)     # $FOO
+                path = os.path.expanduser(basename)  # ~, ~user
+                path = os.path.expandvars(path)      # $FOO
                 path = os.path.join(path, self.filename)
                 d = self.__parse_file(path)
                 if d:
