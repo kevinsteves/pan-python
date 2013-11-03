@@ -17,13 +17,13 @@
 from __future__ import print_function
 import sys
 
-_valid_part = set([
-        'device-and-network-excluded',
-        'policy-and-objects-excluded',
-        'shared-object-excluded',
-        'no-vsys',
-        'vsys',
-        ])
+valid_part = set([
+    'device-and-network-excluded',
+    'policy-and-objects-excluded',
+    'shared-object-excluded',
+    'no-vsys',
+    'vsys',
+    ])
 
 _part_xml = {
     'device-and-network-excluded':

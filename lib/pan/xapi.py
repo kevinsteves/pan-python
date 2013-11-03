@@ -142,9 +142,9 @@ class PanXapi:
         # api_password but they are not used due to existence of
         # api_key in .panrc.
         if ('api_key' in panrc.panrc and
-            api_username is not None and
-            api_password is not None and
-            api_key is None):
+                api_username is not None and
+                api_password is not None and
+                api_key is None):
             del panrc.panrc['api_key']
             if self.debug1:
                 print('ignoring .panrc inherited api_key',
@@ -189,7 +189,7 @@ class PanXapi:
 
     def __str__(self):
         return '\n'.join((': '.join((k, str(self.__dict__[k]))))
-                          for k in sorted(self.__dict__))
+                         for k in sorted(self.__dict__))
 
     def __clear_response(self):
         # XXX naming
@@ -402,7 +402,7 @@ class PanXapi:
 
         if result:
             if (self.element_result is None or
-                not len(self.element_result)):
+                    not len(self.element_result)):
                 return None
             elem = list(self.element_result)[0]  # XXX
         else:
@@ -510,7 +510,7 @@ class PanXapi:
         self.__clear_response()
 
         if (self.api_username is None or
-            self.api_password is None):
+                self.api_password is None):
             raise PanXapiError('api_username and api_password ' +
                                'arguments required')
 
@@ -818,7 +818,7 @@ class PanXapi:
                       file=sys.stderr)
 
             if (timeout is not None and timeout != 0 and
-                time.time() > start_time + timeout):
+                    time.time() > start_time + timeout):
                 raise PanXapiError('timeout waiting for ' +
                                    'job %s completion' % job.text)
 

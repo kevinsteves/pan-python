@@ -302,9 +302,9 @@ class PanConfig:
         attrs = elem.items()
 
         if self.debug3:
-            print('TAG(elem=%d member_list=%s): "%s"' % \
-                      (len(elem), member_list, tag), \
-                      file=sys.stderr)
+            print('TAG(elem=%d member_list=%s): "%s"' %
+                  (len(elem), member_list, tag),
+                  file=sys.stderr)
             print('text_strip: "%s"' % text_strip, file=sys.stderr)
             print('attrs: %s' % attrs, file=sys.stderr)
             print('path: "%s"' % path, file=sys.stderr)

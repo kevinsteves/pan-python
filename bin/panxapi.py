@@ -183,8 +183,8 @@ def main():
                 c = pan.commit.PanCommit(debug=options['debug'],
                                          force=options['force'],
                                          commit_all=options['commit_all'],
-                                         merge_with_candidate=\
-                                             options['merge'])
+                                         merge_with_candidate=
+                                         options['merge'])
 
                 for part in options['partial']:
                     if part == 'device-and-network-excluded':
@@ -537,7 +537,7 @@ def save_pcap(xapi, options):
 
     if not path_done:
         if (options['recursive'] and src_dir and
-            re.search(r'^\d{8,8}$', src_dir)):
+                re.search(r'^\d{8,8}$', src_dir)):
             path = os.path.join(path, src_dir)
             if not os.path.isdir(path):
                 try:

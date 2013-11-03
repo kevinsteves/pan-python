@@ -23,12 +23,12 @@ import pprint
 _search_path = ['__init__()', '.', '~']
 _filename = '.panrc'
 _valid_varnames = set([
-        'hostname',
-        'port',
-        'api_username',
-        'api_password',
-        'api_key',
-        ])
+    'hostname',
+    'port',
+    'api_username',
+    'api_password',
+    'api_key',
+    ])
 
 _indent = 2
 
@@ -108,7 +108,7 @@ class PanRc:
             if self.tag:
                 result = re.search(r'\s*(\w+)%([\w-]+)\s*=\s*(.+)', line)
                 if (result and result.group(2) == self.tag and
-                    result.group(1) in _valid_varnames):
+                        result.group(1) in _valid_varnames):
                     panrc[result.group(1)] = result.group(3)
             else:
                 result = re.search(r'\s*(\w+)\s*=\s*(.+)', line)
