@@ -1,0 +1,234 @@
+..
+ Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+
+ Permission to use, copy, modify, and distribute this software for any
+ purpose with or without fee is hereby granted, provided that the above
+ copyright notice and this permission notice appear in all copies.
+
+ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+===========
+panwfapi.py
+===========
+
+---------------------------------------------------
+command line program for accessing the WildFire API
+---------------------------------------------------
+
+NAME
+====
+
+ panwfapi.py - command line program for accessing the WildFire API
+
+SYNOPSIS
+========
+::
+
+ panwfapi.py [options]
+    --submit path|url     submit file or URL to WildFire for analysis
+    --report              get WildFire report
+    --sample              get WildFire sample file
+    --pcap                get WildFire PCAP files
+    --hash hash           query MD5 or SHA256 hash
+    --serial serial       query device serial number
+    --id id               query report ID
+    --format format       report output format
+    --dst dst             save file to directory or path
+    -K api_key            WildFire API key
+    -h hostname           WildFire hostname
+    -x                    print XML response to stdout
+    -p                    print XML response in Python to stdout
+    -j                    print XML response in JSON to stdout
+    -H                    print HTML response to stdout
+    -D                    enable debug (multiple up to -DDD)
+    -t tag                .panrc tagname
+    -T seconds            urlopen() timeout
+    --version             display version
+    --help                display usage
+
+DESCRIPTION
+===========
+
+ **panwfapi.py** is used to perform API requests on the WildFire
+ cloud.  It uses the PanWFapi class from the **pan.wfapi** module to
+ execute API requests (this module is under development and not
+ documented).
+
+ The Warsaw version of the WildFire API version is supported which
+ is currently at beta.wildfire.paloaltonetworks.com.
+
+ The options are:
+
+ ``--submit`` *path|url*
+  Submit a file or URL to WildFire for analysis.  Valid URL
+  schemes for *url* are: **file**, **http**, **https** and **ftp**.
+  A **file** *url* is the same as specifying *path*.
+
+ ``--report``
+  Get WildFire report for a previously uploaded sample.  The
+  sample can be specified by its MD5 or SHA256 hash (**--hash**)
+  or the device serial number (**--serial**) and sample
+  report ID (**--id**).
+
+ ``--sample``
+  Get a previously uploaded sample file.  The sample can be specified
+  by its MD5 or SHA256 hash (**--hash**).
+
+ ``--pcap``
+  Get PCAP (packet capture) files of network activity for a previously
+  uploaded sample.  The sample can be specified by its MD5 or SHA256
+  hash (**--hash**).
+
+  The result is ZIP file containing a PCAP for each virtual machine
+  the sample was analyzed in.
+
+ ``--hash`` *hash*
+  The MD5 or SHA256 hash for a WildFire sample.
+
+ ``--serial`` *serial*
+  The device serial number (*device_id*).
+
+ ``--id`` *id*
+  The report ID for a WildFire sample (*report_id*).
+
+ ``--format`` *format*
+  WildFire report output format string.  This can be **xml** or **pdf**.
+
+  The default is **xml**.
+
+ ``--dst`` *dst*
+  Save file to the directory or path specified in *dst*.  By default
+  files are saved with the filename specified in the HTTP response
+  attachment.  Files saved are:
+
+  - WildFire samples (**--sample**)
+
+    sha256-hash-of-sample
+
+  - PDF files (**--format=pdf**)
+
+    sha256-hash-of-sample.pdf
+
+  - PCAP files (**--pcap**)
+
+    sha256-hash-of-sample.pcap.zip
+
+ ``-K`` *api_key*
+  Specify the **api_key** used in API requests.  This can also be
+  specified in a .panrc file using the ``api_key`` *varname*.
+
+ ``-h`` *hostname*
+  Specify the **hostname** used in API requests.  This can also be
+  specified in a .panrc file using the ``hostname`` *varname*.
+
+  This is used to test alternate clouds (e.g.,
+  ``beta.wildfire.paloaltonetworks.com``).
+
+  The default is ``wildfire.paloaltonetworks.com``.
+
+ ``-x``
+  Print XML response to *stdout*.
+
+ ``-p``
+  Print XML response in Python to *stdout*.
+
+ ``-j``
+  Print XML response in JSON to *stdout*.
+
+ ``-H``
+  Print HTML response to *stdout*.
+
+ ``-D``
+  Enable debugging.  May be specified multiple times up to 3
+  to increase debugging output.
+
+ ``-t`` *tag*
+  Specify tagname for .panrc.
+
+ ``-T`` *seconds*
+  Specify the ``timeout`` value for urlopen().
+
+ ``--help``
+  Display command options.
+
+FILES
+=====
+
+ ``.panrc``
+  .panrc file.  See PanXapi documentation for .panrc format.
+
+EXIT STATUS
+===========
+
+ **panwfapi.py** exits with 0 on success and 1 if an error occurs.
+
+EXAMPLES
+========
+
+ Add WildFire API key to .panrc file.
+ ::
+
+  $ echo 'api_key=wildfire%d3b07384d113edec49eaa6238ad5ff00' >>.panrc
+
+ Submit file to WildFire for analysis and print XML response.
+ ::
+
+  $ panwfapi.py -t wildfire -x --submit /tmp/sample.exe
+  submit: 200 OK [response_body=True response_type=xml]
+
+  <?xml version="1.0" encoding="UTF-8" ?><wildfire><upload-file-info><url></url><filename>sample.exe</filename><sha256>5a036546422c5235283254234fc5a67a36e3221a2324a3087db0081f08cc38e6</sha256><md5>ada8501b1e2abae90a83cc4cf20196d8</md5><size>466356</size><filetype>PE32 executable</filetype></upload-file-info></wildfire>
+
+ Query WildFire sample report by MD5 hash and print XML response.
+ ::
+
+  $ panwfapi.py -t wildfire -x --report --hash 6de476723a12ad277a84f031868aace3 | head
+  report: 200 OK [response_body=True response_type=xml]
+  <?xml version="1.0" encoding="UTF-8" ?>
+  <wildfire> 
+  <version>2.0</version>
+  <file_info>
+      <sha256>74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e</sha256>
+      <md5>6de476723a12ad277a84f031868aace3</md5>
+      <filetype>PE</filetype>
+      <size>313856</size>
+      <malware>yes</malware>
+  </file_info>
+
+ Get previously uploaded sample.
+ ::
+
+  $ panwfapi.py -t wildfire --sample --hash 6de476723a12ad277a84f031868aace3 --dst /tmp
+  sample: 200 OK [attachment="74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e"]
+  saved /tmp/74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e
+
+ Get PCAP files of sample network activity.
+ ::
+
+  $ panwfapi.py -t wildfire --pcap --hash 6de476723a12ad277a84f031868aace3 --dst /tmp
+  pcap: 200 OK [attachment="74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e.pcap.zip"]
+  saved /tmp/74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e.pcap.zip
+
+ Submit URL to WildFire for analysis.
+ ::
+
+  $ panwfapi.py -t wildfire -x --submit \
+  > https://www.paloaltonetworks.com/content/dam/paloaltonetworks-com/en_US/assets/pdf/datasheets/wildfire/wildfire.pdf
+  submit: 200 OK [response_body=True response_type=xml]
+
+  <?xml version="1.0" encoding="UTF-8" ?><wildfire><upload-file-info><url>https://www.paloaltonetworks.com/content/dam/paloaltonetworks-com/en_US/assets/pdf/datasheets/wildfire/wildfire.pdf</url><filename></filename><sha256>716bc87686b4242c4e446fdb4599cf112fdd6fd85600a30a1856a67cc61b9c25</sha256><md5>b81a9805d672bc6d574bd76ffd09ad54</md5><size>1236454</size><filetype>Adobe PDF document</filetype></upload-file-info></wildfire>
+
+SEE ALSO
+========
+
+ pan.xapi
+
+AUTHORS
+=======
+
+ Kevin Steves <kevin.steves@pobox.com>

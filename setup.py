@@ -16,10 +16,12 @@ elif version == 'snapshot':
     import time
     version = 'snapshot-' + time.strftime('%Y%m%d')
 
+desc = 'Multi-tool set for Palo Alto Networks PAN-OS, Panorama and WildFire API'
+
 setup(name='pan-python',
       version=version,
       description='Python package for PAN-OS',
-      long_description='Python interface to the PAN-OS XML API',
+      long_description=desc,
       author='Kevin Steves',
       author_email='kevin.steves@pobox.com',
       url='https://github.com/kevinsteves/pan-python',
@@ -27,5 +29,5 @@ setup(name='pan-python',
 #
       package_dir = {'': 'lib'},
       packages=['pan'],
-      scripts=['bin/panxapi.py', 'bin/panconf.py']
+      scripts=['bin/panxapi.py', 'bin/panconf.py', 'bin/panwfapi.py]
      )
