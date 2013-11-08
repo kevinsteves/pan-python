@@ -167,6 +167,9 @@ DESCRIPTION
   certificate verification. By default the SSL server certificate is
   not verified.
 
+ ``--version``
+  Display version.
+
  ``--help``
   Display command options.
 
