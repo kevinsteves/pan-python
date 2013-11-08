@@ -382,10 +382,12 @@ class PanWFapi:
             return False
 
         self.http_code = response.getcode()
-        # XXX can we access reason in 2.7?
         if hasattr(response, 'reason'):
             # 3.2
             self.http_reason = response.reason
+        elif hasattr(response, 'msg'):
+            # 2.7
+            self.http_reason = response.msg
         elif self.http_code in responses:
             self.http_reason = responses[self.http_code]
 
