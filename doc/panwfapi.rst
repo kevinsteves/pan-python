@@ -230,14 +230,24 @@ EXAMPLES
   pcap: 200 OK [attachment="74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e.pcap.zip"]
   saved /tmp/74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e.pcap.zip
 
- Submit URL to WildFire for analysis.
+ Submit URL to WildFire for analysis and print XML response in JSON.
  ::
 
-  $ panwfapi.py -t wildfire -x --submit \
+  $ panwfapi.py -t wildfire -j --submit \
   > https://www.paloaltonetworks.com/content/dam/paloaltonetworks-com/en_US/assets/pdf/datasheets/wildfire/wildfire.pdf
   submit: 200 OK [response_body=True response_type=xml]
-
-  <?xml version="1.0" encoding="UTF-8" ?><wildfire><upload-file-info><url>https://www.paloaltonetworks.com/content/dam/paloaltonetworks-com/en_US/assets/pdf/datasheets/wildfire/wildfire.pdf</url><filename></filename><sha256>716bc87686b4242c4e446fdb4599cf112fdd6fd85600a30a1856a67cc61b9c25</sha256><md5>b81a9805d672bc6d574bd76ffd09ad54</md5><size>1236454</size><filetype>Adobe PDF document</filetype></upload-file-info></wildfire>
+  {
+    "wildfire": {
+      "upload-file-info": {
+        "filename": null, 
+        "filetype": "Adobe PDF document", 
+        "md5": "b81a9805d672bc6d574bd76ffd09ad54", 
+        "sha256": "716bc87686b4242c4e446fdb4599cf112fdd6fd85600a30a1856a67cc61b9c25", 
+        "size": "1236454", 
+        "url": "https://www.paloaltonetworks.com/content/dam/paloaltonetworks-com/en_US/assets/pdf/datasheets/wildfire/wildfire.pdf"
+      }
+    }
+  }
 
 SEE ALSO
 ========
