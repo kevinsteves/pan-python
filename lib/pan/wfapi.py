@@ -34,14 +34,16 @@ from io import BytesIO
 import email.utils
 try:
     # 3.2
-    from urllib.request import Request, urlopen
+    from urllib.request import Request, urlopen, \
+        build_opener, install_opener, HTTPErrorProcessor
     from urllib.error import URLError
     from urllib.parse import urlencode
     from http.client import responses
     _legacy_urllib = False
 except ImportError:
     # 2.7
-    from urllib2 import Request, urlopen, URLError
+    from urllib2 import Request, urlopen, URLError, \
+        build_opener, install_opener, HTTPErrorProcessor
     from urllib import urlencode
     from httplib import responses
     _legacy_urllib = True
@@ -257,9 +259,8 @@ class PanWFapi:
 
     def __set_xml_response(self, message_body):
         if self.debug2:
-            print(message_body, file=sys.stderr)
+            print('__set_xml_response:', repr(message_body), file=sys.stderr)
         self.response_body = message_body.decode(_encoding)
-        self.response_type = 'xml'
 
         # ParseError: "XML or text declaration not at start of entity"
         # fix: remove leading blank lines if exist
@@ -267,6 +268,10 @@ class PanWFapi:
         while (_message_body[0:1] == b'\r' or
                _message_body[0:1] == b'\n'):
             _message_body = _message_body[1:]
+
+        if len(_message_body) == 0:
+            return True
+        self.response_type = 'xml'
 
         try:
             element = etree.fromstring(_message_body)
@@ -280,8 +285,10 @@ class PanWFapi:
 
     def __set_html_response(self, message_body):
         if self.debug2:
-            print(message_body, file=sys.stderr)
+            print('__set_html_response:', repr(message_body), file=sys.stderr)
         self.response_body = message_body.decode()
+        if len(self.response_body) == 0:
+            return True
         self.response_type = 'html'
 
         return True
@@ -368,11 +375,20 @@ class PanWFapi:
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout
 
+        # override HTTPError for (not 200 <= code 300) and handle below
+        def http_response(request, response):
+            return response
+
+        http_error_processor = HTTPErrorProcessor()
+        http_error_processor.https_response = http_response
+        opener = build_opener(http_error_processor)
+        # install so we can use **kwargs
+        install_opener(opener)
+
         try:
             response = urlopen(**kwargs)
 
         # XXX handle httplib.BadStatusLine when http to port 443
-
         except URLError as e:
             self._msg = str(e)
             return False
@@ -398,6 +414,12 @@ class PanWFapi:
                   file=sys.stderr)
             print('HTTP response headers:', file=sys.stderr)
             print(response.info(), file=sys.stderr)
+
+        if not (200 <= self.http_code < 300):
+            self._msg = 'HTTP Error %s: %s' % (self.http_code,
+                                               self.http_reason)
+            self.__set_response(response)
+            return False
 
         return response
 
