@@ -49,6 +49,8 @@ SYNOPSIS
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
+    --cafile              file containing CA certificates
+    --capath              directory of hashed certificate files
     --version             display version
     --help                display usage
 
@@ -153,6 +155,17 @@ DESCRIPTION
 
  ``-T`` *seconds*
   Specify the ``timeout`` value for urlopen().
+
+ ``--cafile``
+  Specify the ``cafile`` value for urlopen().  ``cafile`` is a file
+  containing CA certificates to be used for SSL server certificate
+  verification. By default the SSL server certificate is not verified.
+
+ ``--capath``
+  Specify the ``capath`` value for urlopen().  ``capath`` is a
+  directory of hashed certificate files to be used for SSL server
+  certificate verification. By default the SSL server certificate is
+  not verified.
 
  ``--help``
   Display command options.

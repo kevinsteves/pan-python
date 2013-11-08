@@ -371,6 +371,8 @@ def usage():
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
+    --cafile              file containing CA certificates
+    --capath              directory of hashed certificate files
     --version             display version
     --help                display usage
 '''
