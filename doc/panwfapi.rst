@@ -49,6 +49,7 @@ SYNOPSIS
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
+    --nocacloud           disable default cloud CA certificate verification
     --cafile              file containing CA certificates
     --capath              directory of hashed certificate files
     --version             display version
@@ -156,17 +157,30 @@ DESCRIPTION
  ``-T`` *seconds*
   Specify the ``timeout`` value for urlopen().
 
+ ``--nocacloud``
+  Disable default cloud CA SSL server certificate verification.
+
+  By default SSL server certificate verification is performed using
+  the Go Daddy Class 2 Certification Authority Root Certificate which
+  is used by the WildFire cloud and is stored in the PanWFapi class.
+  ``--nocacloud`` can be used to disable verification for test clouds
+  or if the cloud CA changes.
+
+  urlopen() only supports SSL server certificate verification in
+  Python version 3.2 and greater.
+
  ``--cafile``
   Specify the ``cafile`` value for urlopen().  ``cafile`` is a file
   containing CA certificates to be used for SSL server certificate
-  verification. By default the SSL server certificate is not verified.
+  verification.
+  ``--cafile`` disables default cloud certificate verification.
   ``--cafile`` is only supported in Python version 3.2 and greater.
 
  ``--capath``
   Specify the ``capath`` value for urlopen().  ``capath`` is a
   directory of hashed certificate files to be used for SSL server
-  certificate verification. By default the SSL server certificate is
-  not verified.
+  certificate verification.
+  ``--capath`` disables default cloud certificate verification.
   ``--capath`` is only supported in Python version 3.2 and greater.
 
  ``--version``

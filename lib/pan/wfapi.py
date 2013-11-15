@@ -30,6 +30,7 @@ from __future__ import print_function
 import sys
 import re
 import os
+from tempfile import NamedTemporaryFile
 from io import BytesIO
 import email.utils
 try:
@@ -98,6 +99,7 @@ class PanWFapi:
                  hostname=None,
                  api_key=None,
                  timeout=None,
+                 cacloud=True,
                  cafile=None,
                  capath=None):
         self.debug = debug
@@ -112,9 +114,6 @@ class PanWFapi:
         self.hostname = hostname
         self.api_key = None
         self.timeout = timeout
-        # WildFire cloud cafile:
-        # https://certs.godaddy.com/anonymous/repository.pki
-        # Go Daddy Class 2 Certification Authority Root Certificate
         self.cafile = cafile
         self.capath = capath
 
@@ -126,6 +125,14 @@ class PanWFapi:
             print('xml.etree.ElementTree version:', etree.VERSION,
                   file=sys.stderr)
             print('pan-python version:', __version__, file=sys.stderr)
+
+        if ((cacloud and sys.hexversion >= 0x03020000) and
+                (self.cafile is None and self.capath is None)):
+            tempfile = self.__cacloud()
+            if tempfile is None:
+                raise PanWFapiError(self._msg)
+            self.cacloud_tempfile = tempfile
+            self.cafile = self.cacloud_tempfile.name
 
         if self.timeout is not None:
             try:
@@ -370,7 +377,8 @@ class PanWFapi:
             kwargs['capath'] = self.capath
         # Changed in version 3.3: cadefault added
         if sys.hexversion >= 0x03030000:
-            kwargs['cadefault'] = True
+            pass
+#            kwargs['cadefault'] = True
 
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout
@@ -551,6 +559,54 @@ class PanWFapi:
 
         if not self.__set_response(response):
             raise PanWFapiError(self._msg)
+
+    def __cacloud(self):
+        # WildFire cloud cafile:
+        #   https://certs.godaddy.com/anonymous/repository.pki
+        #   Go Daddy Class 2 Certification Authority Root Certificate
+        # use:
+        #   $ openssl x509 -in wfapi.py -text
+        # to view text form.
+
+        gd_class2_root_crt = b'''
+-----BEGIN CERTIFICATE-----
+MIIEADCCAuigAwIBAgIBADANBgkqhkiG9w0BAQUFADBjMQswCQYDVQQGEwJVUzEh
+MB8GA1UEChMYVGhlIEdvIERhZGR5IEdyb3VwLCBJbmMuMTEwLwYDVQQLEyhHbyBE
+YWRkeSBDbGFzcyAyIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4XDTA0MDYyOTE3
+MDYyMFoXDTM0MDYyOTE3MDYyMFowYzELMAkGA1UEBhMCVVMxITAfBgNVBAoTGFRo
+ZSBHbyBEYWRkeSBHcm91cCwgSW5jLjExMC8GA1UECxMoR28gRGFkZHkgQ2xhc3Mg
+MiBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTCCASAwDQYJKoZIhvcNAQEBBQADggEN
+ADCCAQgCggEBAN6d1+pXGEmhW+vXX0iG6r7d/+TvZxz0ZWizV3GgXne77ZtJ6XCA
+PVYYYwhv2vLM0D9/AlQiVBDYsoHUwHU9S3/Hd8M+eKsaA7Ugay9qK7HFiH7Eux6w
+wdhFJ2+qN1j3hybX2C32qRe3H3I2TqYXP2WYktsqbl2i/ojgC95/5Y0V4evLOtXi
+EqITLdiOr18SPaAIBQi2XKVlOARFmR6jYGB0xUGlcmIbYsUfb18aQr4CUWWoriMY
+avx4A6lNf4DD+qta/KFApMoZFv6yyO9ecw3ud72a9nmYvLEHZ6IVDd2gWMZEewo+
+YihfukEHU1jPEX44dMX4/7VpkI+EdOqXG68CAQOjgcAwgb0wHQYDVR0OBBYEFNLE
+sNKR1EwRcbNhyz2h/t2oatTjMIGNBgNVHSMEgYUwgYKAFNLEsNKR1EwRcbNhyz2h
+/t2oatTjoWekZTBjMQswCQYDVQQGEwJVUzEhMB8GA1UEChMYVGhlIEdvIERhZGR5
+IEdyb3VwLCBJbmMuMTEwLwYDVQQLEyhHbyBEYWRkeSBDbGFzcyAyIENlcnRpZmlj
+YXRpb24gQXV0aG9yaXR5ggEAMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQAD
+ggEBADJL87LKPpH8EsahB4yOd6AzBhRckB4Y9wimPQoZ+YeAEW5p5JYXMP80kWNy
+OO7MHAGjHZQopDH2esRU1/blMVgDoszOYtuURXO1v0XJJLXVggKtI3lpjbi2Tc7P
+TMozI+gciKqdi0FuFskg5YmezTvacPd+mSYgFFQlq25zheabIZ0KbIIOqPjCDPoQ
+HmyW74cNxA9hi63ugyuV+I6ShHI56yDqg+2DzZduCLzrTia2cyvk0/ZM/iZx4mER
+dEr/VxqHD3VILs9RaRegAhJhldXRQLIQTO7ErBBDpqWeCtWVYpoNz4iCxTIM5Cuf
+ReYNnyicsbkqWletNw+vHX/bvZ8=
+-----END CERTIFICATE-----
+'''
+
+        try:
+            tf = NamedTemporaryFile(suffix='.crt')
+            tf.write(gd_class2_root_crt)
+            tf.flush()
+        except (OSError, IOError) as e:
+            self._msg = "Can't create cloud cafile: %s" % e
+            return None
+
+        if self.debug2:
+            print('__cacloud:', tf.name, file=sys.stderr)
+
+        return tf
 
 
 # Minimal RFC 2388 implementation

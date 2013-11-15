@@ -46,6 +46,7 @@ def main():
                                    api_key=options['api_key'],
                                    hostname=options['hostname'],
                                    timeout=options['timeout'],
+                                   cacloud=options['cacloud'],
                                    cafile=options['cafile'],
                                    capath=options['capath'])
 
@@ -157,6 +158,7 @@ def parse_opts():
         'dst': None,
         'api_key': None,
         'hostname': None,
+        'cacloud': True,
         'cafile': None,
         'capath': None,
         'print_xml': False,
@@ -172,7 +174,7 @@ def parse_opts():
     long_options = ['version', 'help',
                     'submit=', 'report', 'sample', 'pcap',
                     'hash=', 'serial=', 'id=', 'format=', 'dst=',
-                    'cafile=', 'cpath=',
+                    'nocacloud', 'cafile=', 'cpath=',
                     ]
 
     try:
@@ -208,6 +210,8 @@ def parse_opts():
             options['api_key'] = arg
         elif opt == '-h':
             options['hostname'] = arg
+        elif opt == '--nocacloud':
+            options['cacloud'] = False
         elif opt == '--cafile':
             options['cafile'] = arg
         elif opt == '--capath':
@@ -371,6 +375,7 @@ def usage():
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
+    --nocacloud           disable default cloud CA certificate verification
     --cafile              file containing CA certificates
     --capath              directory of hashed certificate files
     --version             display version
