@@ -154,11 +154,13 @@ class pan.xapi.PanXapi()
   The ``cafile`` value for urlopen().  ``cafile`` is a file containing
   CA certificates to be used for SSL server certificate
   verification. By default the SSL server certificate is not verified.
+  ``cafile`` is only supported in Python version 3.2 and greater.
 
  **capath**
   The ``capath`` value for urlopen().  ``capath`` is a directory of
   hashed certificate files to be used for SSL server certificate
   verification. By default the SSL server certificate is not verified.
+  ``capath`` is only supported in Python version 3.2 and greater.
 
 exception pan.xapi.PanXapiError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
