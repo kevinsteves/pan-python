@@ -441,10 +441,10 @@ class PanConfig:
         xpaths_panos_multi_vsys = xpaths_panos_multi_vsys_4_1
         xpaths_panorama = xpaths_panorama_4_1
 
-        if self.config_version() is not None and \
-                self.config_version() == '5.0.0':  # XXX
-            xpaths_panos = xpaths_panos_5_0
-            xpaths_panorama = xpaths_panorama_5_0
+        if self.config_version() is not None:
+            if self.config_version() in ['5.0.0', '5.1.0']:
+                xpaths_panos = xpaths_panos_5_0
+                xpaths_panorama = xpaths_panorama_5_0
 
         if self.config_multi_vsys():
             xpaths = xpaths_panos_multi_vsys
