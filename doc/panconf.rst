@@ -235,7 +235,7 @@ MISCELLANY
  no arguments a default set of XPath expressions is used by PAN-OS to
  match the configuration to be displayed.  These paths are stored
  internally in the **pan.config** module for different PAN-OS versions
- (currently 4.1 and 5.0) in order to duplicate the order and set of
+ (4.1, 5.0 and 5.1) in order to duplicate the order and set of
  configuration nodes displayed.
 
  PAN-OS may place a trailing space on some set statements;
