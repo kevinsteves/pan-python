@@ -659,7 +659,6 @@ class PanXapi:
 
         query = {}
         query['type'] = 'user-id'
-#        query['action'] = 'set'
         query['key'] = self.api_key
         if cmd is not None:
             query['cmd'] = cmd
