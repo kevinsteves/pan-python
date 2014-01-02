@@ -215,11 +215,13 @@ MISCELLANY
 
  Configurations with ``multi-vsys: on`` are identified when multiple
  nodes match the xpath
- ``"./devices/entry[@name='localhost.localdomain']/vsys/entry"``, which
- is not perfect.
+ ``"/config/devices/entry[@name='localhost.localdomain']/vsys/entry"``,
+ which is not perfect.
 
  Configurations for Panorama are identified by matching the xpath
- ``"/config/panorama"``.
+ ``"/config/panorama"`` or
+ ``"/config/devices/entry[@name='localhost.localdomain']/device-group"``,
+ which is also not perfect.
 
  ``--debug 1`` can be used to display configuration version and types
  identified:
@@ -231,12 +233,12 @@ MISCELLANY
   config_panorama: True
   config_multi_vsys: False
 
- When performing a top level configuration mode ``# show`` command with
- no arguments a default set of XPath expressions is used by PAN-OS to
- match the configuration to be displayed.  These paths are stored
- internally in the **pan.config** module for different PAN-OS versions
- (4.1, 5.0 and 5.1) in order to duplicate the order and set of
- configuration nodes displayed.
+ When performing a top level configuration mode ``# show`` command
+ with no arguments a default set of XPath expressions is used by
+ PAN-OS to match the configuration to be displayed.  These paths are
+ stored internally in the **pan.config** module for different PAN-OS
+ versions (4.1, 5.0, 5.1 (Panorama) and 6.0) in order to duplicate
+ the order and set of configuration nodes displayed.
 
  PAN-OS may place a trailing space on some set statements;
  **panconf.py** never ends a statement with a space.
