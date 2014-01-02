@@ -4,9 +4,8 @@ Firewalls.  It provides:
   - a Python and command line interface to the PAN-OS and Panorama XML API
   - a command line program for managing PAN-OS XML configurations
 
-Python versions 2.7 and 3.2 are supported with a single code base (3.3
-is expected to work but is untested at this time).  There are no
-external modules required to use pan-python.
+Python versions 2.7, 3.2 and 3.3 are supported with a single code
+base.  There are no external modules required to use pan-python.
 
 The pan package contains the following modules:
 
