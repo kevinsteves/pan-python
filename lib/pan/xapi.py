@@ -365,6 +365,16 @@ class PanXapi:
                 lines.append(elem.text)
             return ''.join(lines)
 
+        path = './result/job/details/line'
+        elem = self.element_root.findall(path)
+        if len(elem) > 0:
+            if self.debug2:
+                print('path:', path, elem, file=sys.stderr)
+            for line in elem:
+                if line.text is not None:
+                    lines.append(line.text)
+            return '\n'.join(lines)
+
         return None
 
     # XXX store tostring() results?
