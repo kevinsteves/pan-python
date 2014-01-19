@@ -335,7 +335,7 @@ class PanXapi:
                     elem = line.find('line')
                     if elem is not None and elem.text is not None:
                         lines.append(elem.text)
-            return '\n'.join(lines)
+            return '\n'.join(lines) if lines else None
 
         path = './result/msg/line'
         elem = self.element_root.findall(path)
@@ -345,7 +345,7 @@ class PanXapi:
             for line in elem:
                 if line.text is not None:
                     lines.append(line.text)
-            return '\n'.join(lines)
+            return '\n'.join(lines) if lines else None
 
         path = './result/msg'
         elem = self.element_root.find(path)
@@ -354,7 +354,7 @@ class PanXapi:
                 print('path:', path, elem, file=sys.stderr)
             if elem.text is not None:
                 lines.append(elem.text)
-            return ''.join(lines)
+            return lines[0] if lines else None
 
         path = './msg'
         elem = self.element_root.find(path)
@@ -363,7 +363,7 @@ class PanXapi:
                 print('path:', path, elem, file=sys.stderr)
             if elem.text is not None:
                 lines.append(elem.text)
-            return ''.join(lines)
+            return lines[0] if lines else None
 
         path = './result/job/details/line'
         elem = self.element_root.findall(path)
@@ -373,7 +373,7 @@ class PanXapi:
             for line in elem:
                 if line.text is not None:
                     lines.append(line.text)
-            return '\n'.join(lines)
+            return '\n'.join(lines) if lines else None
 
         return None
 
