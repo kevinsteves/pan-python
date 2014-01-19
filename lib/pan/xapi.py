@@ -365,6 +365,7 @@ class PanXapi:
                 lines.append(elem.text)
             return lines[0] if lines else None
 
+        # 'show jobs id nn' and 'show jobs all' responses
         path = './result/job/details/line'
         elem = self.element_root.findall(path)
         if len(elem) > 0:
@@ -373,6 +374,11 @@ class PanXapi:
             for line in elem:
                 if line.text is not None:
                     lines.append(line.text)
+                else:
+                    path = './newjob/newmsg'
+                    elem2 = line.find(path)
+                    if elem2 is not None and elem2.text is not None:
+                        lines.append(elem2.text)
             return '\n'.join(lines) if lines else None
 
         return None
