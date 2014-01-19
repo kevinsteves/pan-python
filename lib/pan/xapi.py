@@ -319,43 +319,63 @@ class PanXapi:
             return False
 
     def __get_response_msg(self):
-        msg = None
+        lines = []
 
-        if self.element_result is not None:
-            # <result>
-            element = self.element_result.find('msg')
-            if element is not None:
-                # <result><msg>
-                msg = self.__get_response_msg_line(element)
-        else:
-            element = self.element_root.find('msg')
-            if element is not None:
-                # <msg>
-                msg = self.__get_response_msg_line(element)
-
-        return msg
-
-    def __get_response_msg_line(self, element):
-        msg = None
-
-        lines = element.findall('line')
-        if len(lines) > 0:
-            # <msg><line>xxx</line><line>...
-            msg = ''
-            for line in lines:
+        # XML API response message formats are not documented
+        path = './msg/line'
+        elem = self.element_root.findall(path)
+        if len(elem) > 0:
+            if self.debug2:
+                print('path:', path, elem, file=sys.stderr)
+            for line in elem:
                 if line.text is not None:
-                    msg += line.text
+                    lines.append(line.text)
                 else:
-                    # <msg><line><line>xxx</line></line>...
-                    element = line.find('line')
-                    if element is not None and element.text is not None:
-                        msg += element.text
-        else:
-            # <msg>xxx</msg>
-            if element.text is not None:
-                msg = element.text
+                    # <line><line>xxx</line></line>...
+                    elem = line.find('line')
+                    if elem is not None and elem.text is not None:
+                        lines.append(elem.text)
+            return '\n'.join(lines) if lines else None
 
-        return msg
+        path = './result/msg/line'
+        elem = self.element_root.findall(path)
+        if len(elem) > 0:
+            if self.debug2:
+                print('path:', path, elem, file=sys.stderr)
+            for line in elem:
+                if line.text is not None:
+                    lines.append(line.text)
+            return '\n'.join(lines) if lines else None
+
+        path = './result/msg'
+        elem = self.element_root.find(path)
+        if elem is not None:
+            if self.debug2:
+                print('path:', path, elem, file=sys.stderr)
+            if elem.text is not None:
+                lines.append(elem.text)
+            return lines[0] if lines else None
+
+        path = './msg'
+        elem = self.element_root.find(path)
+        if elem is not None:
+            if self.debug2:
+                print('path:', path, elem, file=sys.stderr)
+            if elem.text is not None:
+                lines.append(elem.text)
+            return lines[0] if lines else None
+
+        path = './result/job/details/line'
+        elem = self.element_root.findall(path)
+        if len(elem) > 0:
+            if self.debug2:
+                print('path:', path, elem, file=sys.stderr)
+            for line in elem:
+                if line.text is not None:
+                    lines.append(line.text)
+            return '\n'.join(lines) if lines else None
+
+        return None
 
     # XXX store tostring() results?
     # XXX rework this
@@ -659,7 +679,6 @@ class PanXapi:
 
         query = {}
         query['type'] = 'user-id'
-#        query['action'] = 'set'
         query['key'] = self.api_key
         if cmd is not None:
             query['cmd'] = cmd
