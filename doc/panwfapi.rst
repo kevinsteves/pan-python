@@ -63,8 +63,7 @@ DESCRIPTION
  execute API requests (this module is under development and not
  documented).
 
- The Warsaw version of the WildFire API version is supported which
- is currently at beta.wildfire.paloaltonetworks.com.
+ The 6.0 version of the WildFire API is supported.
 
  The options are:
 
