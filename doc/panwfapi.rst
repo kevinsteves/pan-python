@@ -52,8 +52,8 @@ SYNOPSIS
     -T seconds            urlopen() timeout
     --http                use http URL scheme (default https)
     --nocacloud           disable default cloud CA certificate verification
-    --cafile              file containing CA certificates
-    --capath              directory of hashed certificate files
+    --cafile path         file containing CA certificates
+    --capath path         directory of hashed certificate files
     --version             display version
     --help                display usage
 
@@ -186,14 +186,14 @@ DESCRIPTION
   urlopen() only supports SSL server certificate verification in
   Python version 3.2 and greater.
 
- ``--cafile``
+ ``--cafile`` *path*
   Specify the ``cafile`` value for urlopen().  ``cafile`` is a file
   containing CA certificates to be used for SSL server certificate
   verification.
   ``--cafile`` disables default cloud certificate verification.
   ``--cafile`` is only supported in Python version 3.2 and greater.
 
- ``--capath``
+ ``--capath`` *path*
   Specify the ``capath`` value for urlopen().  ``capath`` is a
   directory of hashed certificate files to be used for SSL server
   certificate verification.

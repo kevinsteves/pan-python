@@ -394,8 +394,8 @@ def usage():
     -T seconds            urlopen() timeout
     --http                use http URL scheme (default https)
     --nocacloud           disable default cloud CA certificate verification
-    --cafile              file containing CA certificates
-    --capath              directory of hashed certificate files
+    --cafile path         file containing CA certificates
+    --capath path         directory of hashed certificate files
     --version             display version
     --help                display usage
 '''
