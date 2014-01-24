@@ -491,7 +491,7 @@ def print_status(xapi, action, exception_msg=None):
         code = ''
     if xapi.status is not None:
         print(': %s%s' % (xapi.status, code), end='', file=sys.stderr)
-    if exception_msg is not None:
+    if exception_msg is not None and str(exception_msg):
         print(': "%s"' % exception_msg, end='', file=sys.stderr)
     elif xapi.status_detail is not None:
         print(': "%s"' % xapi.status_detail, end='', file=sys.stderr)
