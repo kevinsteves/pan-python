@@ -99,6 +99,7 @@ class PanWFapi:
                  hostname=None,
                  api_key=None,
                  timeout=None,
+                 http=False,
                  cacloud=True,
                  cafile=None,
                  capath=None):
@@ -165,7 +166,10 @@ class PanWFapi:
         if self.api_key is None:
             raise PanWFapiError('api_key required')
 
-        self.uri = 'https://%s' % self.hostname
+        if http:
+            self.uri = 'http://%s' % self.hostname
+        else:
+            self.uri = 'https://%s' % self.hostname
 
         if self.debug2 and _legacy_urllib:
             print('using legacy urllib', file=sys.stderr)
@@ -513,6 +517,21 @@ class PanWFapi:
         query['apikey'] = self.api_key
         if hash is not None:
             query['hash'] = hash
+
+        response = self.__api_request(request_uri=request_uri,
+                                      body=urlencode(query))
+        if not response:
+            raise PanWFapiError(self._msg)
+
+        if not self.__set_response(response):
+            raise PanWFapiError(self._msg)
+
+    def testfile(self):
+        self.__clear_response()
+
+        request_uri = '/publicapi/test/pe'
+
+        query = {}
 
         response = self.__api_request(request_uri=request_uri,
                                       body=urlencode(query))

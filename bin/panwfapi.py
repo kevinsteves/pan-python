@@ -46,6 +46,7 @@ def main():
                                    api_key=options['api_key'],
                                    hostname=options['hostname'],
                                    timeout=options['timeout'],
+                                   http=options['http'],
                                    cacloud=options['cacloud'],
                                    cafile=options['cafile'],
                                    capath=options['capath'])
@@ -130,6 +131,14 @@ def main():
             print_response(wfapi, options)
             save_file(wfapi, options)
 
+        if options['testfile']:
+            action = 'testfile'
+
+            wfapi.testfile()
+            print_status(wfapi, action)
+            print_response(wfapi, options)
+            save_file(wfapi, options)
+
     except pan.wfapi.PanWFapiError as msg:
         print_status(wfapi, action, msg)
         print_response(wfapi, options)
@@ -154,10 +163,12 @@ def parse_opts():
         'hash': None,
         'serial': None,
         'id': None,
+        'testfile': False,
         'format': None,
         'dst': None,
         'api_key': None,
         'hostname': None,
+        'http': False,
         'cacloud': True,
         'cafile': None,
         'capath': None,
@@ -173,8 +184,9 @@ def parse_opts():
     short_options = 'K:h:xpjHDt:T:'
     long_options = ['version', 'help',
                     'submit=', 'report', 'sample', 'pcap',
-                    'hash=', 'serial=', 'id=', 'format=', 'dst=',
-                    'nocacloud', 'cafile=', 'cpath=',
+                    'hash=', 'serial=', 'id=', 'testfile',
+                    'format=', 'dst=',
+                    'http', 'nocacloud', 'cafile=', 'cpath=',
                     ]
 
     try:
@@ -202,6 +214,8 @@ def parse_opts():
             options['serial'] = arg
         elif opt == '--id':
             options['id'] = arg
+        elif opt == '--testfile':
+            options['testfile'] = True
         elif opt == '--format':
             options['format'] = arg
         elif opt == '--dst':
@@ -210,6 +224,8 @@ def parse_opts():
             options['api_key'] = arg
         elif opt == '-h':
             options['hostname'] = arg
+        elif opt == '--http':
+            options['http'] = True
         elif opt == '--nocacloud':
             options['cacloud'] = False
         elif opt == '--cafile':
@@ -364,6 +380,7 @@ def usage():
     --hash hash           query MD5 or SHA256 hash
     --serial serial       query device serial number
     --id id               query report ID
+    --testfile            get sample malware test file
     --format format       report output format
     --dst dst             save file to directory or path
     -K api_key            WildFire API key
@@ -375,6 +392,7 @@ def usage():
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
+    --http                use http URL scheme (default https)
     --nocacloud           disable default cloud CA certificate verification
     --cafile              file containing CA certificates
     --capath              directory of hashed certificate files

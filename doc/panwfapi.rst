@@ -38,6 +38,7 @@ SYNOPSIS
     --hash hash           query MD5 or SHA256 hash
     --serial serial       query device serial number
     --id id               query report ID
+    --testfile            get sample malware test file
     --format format       report output format
     --dst dst             save file to directory or path
     -K api_key            WildFire API key
@@ -49,6 +50,7 @@ SYNOPSIS
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
+    --http                use http URL scheme (default https)
     --nocacloud           disable default cloud CA certificate verification
     --cafile              file containing CA certificates
     --capath              directory of hashed certificate files
@@ -99,6 +101,14 @@ DESCRIPTION
  ``--id`` *id*
   The report ID for a WildFire sample (*report_id*).
 
+ ``--testfile``
+  Get sample malware test file.  Each request returns a similar PE
+  (Portable Executable) file named ``wildfire-test-pe-file.exe`` with
+  a different hash and with verdict *malicious*.
+
+  This currently requires an ``api_key`` even though it is not
+  needed for the API request.
+
  ``--format`` *format*
   WildFire report output format string.  This can be **xml** or **pdf**.
 
@@ -120,6 +130,10 @@ DESCRIPTION
   - PCAP files (**--pcap**)
 
     sha256-hash-of-sample.pcap.zip
+
+  - Malware test file (**--testfile**)
+
+    wildfire-test-pe-file.exe
 
  ``-K`` *api_key*
   Specify the **api_key** used in API requests.  This can also be
@@ -155,6 +169,10 @@ DESCRIPTION
 
  ``-T`` *seconds*
   Specify the ``timeout`` value for urlopen().
+
+ ``--http``
+  Use *http* URL scheme for API requests.  This can be used with the
+  ``--testfile`` option to get a malware test file over HTTP.
 
  ``--nocacloud``
   Disable default cloud CA SSL server certificate verification.
@@ -263,6 +281,13 @@ EXAMPLES
       }
     }
   }
+
+ Get malware test file over HTTP.
+ ::
+
+  $ panwfapi.py --testfile --http -K 0
+  testfile: 200 OK [attachment="wildfire-test-pe-file.exe"]
+  saved wildfire-test-pe-file.exe
 
 SEE ALSO
 ========
