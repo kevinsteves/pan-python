@@ -44,7 +44,7 @@ from . import __version__
 import pan.rc
 
 _encoding = 'utf-8'
-_job_sleep = 0.5
+_job_query_interval = 0.5
 
 
 class PanXapiError(Exception):
@@ -770,17 +770,19 @@ class PanXapi:
             self.export_result['category'] = category
 
     def log(self, log_type=None, nlogs=None, skip=None, filter=None,
-            sleep=_job_sleep, timeout=None):
+            interval=None, timeout=None):
         self.__set_api_key()
         self.__clear_response()
 
-        if sleep is not None:
-            try:
-                sleep = float(sleep)
-                if sleep < 0:
-                    raise ValueError
-            except ValueError:
-                raise PanXapiError('Invalid sleep: %s' % sleep)
+        if interval is None:
+            interval = _job_query_interval
+
+        try:
+            interval = float(interval)
+            if interval < 0:
+                raise ValueError
+        except ValueError:
+            raise PanXapiError('Invalid interval: %s' % interval)
 
         if timeout is not None:
             try:
@@ -811,7 +813,7 @@ class PanXapi:
 
         job = self.element_root.find('./result/job')
         if job is None:
-            raise PanXapiError('no job element in type=log request')
+            raise PanXapiError('no job element in type=log response')
 
         query = {}
         query['type'] = 'log'
@@ -834,7 +836,7 @@ class PanXapi:
             status = self.element_root.find('./result/job/status')
             if status is None:
                 raise PanXapiError('no status element in ' +
-                                   'type=log&action=get request')
+                                   'type=log&action=get response')
             if status.text == 'FIN':
                 return
 
@@ -847,10 +849,9 @@ class PanXapi:
                 raise PanXapiError('timeout waiting for ' +
                                    'job %s completion' % job.text)
 
-            if sleep is not None:
-                if self.debug2:
-                    print('sleep %.2f seconds' % sleep, file=sys.stderr)
-                time.sleep(sleep)
+            if self.debug2:
+                print('sleep %.2f seconds' % interval, file=sys.stderr)
+            time.sleep(interval)
 
 if __name__ == '__main__':
     # python -m pan.xapi [tag] [xpath] [0-3]

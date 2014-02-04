@@ -157,8 +157,8 @@ def main():
                      nlogs=options['nlogs'],
                      skip=options['skip'],
                      filter=options['filter'],
-#                     sleep=None,
-                     timeout=None)
+                     interval=options['interval'],
+                     timeout=options['job_timeout'])
             print_status(xapi, action)
             print_response(xapi, options)
 
@@ -260,6 +260,8 @@ def parse_opts():
         'nlogs': None,
         'skip': None,
         'filter': None,
+        'interval': None,
+        'job_timeout': None,
         'api_key': None,
         'cafile': None,
         'capath': None,
@@ -289,6 +291,7 @@ def parse_opts():
                     'clone', 'export=', 'log=', 'recursive',
                     'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
+                    'interval=', 'timeout=',
                     ]
 
     try:
@@ -378,6 +381,10 @@ def parse_opts():
             options['skip'] = arg
         elif opt == '--filter':
             options['filter'] = arg
+        elif opt == '--interval':
+            options['interval'] = arg
+        elif opt == '--timeout':
+            options['job_timeout'] = arg
         elif opt == '-h':
             options['hostname'] = arg
         elif opt == '-K':
@@ -656,6 +663,8 @@ def usage():
     --nlogs num           retrieve num logs
     --skip num            skip num logs
     --filter filter       log selection filter
+    --interval            log job query interval
+    --timeout             log job query timeout
     -K api_key
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout

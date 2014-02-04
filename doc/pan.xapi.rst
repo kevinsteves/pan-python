@@ -329,7 +329,7 @@ export(category=None, from_name=None)
  **from_name** argument is used to specify the source for a file list
  or file export.
 
-log(self, log_type=None, nlogs=None, skip=None, filter=None, sleep=_job_sleep, timeout=None)
+log(self, log_type=None, nlogs=None, skip=None, filter=None, interval=None, timeout=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The log() method performs the ``type=log`` retrieve log API request
@@ -360,7 +360,7 @@ log(self, log_type=None, nlogs=None, skip=None, filter=None, sleep=_job_sleep, t
 
  - **skip**
 
-  Specify the number of logs to skip. This can be used to retieve log
+  Specify the number of logs to skip. This can be used to retrieve log
   entries in batches by skipping previously retrieved logs.
 
   The default is 0.
@@ -378,12 +378,12 @@ log(self, log_type=None, nlogs=None, skip=None, filter=None, sleep=_job_sleep, t
  job ID returned in the initial request is complete and receive the log
  data.  Additional arguments to control the polling include:
 
- - **sleep**
+ - **interval**
 
-  A floating point number specifying the number of seconds to sleep
-  between each non-finished job status request.
+  A floating point number specifying the query interval in seconds
+  between each non-finished job status response.
 
-  The default is 0.5.
+  The default is 0.5 seconds.
 
  - **timeout**
 
