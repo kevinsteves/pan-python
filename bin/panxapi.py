@@ -209,6 +209,9 @@ def main():
 
             kwargs = {
                 'cmd': cmd,
+                'sync': options['sync'],
+                'interval': options['interval'],
+                'timeout': options['job_timeout'],
                 }
             if options['commit_all']:
                 kwargs['action'] = 'all'
@@ -238,6 +241,7 @@ def parse_opts():
         'commit': False,
         'force': False,
         'partial': [],
+        'sync': False,
         'vsys': [],
         'commit_all': False,
         'ad_hoc': None,
@@ -286,7 +290,7 @@ def parse_opts():
 
     short_options = 'de:gksS:U:C:A:o:l:h:P:K:xpjrXHGDt:T:'
     long_options = ['version', 'help',
-                    'ad-hoc=', 'modify', 'force', 'partial=',
+                    'ad-hoc=', 'modify', 'force', 'partial=', 'sync',
                     'vsys=', 'src=', 'dst=', 'move=', 'rename',
                     'clone', 'export=', 'log=', 'recursive',
                     'cafile=', 'capath=', 'ls', 'serial=',
@@ -329,6 +333,8 @@ def parse_opts():
             if arg:
                 l = get_parts(arg)
                 [options['partial'].append(s) for s in l]
+        elif opt == '--sync':
+            options['sync'] = True
         elif opt == '--vsys':
             if arg:
                 l = get_vsys(arg)
@@ -637,6 +643,7 @@ def usage():
     -C cmd                commit candidate configuration
     --force               force commit when conflict
     --partial part        commit specified part
+    --sync                synchronous commit
     -A cmd                commit-all (Panorama)
     --ad-hoc query        perform ad hoc request
     --modify              insert known fields in ad hoc query
@@ -663,8 +670,8 @@ def usage():
     --nlogs num           retrieve num logs
     --skip num            skip num logs
     --filter filter       log selection filter
-    --interval            log job query interval
-    --timeout             log job query timeout
+    --interval            log/commit job query interval
+    --timeout             log/commit job query timeout
     -K api_key
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout
