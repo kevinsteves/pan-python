@@ -157,8 +157,8 @@ def main():
                      nlogs=options['nlogs'],
                      skip=options['skip'],
                      filter=options['filter'],
-#                     sleep=None,
-                     timeout=None)
+                     interval=options['interval'],
+                     timeout=options['job_timeout'])
             print_status(xapi, action)
             print_response(xapi, options)
 
@@ -209,6 +209,9 @@ def main():
 
             kwargs = {
                 'cmd': cmd,
+                'sync': options['sync'],
+                'interval': options['interval'],
+                'timeout': options['job_timeout'],
                 }
             if options['commit_all']:
                 kwargs['action'] = 'all'
@@ -238,6 +241,7 @@ def parse_opts():
         'commit': False,
         'force': False,
         'partial': [],
+        'sync': False,
         'vsys': [],
         'commit_all': False,
         'ad_hoc': None,
@@ -260,6 +264,8 @@ def parse_opts():
         'nlogs': None,
         'skip': None,
         'filter': None,
+        'interval': None,
+        'job_timeout': None,
         'api_key': None,
         'cafile': None,
         'capath': None,
@@ -284,11 +290,12 @@ def parse_opts():
 
     short_options = 'de:gksS:U:C:A:o:l:h:P:K:xpjrXHGDt:T:'
     long_options = ['version', 'help',
-                    'ad-hoc=', 'modify', 'force', 'partial=',
+                    'ad-hoc=', 'modify', 'force', 'partial=', 'sync',
                     'vsys=', 'src=', 'dst=', 'move=', 'rename',
                     'clone', 'export=', 'log=', 'recursive',
                     'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
+                    'interval=', 'timeout=',
                     ]
 
     try:
@@ -326,6 +333,8 @@ def parse_opts():
             if arg:
                 l = get_parts(arg)
                 [options['partial'].append(s) for s in l]
+        elif opt == '--sync':
+            options['sync'] = True
         elif opt == '--vsys':
             if arg:
                 l = get_vsys(arg)
@@ -378,6 +387,10 @@ def parse_opts():
             options['skip'] = arg
         elif opt == '--filter':
             options['filter'] = arg
+        elif opt == '--interval':
+            options['interval'] = arg
+        elif opt == '--timeout':
+            options['job_timeout'] = arg
         elif opt == '-h':
             options['hostname'] = arg
         elif opt == '-K':
@@ -491,10 +504,10 @@ def print_status(xapi, action, exception_msg=None):
         code = ''
     if xapi.status is not None:
         print(': %s%s' % (xapi.status, code), end='', file=sys.stderr)
-    if exception_msg is not None:
+    if exception_msg is not None and str(exception_msg):
         print(': "%s"' % exception_msg, end='', file=sys.stderr)
     elif xapi.status_detail is not None:
-        print(': %s' % xapi.status_detail, end='', file=sys.stderr)
+        print(': "%s"' % xapi.status_detail, end='', file=sys.stderr)
     print(file=sys.stderr)
 
 
@@ -630,6 +643,7 @@ def usage():
     -C cmd                commit candidate configuration
     --force               force commit when conflict
     --partial part        commit specified part
+    --sync                synchronous commit
     -A cmd                commit-all (Panorama)
     --ad-hoc query        perform ad hoc request
     --modify              insert known fields in ad hoc query
@@ -656,6 +670,8 @@ def usage():
     --nlogs num           retrieve num logs
     --skip num            skip num logs
     --filter filter       log selection filter
+    --interval            log/commit job query interval
+    --timeout             log/commit job query timeout
     -K api_key
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout
@@ -669,8 +685,8 @@ def usage():
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
-    --cafile              file containing CA certificates
-    --capath              directory of hashed certificate files
+    --cafile path         file containing CA certificates
+    --capath path         directory of hashed certificate files
     --version             display version
     --help                display usage
 '''
