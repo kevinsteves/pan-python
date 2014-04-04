@@ -335,6 +335,21 @@ class PanXapi:
                     elem = line.find('line')
                     if elem is not None and elem.text is not None:
                         lines.append(elem.text)
+                    # <line><uid-response><payload><register>
+                    #   <entry message="xxx"/>
+                    # </register></payload></uid-response></line>
+                    elem = line.find('uid-response')
+                    if elem is not None:
+                        paths = [
+                            'payload/register/entry',
+                            'payload/unregister/entry'
+                        ]
+                        for path in paths:
+                            for entry in elem.findall(path):
+                                lines.append("%s : %s" %
+                                             (entry.get('ip'),
+                                              entry.get('message'))
+                                             )
             return '\n'.join(lines) if lines else None
 
         path = './result/msg/line'
