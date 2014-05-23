@@ -741,6 +741,8 @@ class PanXapi:
         query = {}
         query['type'] = 'commit'
         query['key'] = self.api_key
+        if self.serial is not None:
+            query['target'] = self.serial
         if cmd is not None:
             query['cmd'] = cmd
         if action is not None:
