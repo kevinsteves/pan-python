@@ -295,7 +295,7 @@ class PanXapi:
         self.element_result = self.element_root.find('result')  # can be None
 
         if self.debug3:
-            print('xml_document:', self.xml_document)
+            print('xml_document:', self.xml_document, file=sys.stderr)
             print('message_body:', type(message_body), file=sys.stderr)
             print('message_body.decode():',
                   type(self.xml_document), file=sys.stderr)
