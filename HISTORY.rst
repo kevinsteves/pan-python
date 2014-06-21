@@ -1,6 +1,24 @@
 Release History
 ===============
 
+0.3.0 (2014-06-21)
+------------------
+
+- PEP8 cleanup.
+
+- fix unintended _valid_part to valid_part variable name change in
+  pan.config.
+
+- handle type=user-id register and unregister response messages.
+  suggested and initial diff by btorresgil.
+
+- fix serial number (target API argument) not set in type=commit;
+  from btorresgil.
+
+- fix debug print to stdout vs. stderr in pan.xapi.
+
+- changes for PyPI upload in setup.py.
+
 0.2.0 (2014-03-22)
 ------------------
 
