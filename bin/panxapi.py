@@ -370,7 +370,7 @@ def parse_opts():
                 (options['api_username'],
                  options['api_password']) = arg.split(':', 1)
             except ValueError:
-                print('Invalid api_username:api_password: "%s"' % \
+                print('Invalid api_username:api_password: "%s"' %
                       arg, file=sys.stderr)
                 sys.exit(1)
         elif opt == '-P':

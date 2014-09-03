@@ -295,7 +295,7 @@ class PanXapi:
         self.element_result = self.element_root.find('result')  # can be None
 
         if self.debug3:
-            print('xml_document:', self.xml_document)
+            print('xml_document:', self.xml_document, file=sys.stderr)
             print('message_body:', type(message_body), file=sys.stderr)
             print('message_body.decode():',
                   type(self.xml_document), file=sys.stderr)
@@ -322,6 +322,21 @@ class PanXapi:
         lines = []
 
         # XML API response message formats are not documented
+
+        # type=user-id register and unregister
+        path = './msg/line/uid-response/payload/*/entry'
+        elem = self.element_root.findall(path)
+        if len(elem) > 0:
+            if self.debug2:
+                print('path:', path, elem, file=sys.stderr)
+            for line in elem:
+                msg = ''
+                for key in line.keys():
+                    msg += '%s: %s ' % (key, line.get(key))
+                if msg:
+                    lines.append(msg.rstrip())
+            return '\n'.join(lines) if lines else None
+
         path = './msg/line'
         elem = self.element_root.findall(path)
         if len(elem) > 0:
@@ -726,6 +741,8 @@ class PanXapi:
         query = {}
         query['type'] = 'commit'
         query['key'] = self.api_key
+        if self.serial is not None:
+            query['target'] = self.serial
         if cmd is not None:
             query['cmd'] = cmd
         if action is not None:
