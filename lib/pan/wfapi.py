@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013, 2014 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -462,8 +462,6 @@ class PanWFapi:
 
     def report(self,
                hash=None,
-               device_id=None,
-               report_id=None,
                format=None):
         self.__clear_response()
 
@@ -473,10 +471,6 @@ class PanWFapi:
         query['apikey'] = self.api_key
         if hash is not None:
             query['hash'] = hash
-        if device_id is not None:
-            query['device_id'] = device_id
-        if report_id is not None:
-            query['report_id'] = report_id
         if format is not None:
             query['format'] = format
 
@@ -508,7 +502,8 @@ class PanWFapi:
             raise PanWFapiError(self._msg)
 
     def pcap(self,
-             hash=None):
+             hash=None,
+             platform=None):
         self.__clear_response()
 
         request_uri = '/publicapi/get/pcap'
@@ -517,6 +512,8 @@ class PanWFapi:
         query['apikey'] = self.api_key
         if hash is not None:
             query['hash'] = hash
+        if platform is not None:
+            query['platform'] = platform
 
         response = self.__api_request(request_uri=request_uri,
                                       body=urlencode(query))

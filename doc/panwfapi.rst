@@ -1,5 +1,5 @@
 ..
- Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2013, 2014 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -36,8 +36,7 @@ SYNOPSIS
     --sample              get WildFire sample file
     --pcap                get WildFire PCAP files
     --hash hash           query MD5 or SHA256 hash
-    --serial serial       query device serial number
-    --id id               query report ID
+    --platform id         platform ID for sandbox environment
     --testfile            get sample malware test file
     --format format       report output format
     --dst dst             save file to directory or path
@@ -46,7 +45,6 @@ SYNOPSIS
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout
     -j                    print XML response in JSON to stdout
-    -H                    print HTML response to stdout
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
@@ -62,10 +60,7 @@ DESCRIPTION
 
  **panwfapi.py** is used to perform API requests on the WildFire
  cloud.  It uses the PanWFapi class from the **pan.wfapi** module to
- execute API requests (this module is under development and not
- documented).
-
- The 6.0 version of the WildFire API is supported.
+ execute API requests.
 
  The options are:
 
@@ -75,36 +70,41 @@ DESCRIPTION
   A **file** *url* is the same as specifying *path*.
 
  ``--report``
-  Get WildFire report for a previously uploaded sample.  The
-  sample can be specified by its MD5 or SHA256 hash (**--hash**)
-  or the device serial number (**--serial**) and sample
-  report ID (**--id**).
+  Get analysis report for a previously uploaded sample.  The
+  sample can be specified by its MD5 or SHA256 hash (**--hash**).
 
  ``--sample``
   Get a previously uploaded sample file.  The sample can be specified
   by its MD5 or SHA256 hash (**--hash**).
 
  ``--pcap``
-  Get PCAP (packet capture) files of network activity for a previously
+  Get PCAP (packet capture) file of network activity for a previously
   uploaded sample.  The sample can be specified by its MD5 or SHA256
-  hash (**--hash**).
-
-  The result is ZIP file containing a PCAP for each virtual machine
-  the sample was analyzed in.
+  hash (**--hash**).  The sandbox environment for the PCAP can optionally
+  be specified using the platform ID (**--platform**).  If no platform
+  is specified a PCAP from an environment that resulted in a *Malware*
+  verdict is returned.
 
  ``--hash`` *hash*
-  The MD5 or SHA256 hash for a WildFire sample.
+  MD5 or SHA256 hash for a WildFire sample.
 
- ``--serial`` *serial*
-  The device serial number (*device_id*).
+ ``--platform`` *id*
+  Platform ID for sandbox environment.  Valid platform IDs are:
 
- ``--id`` *id*
-  The report ID for a WildFire sample (*report_id*).
+  ===========  ===================
+  Platform ID  Sandbox Environment
+  ===========  ===================
+  1            Windows XP, Adobe Reader 9.3.3, Office 2003
+  2            Windows XP, Adobe Reader 9.4.0, Flash 10, Office 2007
+  3            Windows XP, Adobe Reader 11, Flash 11, Office 2010
+  4            Windows 7, Adobe Reader 11, Flash 11, Office 2010
+  201          Android 2.3, API 10, avd2.3.1
+  ===========  ===================
 
  ``--testfile``
   Get sample malware test file.  Each request returns a similar PE
   (Portable Executable) file named ``wildfire-test-pe-file.exe`` with
-  a different hash and with verdict *malicious*.
+  a different hash and with verdict *Malware*.
 
   This currently requires an ``api_key`` even though it is not
   needed for the API request.
@@ -129,7 +129,7 @@ DESCRIPTION
 
   - PCAP files (**--pcap**)
 
-    sha256-hash-of-sample.pcap.zip
+    sha256-hash-of-sample.platform.unknown.pcap
 
   - Malware test file (**--testfile**)
 
@@ -156,9 +156,6 @@ DESCRIPTION
 
  ``-j``
   Print XML response in JSON to *stdout*.
-
- ``-H``
-  Print HTML response to *stdout*.
 
  ``-D``
   Enable debugging.  May be specified multiple times up to 3
@@ -256,12 +253,12 @@ EXAMPLES
   sample: 200 OK [attachment="74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e"]
   saved /tmp/74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e
 
- Get PCAP files of sample network activity.
+ Get PCAP file of sample network activity.
  ::
 
-  $ panwfapi.py -t wildfire --pcap --hash 6de476723a12ad277a84f031868aace3 --dst /tmp
-  pcap: 200 OK [attachment="74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e.pcap.zip"]
-  saved /tmp/74e330f15ac544a7e5201b9bed97d4425058a47bd10a6763932181f78b99116e.pcap.zip
+  $ panwfapi.py -t wildfire --pcap --hash 11727b1d9ed03799a756d1bbb84e6319 --platform 4
+  pcap: 200 OK [attachment="033e2d2ea39ffd9285d75edff1171c4b9f28fb407a314010f87f5d7ed98517d6.4.1.pcap"]
+  saved 033e2d2ea39ffd9285d75edff1171c4b9f28fb407a314010f87f5d7ed98517d6.4.1.pcap
 
  Submit URL to WildFire for analysis and print XML response in JSON.
  ::

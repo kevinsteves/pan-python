@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013, 2014 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -95,10 +95,6 @@ def main():
                 validate_hash(options['hash'])
                 kwargs['hash'] = options['hash']
 
-            if options['serial'] is not None:
-                kwargs['device_id'] = options['serial']
-            if options['id'] is not None:
-                kwargs['report_id'] = options['id']
             if options['format'] is not None:
                 kwargs['format'] = options['format']
 
@@ -125,6 +121,8 @@ def main():
             if options['hash'] is not None:
                 validate_hash(options['hash'])
                 kwargs['hash'] = options['hash']
+            if options['platform'] is not None:
+                kwargs['platform'] = options['platform']
 
             wfapi.pcap(**kwargs)
             print_status(wfapi, action)
@@ -161,8 +159,7 @@ def parse_opts():
         'sample': False,
         'pcap': False,
         'hash': None,
-        'serial': None,
-        'id': None,
+        'platform': None,
         'testfile': False,
         'format': None,
         'dst': None,
@@ -184,7 +181,7 @@ def parse_opts():
     short_options = 'K:h:xpjHDt:T:'
     long_options = ['version', 'help',
                     'submit=', 'report', 'sample', 'pcap',
-                    'hash=', 'serial=', 'id=', 'testfile',
+                    'hash=', 'platform=', 'testfile',
                     'format=', 'dst=',
                     'http', 'nocacloud', 'cafile=', 'cpath=',
                     ]
@@ -210,10 +207,8 @@ def parse_opts():
             options['pcap'] = True
         elif opt == '--hash':
             options['hash'] = arg
-        elif opt == '--serial':
-            options['serial'] = arg
-        elif opt == '--id':
-            options['id'] = arg
+        elif opt == '--platform':
+            options['platform'] = arg
         elif opt == '--testfile':
             options['testfile'] = True
         elif opt == '--format':
@@ -378,8 +373,7 @@ def usage():
     --sample              get WildFire sample file
     --pcap                get WildFire PCAP files
     --hash hash           query MD5 or SHA256 hash
-    --serial serial       query device serial number
-    --id id               query report ID
+    --platform id         platform ID for sandbox environment
     --testfile            get sample malware test file
     --format format       report output format
     --dst dst             save file to directory or path
@@ -388,7 +382,6 @@ def usage():
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout
     -j                    print XML response in JSON to stdout
-    -H                    print HTML response to stdout
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
