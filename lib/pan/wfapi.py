@@ -72,6 +72,11 @@ _encoding = 'utf-8'
 _tags_forcelist = set(['entry'])
 _rfc2231_encode = False
 #_rfc2231_encode = True
+_wildfire_responses = {
+    418: 'Unsupported File Type',
+    419: 'Sample Upload or Request Quota Exceeded',
+    422: 'URL Download Error',
+}
 
 
 def _isunicode(s):
@@ -445,8 +450,12 @@ class PanWFapi:
         elif hasattr(response, 'msg'):
             # 2.7
             self.http_reason = response.msg
-        elif self.http_code in responses:
-            self.http_reason = responses[self.http_code]
+
+        if self.http_reason == '':
+            if self.http_code in _wildfire_responses:
+                self.http_reason = _wildfire_responses[self.http_code]
+            elif self.http_code in responses:
+                self.http_reason = responses[self.http_code]
 
         if self.debug2:
             print('HTTP response code:', self.http_code,
