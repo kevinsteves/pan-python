@@ -37,6 +37,7 @@ try:
     # 3.2
     from urllib.request import Request, urlopen, \
         build_opener, install_opener, HTTPErrorProcessor
+    from urllib.request import HTTPSHandler, OpenerDirector
     from urllib.error import URLError
     from urllib.parse import urlencode
     from http.client import responses
@@ -52,6 +53,19 @@ except ImportError:
 import xml.etree.ElementTree as etree
 from . import __version__
 import pan.rc
+
+import socket
+try:
+    import ssl
+except ImportError:
+    raise ValueError('SSL support not available')
+
+try:
+    ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+except AttributeError:
+    _have_sslcontext = False
+else:
+    _have_sslcontext = True
 
 _cloud_server = 'wildfire.paloaltonetworks.com'
 _encoding = 'utf-8'
@@ -340,6 +354,32 @@ class PanWFapi:
 
         return conf.python()
 
+    # see http://bugs.python.org/issue18543
+    # this is a modified urllib.request.urlopen()
+    @staticmethod
+    def _urlopen(url, data=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                 cafile=None, capath=None, cadefault=False):
+
+        def http_response(request, response):
+            return response
+
+        http_error_processor = HTTPErrorProcessor()
+        http_error_processor.https_response = http_response
+
+        if _have_sslcontext and (cafile or capath or cadefault):
+            context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            context.options |= ssl.OP_NO_SSLv2
+            context.verify_mode = ssl.CERT_REQUIRED
+            if cafile or capath:
+                context.load_verify_locations(cafile, capath)
+            else:
+                context.set_default_verify_paths()
+            https_handler = HTTPSHandler(context=context, check_hostname=True)
+            opener = build_opener(https_handler, http_error_processor)
+        else:
+            opener = build_opener(http_error_processor)
+        return opener.open(url, data, timeout)
+
 # XXX Unicode notes
 # 2.7
 # decode() str (bytes) -> unicode
@@ -387,25 +427,14 @@ class PanWFapi:
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout
 
-        # override HTTPError for (not 200 <= code 300) and handle below
-        def http_response(request, response):
-            return response
-
-        http_error_processor = HTTPErrorProcessor()
-        http_error_processor.https_response = http_response
-        opener = build_opener(http_error_processor)
-        # install so we can use **kwargs
-        install_opener(opener)
-
         try:
-            response = urlopen(**kwargs)
 
-        # XXX handle httplib.BadStatusLine when http to port 443
-        except URLError as e:
-            self._msg = str(e)
-            return False
+            response = PanWFapi._urlopen(**kwargs)
+
         # invalid cafile, capath
-        except IOError as e:
+        except (URLError, IOError) as e:
+            if self.debug2:
+                print('urlopen() exception:', sys.exc_info(), file=sys.stderr)
             self._msg = str(e)
             return False
 
