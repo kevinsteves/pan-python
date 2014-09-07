@@ -183,7 +183,7 @@ def parse_opts():
                     'submit=', 'report', 'sample', 'pcap',
                     'hash=', 'platform=', 'testfile',
                     'format=', 'dst=',
-                    'http', 'nocacloud', 'cafile=', 'cpath=',
+                    'http', 'nocacloud', 'cafile=', 'capath=',
                     ]
 
     try:
