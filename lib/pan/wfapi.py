@@ -290,8 +290,13 @@ class PanWFapi:
     def __set_xml_response(self, message_body):
         if self.debug2:
             print('__set_xml_response:', repr(message_body), file=sys.stderr)
-        self.response_body = message_body.decode(_encoding)
         self.response_type = 'xml'
+
+        _message_body = message_body.decode(_encoding)
+        if len(_message_body) == 0:
+            return True
+
+        self.response_body = _message_body
 
         # ParseError: "XML or text declaration not at start of entity"
         # fix: remove leading blank lines if exist
@@ -316,10 +321,13 @@ class PanWFapi:
     def __set_html_response(self, message_body):
         if self.debug2:
             print('__set_html_response:', repr(message_body), file=sys.stderr)
-        self.response_body = message_body.decode()
-        if len(self.response_body) == 0:
-            return True
         self.response_type = 'html'
+
+        _message_body = message_body.decode()
+        if len(_message_body) == 0:
+            return True
+
+        self.response_body = _message_body
 
         return True
 
