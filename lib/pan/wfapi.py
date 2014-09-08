@@ -291,6 +291,7 @@ class PanWFapi:
         if self.debug2:
             print('__set_xml_response:', repr(message_body), file=sys.stderr)
         self.response_body = message_body.decode(_encoding)
+        self.response_type = 'xml'
 
         # ParseError: "XML or text declaration not at start of entity"
         # fix: remove leading blank lines if exist
@@ -301,7 +302,6 @@ class PanWFapi:
 
         if len(_message_body) == 0:
             return True
-        self.response_type = 'xml'
 
         try:
             element = etree.fromstring(_message_body)
