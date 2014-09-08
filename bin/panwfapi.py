@@ -265,6 +265,7 @@ def parse_opts():
 
 def print_status(wfapi, action, exception_msg=None):
     print(action, end='', file=sys.stderr)
+
     if exception_msg is not None:
         print(': %s' % exception_msg, end='', file=sys.stderr)
     else:
@@ -272,17 +273,18 @@ def print_status(wfapi, action, exception_msg=None):
             print(': %s' % wfapi.http_code, end='', file=sys.stderr)
         if wfapi.http_reason is not None:
             print(' %s' % wfapi.http_reason, end='', file=sys.stderr)
-        print(' [', end='', file=sys.stderr)
-        if wfapi.attachment is not None:
-            print('attachment="%s"' % wfapi.attachment['filename'], end='',
+
+    print(' [', end='', file=sys.stderr)
+    if wfapi.attachment is not None:
+        print('attachment="%s"' % wfapi.attachment['filename'], end='',
+              file=sys.stderr)
+    else:
+        body = True if wfapi.response_body is not None else False
+        print('response_body=%s' % body, end='', file=sys.stderr)
+        if wfapi.response_type is not None:
+            print(' response_type=%s' % wfapi.response_type, end='',
                   file=sys.stderr)
-        else:
-            body = True if wfapi.response_body is not None else False
-            print('response_body=%s' % body, end='', file=sys.stderr)
-            if wfapi.response_type is not None:
-                print(' response_type=%s' % wfapi.response_type, end='',
-                      file=sys.stderr)
-        print(']', end='', file=sys.stderr)
+    print(']', end='', file=sys.stderr)
 
     print(file=sys.stderr)
 
