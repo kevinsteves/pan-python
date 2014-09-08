@@ -284,17 +284,20 @@ def print_status(wfapi, action, exception_msg=None):
         if wfapi.response_type is not None:
             print(' response_type=%s' % wfapi.response_type, end='',
                   file=sys.stderr)
+        if body:
+            print(' length=%d' % len(wfapi.response_body), end='',
+                  file=sys.stderr)
     print(']', end='', file=sys.stderr)
 
     print(file=sys.stderr)
 
 
 def print_response(wfapi, options):
-    if wfapi.response_type is 'html':
+    if wfapi.response_type is 'html' and wfapi.response_body is not None:
         if options['print_html']:
             print(wfapi.response_body)
 
-    elif wfapi.response_type is 'xml':
+    elif wfapi.response_type is 'xml' and wfapi.response_body is not None:
         if options['print_xml']:
             print(wfapi.response_body)
 
