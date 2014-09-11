@@ -28,8 +28,8 @@ with open('README.txt') as file:
 
 setup(name='pan-python',
       version=version,
-      description='Multi-tool set for Palo Alto Networks PAN-OS and ' +
-      'Panorama API and XML configuration',
+      description='Multi-tool set for Palo Alto Networks' +
+      ' PAN-OS, Panorama and WildFire',
       long_description=long_description,
       author='Kevin Steves',
       author_email='kevin.steves@pobox.com',
