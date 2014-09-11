@@ -71,7 +71,6 @@ _cloud_server = 'wildfire.paloaltonetworks.com'
 _encoding = 'utf-8'
 _tags_forcelist = set(['entry'])
 _rfc2231_encode = False
-#_rfc2231_encode = True
 _wildfire_responses = {
     418: 'Unsupported File Type',
     419: 'Sample Upload or Request Quota Exceeded',
@@ -249,8 +248,6 @@ class PanWFapi:
         # XXX text/xml RFC 3023
         elif ('application/xml' in content_type or
               'text/xml' in content_type):
-#              'text/xml' in content_type) and
-#              'charset=utf-8' in content_type):
             return self.__set_xml_response(message_body)
 
         elif 'text/html' in content_type:
@@ -268,7 +265,7 @@ class PanWFapi:
             self._msg = 'no content-disposition response header'
             return False
 
-        if not 'attachment' in content_disposition:
+        if 'attachment' not in content_disposition:
             msg = 'no handler for content-disposition: %s' % \
                 content_disposition
             self._msg = msg
@@ -683,7 +680,7 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
 # Content-Type: application/octet-stream
 #
 # XXXfilecontents
-#--___XXX--
+# --___XXX--
 
 class _MultiPartFormData:
     def __init__(self, debug=0):
