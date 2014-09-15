@@ -578,6 +578,8 @@ class PanXapi:
 
         self.api_key = element.text
 
+        return self.api_key
+
     def ad_hoc(self, qs=None, xpath=None, modify_qs=False):
         self.__set_api_key()
         self.__clear_response()
