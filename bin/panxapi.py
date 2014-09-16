@@ -141,6 +141,13 @@ def main():
             print_status(xapi, action)
             print_response(xapi, options)
 
+        if options['override']:
+            action = 'override'
+            xapi.override(xpath=options['xpath'],
+                     element=options['element'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
         if options['export'] is not None:
             action = 'export'
             xapi.export(category=options['export'],
@@ -254,6 +261,7 @@ def parse_opts():
         'move': None,
         'rename': False,
         'clone': False,
+        'override': False,
         'api_username': None,
         'api_password': None,
         'hostname': None,
@@ -292,7 +300,7 @@ def parse_opts():
     long_options = ['version', 'help',
                     'ad-hoc=', 'modify', 'force', 'partial=', 'sync',
                     'vsys=', 'src=', 'dst=', 'move=', 'rename',
-                    'clone', 'export=', 'log=', 'recursive',
+                    'clone', 'override=', 'export=', 'log=', 'recursive',
                     'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
                     'interval=', 'timeout=',
@@ -365,6 +373,8 @@ def parse_opts():
             options['rename'] = True
         elif opt == '--clone':
             options['clone'] = True
+        elif opt == '--override':
+            options['override'] = True
         elif opt == '-l':
             try:
                 (options['api_username'],
@@ -658,6 +668,7 @@ def usage():
     --move where          move after, before, bottom or top
     --rename              rename object at xpath to dst
     --clone               clone object at xpath, src xpath
+    --override element    override template object at xpath
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command
     -l api_username:api_password

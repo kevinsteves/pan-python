@@ -679,6 +679,14 @@ class PanXapi:
             query['newname'] = newname
         self.__type_config('clone', query)
 
+    def override(self, xpath=None, element=None):
+        query = {}
+        if xpath is not None:
+            query['xpath'] = xpath
+        if element is not None:
+            query['element'] = element
+        self.__type_config('override', query)
+
     def __type_config(self, action, query):
         self.__set_api_key()
         self.__clear_response()

@@ -272,6 +272,16 @@ clone(xpath=None, xpath_from=None, newname=None)
  by **xpath**.  **xpath_from** is used to specify the source XPath and
  **newname** is used to specify the new name for the cloned node.
 
+override(xpath=None, element=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The override() method performs the ``action=override`` device
+ configuration API request with the **xpath** and **element**
+ arguments. override() is used to create a new object at a node
+ that is part of a template from Panorama specified by **xpath**.
+ Only certain nodes in the Network and Device categories can
+ be overridden.
+
 user_id(cmd=None, vsys=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
