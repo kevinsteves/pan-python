@@ -273,7 +273,7 @@ clone(xpath=None, xpath_from=None, newname=None)
  **newname** is used to specify the new name for the cloned node.
 
 override(xpath=None, element=None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The override() method performs the ``action=override`` device
  configuration API request with the **xpath** and **element**
