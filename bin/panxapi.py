@@ -144,7 +144,7 @@ def main():
         if options['override']:
             action = 'override'
             xapi.override(xpath=options['xpath'],
-                     element=options['element'])
+                          element=options['element'])
             print_status(xapi, action)
             print_response(xapi, options)
 
