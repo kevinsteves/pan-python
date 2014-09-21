@@ -58,6 +58,7 @@ SYNOPSIS
     --move where          move after, before, bottom or top
     --rename              rename object at xpath to dst
     --clone               clone object at xpath, src xpath
+    --override element    override template object at xpath
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command
     -l api_username:api_password
@@ -290,6 +291,16 @@ DESCRIPTION
   This clones (copies) an existing node in the configuration specified by
   **xpath**.  **--src** is used to specify the source XPath and **--dst**
   is used to specify the new name for the cloned node.
+
+ ``--override``
+  Perform the ``action=override`` device configuration API request with the
+  **element** and **xpath** arguments.  ``override`` is used to create a new
+  object at the node specified by **xpath** when the xpath is part of a
+  template applied by Panorama.  Only specific nodes in the Device and
+  Network categories can be overridden.
+
+  **element** can be an XML string, a path to a file containing XML,
+  or the value **-** to specify the XML is on *stdin*.
 
  ``--vsys`` *vsys*
   Specify optional **vsys** for dynamic update (**-U**), partial vsys
