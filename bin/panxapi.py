@@ -375,6 +375,7 @@ def parse_opts():
             options['clone'] = True
         elif opt == '--override':
             options['override'] = True
+            options['element'] = get_element(arg)
         elif opt == '-l':
             try:
                 (options['api_username'],
