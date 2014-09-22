@@ -292,7 +292,7 @@ DESCRIPTION
   **xpath**.  **--src** is used to specify the source XPath and **--dst**
   is used to specify the new name for the cloned node.
 
- ``--override``
+ ``--override`` *element*
   Perform the ``action=override`` device configuration API request with the
   **element** and **xpath** arguments.  ``override`` is used to create a new
   object at the node specified by **xpath** when the xpath is part of a
