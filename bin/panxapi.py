@@ -188,6 +188,7 @@ def main():
                     cmd = xapi.cmd_xml(cmd)
             else:
                 c = pan.commit.PanCommit(debug=options['debug'],
+                                         validate=options['validate'],
                                          force=options['force'],
                                          commit_all=options['commit_all'],
                                          merge_with_candidate=
@@ -246,6 +247,7 @@ def parse_opts():
         'set': False,
         'dynamic-update': False,
         'commit': False,
+        'validate': False,
         'force': False,
         'partial': [],
         'sync': False,
@@ -298,8 +300,8 @@ def parse_opts():
 
     short_options = 'de:gksS:U:C:A:o:l:h:P:K:xpjrXHGDt:T:'
     long_options = ['version', 'help',
-                    'ad-hoc=', 'modify', 'force', 'partial=', 'sync',
-                    'vsys=', 'src=', 'dst=', 'move=', 'rename',
+                    'ad-hoc=', 'modify', 'validate', 'force', 'partial=',
+                    'sync', 'vsys=', 'src=', 'dst=', 'move=', 'rename',
                     'clone', 'override=', 'export=', 'log=', 'recursive',
                     'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
@@ -335,6 +337,8 @@ def parse_opts():
         elif opt == '-C':
             options['commit'] = True
             options['cmd'] = get_element(arg)
+        elif opt == '--validate':
+            options['validate'] = True
         elif opt == '--force':
             options['force'] = True
         elif opt == '--partial':
@@ -652,6 +656,7 @@ def usage():
     -S element            set XML element at xpath
     -U cmd                execute dynamic update command
     -C cmd                commit candidate configuration
+    --validate            validate candidate configuration
     --force               force commit when conflict
     --partial part        commit specified part
     --sync                synchronous commit

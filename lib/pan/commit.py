@@ -46,10 +46,12 @@ def valid_part(part):
 class PanCommit:
     def __init__(self,
                  debug=0,
+                 validate=False,
                  force=False,
                  commit_all=False,
                  merge_with_candidate=False):
         self.debug = debug
+        self._validate = validate
         self._force = force
         self._commit_all = commit_all
         self._merge_with_candidate = merge_with_candidate
@@ -57,6 +59,9 @@ class PanCommit:
         self._vsys = set()
         self._device = None
         self._device_group = None
+
+    def validate(self):
+        self._validate = True
 
     def force(self):
         self._force = True
@@ -136,6 +141,9 @@ class PanCommit:
     def __commit(self):
         s = '<commit>'
 
+        if self._validate:
+            s += '<validate>'
+
         if self._force:
             s += '<force>'
 
@@ -156,6 +164,9 @@ class PanCommit:
 
         if self._force:
             s += '</force>'
+
+        if self._validate:
+            s += '</validate>'
 
         s += '</commit>'
 

@@ -42,6 +42,7 @@ SYNOPSIS
     -S element            set XML element at xpath
     -U cmd                execute dynamic update command
     -C cmd                commit candidate configuration
+    --validate            validate candidate configuration
     --force               force commit when conflict
     --partial part        commit specified part
     -A cmd                commit-all (Panorama)
@@ -153,9 +154,14 @@ DESCRIPTION
   or the value **-** to specify the XML is on *stdin*.
 
   When *cmd* is the empty string the XML string will be created
-  according to the **--force**, **--partial** and **--vsys** options
-  specified.  If no commit options are specified it defaults to
-  '<commit></commit>'.
+  according to the **--validate**, **--force**, **--partial** and
+  **--vsys** options specified.  If no commit options are specified it
+  defaults to '<commit></commit>'.
+
+ ``--validate``
+  Validate the candidate configuration.  Configuration validation
+  is performed in a job; to see the validation result you can
+  specify **--sync**.
 
  ``--force``
   Force the commit command in the event of conflict.
@@ -608,6 +614,11 @@ EXAMPLES
         </entry>
   [...]
 
+ Validate candidate configuration.
+ ::
+
+  $ panxapi.py -C '' --validate --sync
+  commit: success: "Configuration is valid"
 
 SEE ALSO
 ========
