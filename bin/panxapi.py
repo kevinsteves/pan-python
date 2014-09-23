@@ -687,8 +687,8 @@ def usage():
     --nlogs num           retrieve num logs
     --skip num            skip num logs
     --filter filter       log selection filter
-    --interval            log/commit job query interval
-    --timeout             log/commit job query timeout
+    --interval seconds    log/commit job query interval
+    --timeout seconds     log/commit job query timeout
     -K api_key
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout

@@ -45,6 +45,7 @@ SYNOPSIS
     --validate            validate candidate configuration
     --force               force commit when conflict
     --partial part        commit specified part
+    --sync                synchronous commit
     -A cmd                commit-all (Panorama)
     --ad-hoc query        perform ad hoc request
     --modify              insert known fields in ad hoc query
@@ -72,6 +73,8 @@ SYNOPSIS
     --nlogs num           retrieve num logs
     --skip num            skip num logs
     --filter filter       log selection filter
+    --interval seconds    log/commit job query interval
+    --timeout seconds     log/commit job query timeout
     -K api_key
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout
@@ -184,6 +187,9 @@ DESCRIPTION
   Multiple parts can be specified by using multiple **--partial**
   options or separating each part with comma (,).  Virtual systems for
   the **vsys** part can be specified with **--vsys**.
+
+ ``--sync``
+  Perform a synchronous commit.
 
  ``-A`` *cmd*
   Perform the ``type=commit`` commit configuration API request with
@@ -368,6 +374,17 @@ DESCRIPTION
   Specify the log query selection filter for the **--log** option.
   This is a set of log filter expressions as can be specified in the
   Monitor tab in the Web UI.
+
+ ``--interval`` *seconds*
+  A floating point number specifying the query interval in seconds
+  between each non-finished job status response.
+
+  The default is 0.5 seconds.
+
+ ``--timeout`` *seconds*
+  The maximum number of seconds to wait for the job to finish.
+
+  The default is to try forever.
 
  ``-K`` *api_key*
   Specify the **api_key** used in API requests.  This is not required to
