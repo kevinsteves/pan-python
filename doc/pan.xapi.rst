@@ -517,9 +517,9 @@ get and show
 .panrc
 ------
 
- .panrc files contain hostname, port, username, password and key
- variables for XML API access on PAN-OS firewalls.  A .panrc file
- consists of lines with the format:
+ .panrc files contain hostname, port, serial number, username,
+ password and key variables for XML API access on PAN-OS firewalls.  A
+ .panrc file consists of lines with the format:
  ::
 
   varname[%tagname]=value
@@ -567,6 +567,7 @@ Recognized varname Values
 
  - **hostname**
  - **port**
+ - **serial**
  - **api_username**
  - **api_password**
  - **api_key**

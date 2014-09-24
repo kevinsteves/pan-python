@@ -128,6 +128,8 @@ class PanXapi:
             init_panrc['hostname'] = hostname
         if port is not None:
             init_panrc['port'] = port
+        if serial is not None:
+            init_panrc['serial'] = serial
 
         try:
             panrc = pan.rc.PanRc(debug=self.debug,
@@ -166,6 +168,8 @@ class PanXapi:
                     raise ValueError
             except ValueError:
                 raise PanXapiError('Invalid port from .panrc: %s' % self.port)
+        if 'serial' in panrc.panrc:
+            self.serial = panrc.panrc['serial']
 
         if self.hostname is None:
             raise PanXapiError('hostname argument required')

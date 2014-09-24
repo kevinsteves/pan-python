@@ -25,6 +25,7 @@ _filename = '.panrc'
 _valid_varnames = set([
     'hostname',
     'port',
+    'serial',
     'api_username',
     'api_password',
     'api_key',
