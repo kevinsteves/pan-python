@@ -637,6 +637,14 @@ EXAMPLES
   $ panxapi.py -C '' --validate --sync
   commit: success: "Configuration is valid"
 
+ Print operational command variable using shell pipeline.
+ ::
+
+  $ (panxapi.py --Xpro 'show system info'; \
+  > echo "print(var1['system']['serial'])") | python
+  op: success
+  001606022345
+
 SEE ALSO
 ========
 
