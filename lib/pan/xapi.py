@@ -243,7 +243,7 @@ class PanXapi:
             self.status_detail = 'no content-disposition response header'
             return False
 
-        if not 'attachment' in content_disposition:
+        if 'attachment' not in content_disposition:
             msg = 'no handler for content-disposition: %s' % \
                 content_disposition
             self.status_detail = msg

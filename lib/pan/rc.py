@@ -84,7 +84,7 @@ class PanRc:
                 d = self.__parse_file(path)
                 if d:
                     s = pprint.pformat(d, indent=_indent)
-                    self.log(DEBUG2, '__parse_path: %s: %s',path, s)
+                    self.log(DEBUG2, '__parse_path: %s: %s', path, s)
                     panrcs.append(d)
 
         if panrcs:
