@@ -411,31 +411,6 @@ class PanXapi:
 
         return s.decode(_encoding)
 
-    # XXX xml_python() is not documented
-    # XXX not sure this should be here
-    def xml_python(self, result=False):
-        try:
-            import pan.config
-        except ImportError:
-            raise PanXapiError('xml_python() no pan.config')
-
-        if result:
-            if (self.element_result is None or
-                    not len(self.element_result)):
-                return None
-            elem = list(self.element_result)[0]  # XXX
-        else:
-            if self.element_root is None:
-                return None
-            elem = self.element_root
-
-        try:
-            conf = pan.config.PanConfig(config=elem)
-        except pan.config.PanConfigError as msg:
-            raise PanXapiError('pan.config.PanConfigError: %s' % msg)
-
-        return conf.python()
-
     def __api_request(self, query):
         # type=keygen request will urlencode key if needed so don't
         # double encode

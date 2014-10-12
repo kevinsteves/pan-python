@@ -29,6 +29,7 @@ libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
 import pan.xapi
 import pan.commit
+import pan.config
 
 debug = 0
 
@@ -551,11 +552,23 @@ def print_response(xapi, options):
             print(s)
 
     if options['print_python'] or options['print_json']:
+        if options['print_result']:
+            if (xapi.element_result is None or
+                    not len(xapi.element_result)):
+                return
+            elem = list(xapi.element_result)[0]
+        else:
+            if xapi.element_root is None:
+                return
+            elem = xapi.element_root
+
         try:
-            d = xapi.xml_python(options['print_result'])
-        except pan.xapi.PanXapiError as msg:
-            print('pan.xapi.PanXapi:', msg, file=sys.stderr)
+            conf = pan.config.PanConfig(config=elem)
+        except pan.config.PanConfigError as msg:
+            print('pan.config.PanConfigError:', msg, file=sys.stderr)
             sys.exit(1)
+
+        d = conf.python()
 
         if d:
             if options['print_python']:

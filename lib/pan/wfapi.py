@@ -70,7 +70,6 @@ else:
 
 _cloud_server = 'wildfire.paloaltonetworks.com'
 _encoding = 'utf-8'
-_tags_forcelist = set(['entry'])
 _rfc2231_encode = False
 _wildfire_responses = {
     418: 'Unsupported File Type',
@@ -326,24 +325,6 @@ class PanWFapi:
         self.log(DEBUG3, 'xml_root: %s', type(s))
         self.log(DEBUG3, 'xml_root.decode(): %s', type(s.decode(_encoding)))
         return s.decode(_encoding)
-
-    def xml_python(self):
-        try:
-            import pan.config
-        except ImportError:
-            raise PanWFapiError('xml_python() no pan.config')
-
-        if self.xml_element_root is None:
-            return None
-        elem = self.xml_element_root
-
-        try:
-            conf = pan.config.PanConfig(config=elem,
-                                        tags_forcelist=_tags_forcelist)
-        except pan.config.PanConfigError as msg:
-            raise PanWFapiError('pan.config.PanConfigError: %s' % msg)
-
-        return conf.python()
 
     # see http://bugs.python.org/issue18543
     # this is a modified urllib.request.urlopen()

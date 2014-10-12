@@ -32,6 +32,7 @@ except ImportError:
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
 import pan.wfapi
+import pan.config
 
 debug = 0
 
@@ -318,11 +319,20 @@ def print_response(wfapi, options):
             print(wfapi.response_body)
 
         if options['print_python'] or options['print_json']:
+            if wfapi.xml_element_root is None:
+                return
+
+            elem = wfapi.xml_element_root
+            tags_forcelist = set(['entry'])
+
             try:
-                d = wfapi.xml_python()
-            except pan.wfapi.PanWFapiError as msg:
-                print('pan.wfapi.PanWFapi:', msg, file=sys.stderr)
+                conf = pan.config.PanConfig(config=elem,
+                                            tags_forcelist=tags_forcelist)
+            except pan.config.PanConfigError as msg:
+                print('pan.config.PanConfigError:', msg, file=sys.stderr)
                 sys.exit(1)
+
+            d = conf.python()
 
             if d:
                 if options['print_python']:
