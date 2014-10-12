@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -16,6 +16,9 @@
 
 from __future__ import print_function
 import sys
+import logging
+
+from . import DEBUG1, DEBUG2, DEBUG3
 
 _valid_part = set([
     'device-and-network-excluded',
@@ -45,12 +48,11 @@ def valid_part(part):
 
 class PanCommit:
     def __init__(self,
-                 debug=0,
                  validate=False,
                  force=False,
                  commit_all=False,
                  merge_with_candidate=False):
-        self.debug = debug
+        self.log = logging.getLogger(__name__).log
         self._validate = validate
         self._force = force
         self._commit_all = commit_all
@@ -133,8 +135,7 @@ class PanCommit:
 
         s += '</shared-policy></commit-all>'
 
-        if self.debug:
-            print('commit-all cmd:', s, file=sys.stderr)
+        self.log(DEBUG1, 'commit-all cmd: %s', s)
 
         return s
 
@@ -170,8 +171,7 @@ class PanCommit:
 
         s += '</commit>'
 
-        if self.debug:
-            print('commit cmd:', s, file=sys.stderr)
+        self.log(DEBUG1, 'commit cmd: %s', s)
 
         return s
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2012, 2013 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2012-2014 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -23,6 +23,7 @@ import signal
 import getopt
 import json
 import pprint
+import logging
 
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
@@ -38,11 +39,26 @@ def main():
         print('No config', file=sys.stderr)
         sys.exit(1)
 
+    if options['debug']:
+        logger = logging.getLogger()
+        if options['debug'] == 3:
+            logger.setLevel(pan.config.DEBUG3)
+        elif options['debug'] == 2:
+            logger.setLevel(pan.config.DEBUG2)
+        elif options['debug'] == 1:
+            logger.setLevel(pan.config.DEBUG1)
+
+#        log_format = '%(levelname)s %(name)s %(message)s'
+        log_format = '%(message)s'
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(log_format)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
     xml = read_file(options['config'])
 
     try:
-        conf = pan.config.PanConfig(debug=options['debug'],
-                                    config=xml)
+        conf = pan.config.PanConfig(config=xml)
     except pan.config.PanConfigError as msg:
         print('pan.config.PanConfigError:', msg, file=sys.stderr)
         sys.exit(1)

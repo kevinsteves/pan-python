@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -23,6 +23,7 @@ import getopt
 import re
 import json
 import pprint
+import logging
 
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
@@ -36,9 +37,24 @@ def main():
     set_encoding()
     options = parse_opts()
 
+    if options['debug']:
+        logger = logging.getLogger()
+        if options['debug'] == 3:
+            logger.setLevel(pan.xapi.DEBUG3)
+        elif options['debug'] == 2:
+            logger.setLevel(pan.xapi.DEBUG2)
+        elif options['debug'] == 1:
+            logger.setLevel(pan.xapi.DEBUG1)
+
+#        log_format = '%(levelname)s %(name)s %(message)s'
+        log_format = '%(message)s'
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(log_format)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
     try:
-        xapi = pan.xapi.PanXapi(debug=options['debug'],
-                                timeout=options['timeout'],
+        xapi = pan.xapi.PanXapi(timeout=options['timeout'],
                                 tag=options['tag'],
                                 use_http=options['use_http'],
                                 use_get=options['use_get'],
@@ -187,8 +203,7 @@ def main():
                 if options['cmd_xml']:
                     cmd = xapi.cmd_xml(cmd)
             else:
-                c = pan.commit.PanCommit(debug=options['debug'],
-                                         validate=options['validate'],
+                c = pan.commit.PanCommit(validate=options['validate'],
                                          force=options['force'],
                                          commit_all=options['commit_all'],
                                          merge_with_candidate=

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2013, 2014 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -23,6 +23,7 @@ import signal
 import getopt
 import json
 import pprint
+import logging
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -40,9 +41,24 @@ def main():
 #    set_encoding()
     options = parse_opts()
 
+    if options['debug']:
+        logger = logging.getLogger()
+        if options['debug'] == 3:
+            logger.setLevel(pan.wfapi.DEBUG3)
+        elif options['debug'] == 2:
+            logger.setLevel(pan.wfapi.DEBUG2)
+        elif options['debug'] == 1:
+            logger.setLevel(pan.wfapi.DEBUG1)
+
+#        log_format = '%(levelname)s %(name)s %(message)s'
+        log_format = '%(message)s'
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(log_format)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
     try:
-        wfapi = pan.wfapi.PanWFapi(debug=options['debug'],
-                                   tag=options['tag'],
+        wfapi = pan.wfapi.PanWFapi(tag=options['tag'],
                                    api_key=options['api_key'],
                                    hostname=options['hostname'],
                                    timeout=options['timeout'],

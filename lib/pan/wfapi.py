@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013, 2014 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -33,6 +33,7 @@ import os
 from tempfile import NamedTemporaryFile
 from io import BytesIO
 import email.utils
+import logging
 try:
     # 3.2
     from urllib.request import Request, urlopen, \
@@ -51,7 +52,7 @@ except ImportError:
     _legacy_urllib = True
 
 import xml.etree.ElementTree as etree
-from . import __version__
+from . import __version__, DEBUG1, DEBUG2, DEBUG3
 import pan.rc
 
 import socket
@@ -112,7 +113,6 @@ class PanWFapiError(Exception):
 
 class PanWFapi:
     def __init__(self,
-                 debug=0,
                  tag=None,
                  hostname=None,
                  api_key=None,
@@ -121,14 +121,7 @@ class PanWFapi:
                  cacloud=True,
                  cafile=None,
                  capath=None):
-        self.debug = debug
-        self.debug1, self.debug2, self.debug3 = False, False, False
-        if self.debug > 0:
-            self.debug1 = True
-        if self.debug > 1:
-            self.debug2 = True
-        if self.debug > 2:
-            self.debug3 = True
+        self.log = logging.getLogger(__name__).log
         self.tag = tag
         self.hostname = hostname
         self.api_key = None
@@ -136,14 +129,9 @@ class PanWFapi:
         self.cafile = cafile
         self.capath = capath
 
-        if self.debug > 3:
-            raise PanWFapiError('Maximum debug level is 3')
-
-        if self.debug3:
-            print('Python version:', sys.version, file=sys.stderr)
-            print('xml.etree.ElementTree version:', etree.VERSION,
-                  file=sys.stderr)
-            print('pan-python version:', __version__, file=sys.stderr)
+        self.log(DEBUG3, 'Python version: %s', sys.version)
+        self.log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
+        self.log(DEBUG3, 'pan-python version: %s', __version__)
 
         if ((cacloud and sys.hexversion >= 0x03020000) and
                 (self.cafile is None and self.capath is None)):
@@ -168,8 +156,7 @@ class PanWFapi:
             init_panrc['api_key'] = api_key
 
         try:
-            panrc = pan.rc.PanRc(debug=self.debug,
-                                 tag=self.tag,
+            panrc = pan.rc.PanRc(tag=self.tag,
                                  init_panrc=init_panrc)
         except pan.rc.PanRcError as msg:
             raise PanWFapiError(str(msg))
@@ -189,8 +176,8 @@ class PanWFapi:
         else:
             self.uri = 'https://%s' % self.hostname
 
-        if self.debug2 and _legacy_urllib:
-            print('using legacy urllib', file=sys.stderr)
+        if _legacy_urllib:
+            self.log(DEBUG2, 'using legacy urllib')
 
     def __str__(self):
         return '\n'.join((': '.join((k, str(self.__dict__[k]))))
@@ -228,9 +215,8 @@ class PanWFapi:
             body = [x.rstrip() for x in body]
             body = set(body)
 
-        if self.debug3:
-            print('__get_header(%s):' % name, s, file=sys.stderr)
-            print('__get_header:', body, file=sys.stderr)
+        self.log(DEBUG3, '__get_header(%s): %s', name, s)
+        self.log(DEBUG3, '__get_header: %s', body)
 
         return body
 
@@ -285,8 +271,7 @@ class PanWFapi:
         return True
 
     def __set_xml_response(self, message_body):
-        if self.debug2:
-            print('__set_xml_response:', repr(message_body), file=sys.stderr)
+        self.log(DEBUG2, '__set_xml_response: %s', repr(message_body))
         self.response_type = 'xml'
 
         _message_body = message_body.decode(_encoding)
@@ -316,8 +301,7 @@ class PanWFapi:
         return True
 
     def __set_html_response(self, message_body):
-        if self.debug2:
-            print('__set_html_response:', repr(message_body), file=sys.stderr)
+        self.log(DEBUG2, '__set_html_response: %s', repr(message_body))
         self.response_type = 'html'
 
         _message_body = message_body.decode()
@@ -339,10 +323,8 @@ class PanWFapi:
         if not s:
             return None
 
-        if self.debug3:
-            print('xml_root:', type(s), file=sys.stderr)
-            print('xml_root.decode():', type(s.decode(_encoding)),
-                  file=sys.stderr)
+        self.log(DEBUG3, 'xml_root: %s', type(s))
+        self.log(DEBUG3, 'xml_root.decode(): %s', type(s.decode(_encoding)))
         return s.decode(_encoding)
 
     def xml_python(self):
@@ -356,8 +338,7 @@ class PanWFapi:
         elem = self.xml_element_root
 
         try:
-            conf = pan.config.PanConfig(debug=self.debug,
-                                        config=elem,
+            conf = pan.config.PanConfig(config=elem,
                                         tags_forcelist=_tags_forcelist)
         except pan.config.PanConfigError as msg:
             raise PanWFapiError('pan.config.PanConfigError: %s' % msg)
@@ -405,22 +386,19 @@ class PanWFapi:
         url = self.uri
         url += request_uri
 
-        if self.debug1:
-            print('URL:', url, file=sys.stderr)
-            print('headers:', headers, file=sys.stderr)
+        self.log(DEBUG1, 'URL: %s', url)
+        self.log(DEBUG1, 'headers: %s', headers)
 
         # body must by type 'bytes' for 3.x
         if _isunicode(body):
             body = body.encode()
 
-        if self.debug3:
-            print('body:', repr(body), file=sys.stderr)
+        self.log(DEBUG3, 'body: %s', repr(body))
 
         request = Request(url, body, headers)
 
-        if self.debug1:
-            print('method:', request.get_method(), file=sys.stderr)
-            print('headers:', request.header_items(), file=sys.stderr)
+        self.log(DEBUG1, 'method: %s', request.get_method())
+        self.log(DEBUG1, 'headers: %s', request.header_items())
 
         kwargs = {
             'url': request,
@@ -443,8 +421,7 @@ class PanWFapi:
 
         # invalid cafile, capath
         except (URLError, IOError) as e:
-            if self.debug2:
-                print('urlopen() exception:', sys.exc_info(), file=sys.stderr)
+            self.log(DEBUG2, 'urlopen() exception: %s', sys.exc_info())
             self._msg = str(e)
             return False
 
@@ -462,13 +439,10 @@ class PanWFapi:
             elif self.http_code in responses:
                 self.http_reason = responses[self.http_code]
 
-        if self.debug2:
-            print('HTTP response code:', self.http_code,
-                  file=sys.stderr)
-            print('HTTP response reason:', self.http_reason,
-                  file=sys.stderr)
-            print('HTTP response headers:', file=sys.stderr)
-            print(response.info(), file=sys.stderr)
+        self.log(DEBUG2, 'HTTP response code: %s', self.http_code)
+        self.log(DEBUG2, 'HTTP response reason: %s', self.http_reason)
+        self.log(DEBUG2, 'HTTP response headers:')
+        self.log(DEBUG2, '%s', response.info())
 
         if not (200 <= self.http_code < 300):
             self._msg = 'HTTP Error %s: %s' % (self.http_code,
@@ -489,17 +463,16 @@ class PanWFapi:
         buf = f.read()
         f.close()
 
-        if self.debug2:
-            print('path:', type(path), len(path), file=sys.stderr)
-            print('path: %s size: %d' % (path, len(buf)), file=sys.stderr)
-        if self.debug3:
+        self.log(DEBUG2, 'path: %s %d', type(path), len(path))
+        self.log(DEBUG2, 'path: %s size: %d', path, len(buf))
+        if logging.getLogger(__name__).getEffectiveLevel() == DEBUG3:
             import hashlib
             md5 = hashlib.md5()
             md5.update(buf)
             sha256 = hashlib.sha256()
             sha256.update(buf)
-            print('MD5:', md5.hexdigest(), file=sys.stderr)
-            print('SHA256:', sha256.hexdigest(), file=sys.stderr)
+            self.log(DEBUG3, 'MD5: %s', md5.hexdigest())
+            self.log(DEBUG3, 'SHA256: %s', sha256.hexdigest())
 
         return buf
 
@@ -596,7 +569,7 @@ class PanWFapi:
         else:
             raise PanWFapiError('file or url not specified')
 
-        form = _MultiPartFormData(debug=self.debug)
+        form = _MultiPartFormData()
         form.add_field('apikey', self.api_key)
         if file is not None:
             buf = self._read_file(file)
@@ -662,8 +635,7 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
             self._msg = "Can't create cloud cafile: %s" % e
             return None
 
-        if self.debug2:
-            print('__cacloud:', tf.name, file=sys.stderr)
+        self.log(DEBUG2, '__cacloud: %s', tf.name)
 
         return tf
 
@@ -683,20 +655,18 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
 # --___XXX--
 
 class _MultiPartFormData:
-    def __init__(self, debug=0):
-        self.debug = debug
+    def __init__(self):
+        self.log = logging.getLogger(__name__).log
         self.parts = []
         self.boundary = self._boundary()
 
     def add_field(self, name, value):
-        part = _FormDataPart(debug=self.debug,
-                             name=name,
+        part = _FormDataPart(name=name,
                              body=value)
         self.parts.append(part)
 
     def add_file(self, filename=None, body=None):
-        part = _FormDataPart(debug=self.debug,
-                             name='file')
+        part = _FormDataPart(name='file')
         if filename is not None:
             part.append_header('filename', filename)
         if body is not None:
@@ -713,14 +683,12 @@ class _MultiPartFormData:
         try:
             import os
             seq = os.urandom(rand_bytes)
-            if self.debug:
-                print('_MultiPartFormData._boundary:', 'using os.urandom',
-                      file=sys.stderr)
+            self.log(DEBUG1, '_MultiPartFormData._boundary: %s',
+                     'using os.urandom')
         except NotImplementedError:
             import random
-            if self.debug:
-                print('_MultiPartFormData._boundary:', 'using random',
-                      file=sys.stderr)
+            self.log(DEBUG1, '_MultiPartFormData._boundary: %s',
+                     'using random')
             seq = bytearray()
             [seq.append(random.randrange(256)) for i in range(rand_bytes)]
 
@@ -755,8 +723,8 @@ class _MultiPartFormData:
 
 
 class _FormDataPart:
-    def __init__(self, debug=0, name=None, body=None):
-        self.debug = debug
+    def __init__(self, name=None, body=None):
+        self.log = logging.getLogger(__name__).log
         self.headers = []
         self.add_header(b'Content-Disposition: form-data')
         self.append_header('name', name)
@@ -766,41 +734,32 @@ class _FormDataPart:
 
     def add_header(self, header):
         self.headers.append(header)
-        if self.debug:
-            print('_FormDataPart.add_header:', self.headers[-1],
-                  file=sys.stderr)
+        self.log(DEBUG1, '_FormDataPart.add_header: %s', self.headers[-1])
 
     def append_header(self, name, value):
         self.headers[-1] += b'; ' + self._encode_field(name, value)
-        if self.debug:
-            print('_FormDataPart.append_header:', self.headers[-1],
-                  file=sys.stderr)
+        self.log(DEBUG1, '_FormDataPart.append_header: %s', self.headers[-1])
 
     def _encode_field(self, name, value):
-        if self.debug:
-            print('_FormDataPart._encode_field:', type(name), type(value),
-                  file=sys.stderr)
+        self.log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+                 type(name), type(value))
         if not _rfc2231_encode:
             s = '%s="%s"' % (name, value)
-            if self.debug:
-                print('_FormDataPart._encode_field:', type(s), s,
-                      file=sys.stderr)
+            self.log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+                     type(s), s)
             if _isunicode(s):
                 s = s.encode('utf-8')
-                if self.debug:
-                    print('_FormDataPart._encode_field:', type(s), s,
-                          file=sys.stderr)
+                self.log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+                         type(s), s)
             return s
 
         if not [ch for ch in '\r\n\\' if ch in value]:
             try:
                 return ('%s="%s"' % (name, value)).encode('ascii')
             except UnicodeEncodeError:
-                if self.debug:
-                    print('UnicodeEncodeError 3.x', file=sys.stderr)
+                self.log(DEBUG1, 'UnicodeEncodeError 3.x')
             except UnicodeDecodeError:  # 2.x
-                if self.debug:
-                    print('UnicodeDecodeError 2.x', file=sys.stderr)
+                self.log(DEBUG1, 'UnicodeDecodeError 2.x')
         # RFC 2231
         value = email.utils.encode_rfc2231(value, 'utf-8')
         return ('%s*=%s' % (name, value)).encode('ascii')
@@ -809,9 +768,8 @@ class _FormDataPart:
         if _isunicode(body):
             body = body.encode('latin-1')
         self.body = body
-        if self.debug:
-            print('_FormDataPart.add_body:', type(self.body), len(self.body),
-                  file=sys.stderr)
+        self.log(DEBUG1, '_FormDataPart.add_body: %s %d',
+                 type(self.body), len(self.body))
 
     def serialize(self):
         bio = BytesIO()
@@ -823,23 +781,19 @@ class _FormDataPart:
         return bio.getvalue()
 
 if __name__ == '__main__':
-    # python -m pan.wfapi [tag] [sha256] [0-3]
+    # python -m pan.wfapi [tag] [sha256]
     import pan.wfapi
 
     tag = None
     sha256 = '5f31d8658a41aa138ada548b7fb2fc758219d40b557aaeab80681d314f739f92'
-    debug = 0
 
     if len(sys.argv) > 1 and sys.argv[1]:
         tag = sys.argv[1]
     if len(sys.argv) > 2:
         hash = sys.argv[2]
-    if len(sys.argv) > 3 and int(sys.argv[3]):
-        debug = int(sys.argv[3])
 
     try:
-        wfapi = pan.wfapi.PanWFapi(debug=debug,
-                                   tag=tag)
+        wfapi = pan.wfapi.PanWFapi(tag=tag)
     except pan.wfapi.PanWFapiError as msg:
         print('pan.wfapi.PanWFapi:', msg, file=sys.stderr)
         sys.exit(1)

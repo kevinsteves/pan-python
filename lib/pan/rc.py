@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -19,6 +19,9 @@ import sys
 import os
 import re
 import pprint
+import logging
+
+from . import DEBUG1, DEBUG2, DEBUG3
 
 _search_path = ['__init__()', '.', '~']
 _filename = '.panrc'
@@ -44,12 +47,11 @@ class PanRcError(Exception):
 
 class PanRc:
     def __init__(self,
-                 debug=0,
                  tag=None,
                  init_panrc=None,
                  search_path=_search_path,
                  filename=_filename):
-        self.debug = debug
+        self.log = logging.getLogger(__name__).log
         self.tag = tag
         self.init_panrc = init_panrc
         self.search_path = search_path
@@ -62,9 +64,8 @@ class PanRc:
                 raise PanRcError('tag must match regexp "%s"' % regexp)
 
         self.__parse_path()
-        if self.debug > 0:
-            s = pprint.pformat(self.panrc, indent=_indent)
-            print('panrc:', s, file=sys.stderr)
+        s = pprint.pformat(self.panrc, indent=_indent)
+        self.log(DEBUG1, 'panrc: %s', s)
 
     def __parse_path(self):
         panrcs = []
@@ -72,11 +73,9 @@ class PanRc:
         for basename in self.search_path:
             if basename == '__init__()':
                 if self.init_panrc:
-                    if self.debug > 1:
-                        s = pprint.pformat(self.init_panrc,
-                                           indent=_indent)
-                        print('__parse_path: __init__(): %s' %
-                              s, file=sys.stderr)
+                    s = pprint.pformat(self.init_panrc,
+                                       indent=_indent)
+                    self.log(DEBUG2, '__parse_path: __init__(): %s', s)
                     panrcs.append(self.init_panrc)
             else:
                 path = os.path.expanduser(basename)  # ~, ~user
@@ -84,10 +83,8 @@ class PanRc:
                 path = os.path.join(path, self.filename)
                 d = self.__parse_file(path)
                 if d:
-                    if self.debug > 1:
-                        s = pprint.pformat(d, indent=_indent)
-                        print('__parse_path: %s: %s' % (path, s),
-                              file=sys.stderr)
+                    s = pprint.pformat(d, indent=_indent)
+                    self.log(DEBUG2, '__parse_path: %s: %s',path, s)
                     panrcs.append(d)
 
         if panrcs:
@@ -97,8 +94,7 @@ class PanRc:
         try:
             f = open(path, 'r')
         except IOError as msg:
-            if self.debug > 2:
-                print('open %s: %s' % (path, msg), file=sys.stderr)
+            self.log(DEBUG3, 'open %s: %s', path, msg)
             return None
 
         panrc = {}
@@ -122,30 +118,25 @@ class PanRc:
 
     def __merge_panrcs(self, panrcs):
         panrcs.reverse()
-        if self.debug > 1:
-            s = pprint.pformat(panrcs, indent=_indent)
-            print('panrcs:', s, file=sys.stderr)
+        s = pprint.pformat(panrcs, indent=_indent)
+        self.log(DEBUG2, 'panrcs: %s', s)
 
         for panrc in panrcs:
             for key in panrc.keys():
                 self.panrc[key] = panrc[key]
 
 if __name__ == '__main__':
-    # python rc.py [tag] [0-3]
+    # python rc.py [tag]
     import pan.rc
 
     tag = None
-    debug = 0
     if len(sys.argv) > 1 and sys.argv[1]:
         tag = sys.argv[1]
-    if len(sys.argv) > 2 and int(sys.argv[2]):
-        debug = int(sys.argv[2])
 
     try:
-        rc = pan.rc.PanRc(debug=debug,
-                          tag=tag)
+        rc = pan.rc.PanRc(tag=tag)
     except PanRcError as msg:
         print('pan.rc.PanRc:', msg, file=sys.stderr)
         sys.exit(1)
-    if not debug:
-        print('panrc:', pprint.pformat(rc.panrc, indent=_indent))
+
+    print('panrc:', pprint.pformat(rc.panrc, indent=_indent))

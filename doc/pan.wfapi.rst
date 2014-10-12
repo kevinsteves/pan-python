@@ -76,6 +76,11 @@ pan.wfapi Attributes
  **__version__**
   pan package version string.
 
+ **DEBUG1**, **DEBUG2**, **DEBUG3**
+  Python ``logging`` module debug levels (see **Debugging and
+  Logging** below).
+
+
 pan.wfapi Constructor and Exception Class
 -----------------------------------------
 
@@ -83,8 +88,7 @@ class pan.wfapi.PanWFapi()
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
  ::
 
-  class pan.wfapi.PanWFapi(debug=0,
-                           tag=None,
+  class pan.wfapi.PanWFapi(tag=None,
                            hostname=None,
                            api_key=None,
                            timeout=None,
@@ -92,10 +96,6 @@ class pan.wfapi.PanWFapi()
                            cacloud=True,
                            cafile=None,
                            capath=None)
-
- **debug**
-  Debug level.  Can be 0-3; 0 specifies no debugging output and 1-3
-  specifies increasing debugging output written to *stderr*.
 
  **tag**
   .panrc tagname.
@@ -239,6 +239,35 @@ response_type
 
  The ``response_type`` data attribute is set to ``xml`` when the message
  body is an XML document.
+
+Debugging and Logging
+---------------------
+
+ The Python standard library ``logging`` module is used to log debug
+ output; by default no debug output is logged.
+
+ In order to obtain debug output the ``logging`` module must be
+ configured: the logging level must be set to one of **DEBUG1**,
+ **DEBUG2**, or **DEBUG3** and a handler must be configured.
+ **DEBUG1** enables basic debugging output and **DEBUG2** and
+ **DEBUG3** specify increasing levels of debug output.
+
+ For example, to configure debug output to **stderr**:
+ ::
+
+  import logging
+
+  if options['debug']:
+      logger = logging.getLogger()
+      if options['debug'] == 3:
+          logger.setLevel(pan.xapi.DEBUG3)
+      elif options['debug'] == 2:
+          logger.setLevel(pan.xapi.DEBUG2)
+      elif options['debug'] == 1:
+          logger.setLevel(pan.xapi.DEBUG1)
+
+      handler = logging.StreamHandler()
+      logger.addHandler(handler)
 
 FILES
 =====

@@ -2,7 +2,7 @@
  NOTE: derived from documentation in PAN-perl
 
  Copyright (c) 2011 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -76,6 +76,10 @@ pan.xapi Attributes
  **__version__**
   pan package version string.
 
+ **DEBUG1**, **DEBUG2**, **DEBUG3**
+  Python ``logging`` module debug levels (see **Debugging and
+  Logging** below).
+
 pan.xapi Constructor and Exception Class
 ----------------------------------------
 
@@ -83,8 +87,7 @@ class pan.xapi.PanXapi()
 ~~~~~~~~~~~~~~~~~~~~~~~~
  ::
 
-  class pan.xapi.PanXapi(debug=0,
-                         tag=None,
+  class pan.xapi.PanXapi(tag=None,
                          api_username=None,
                          api_password=None,
                          api_key=None,
@@ -96,10 +99,6 @@ class pan.xapi.PanXapi()
                          timeout=None,
                          cafile=None,
                          capath=None)
-
- **debug**
-  Debug level.  Can be 0-3; 0 specifies no debugging output and 1-3
-  specifies increasing debugging output written to *stderr*.
 
  **tag**
   .panrc tagname.
@@ -477,6 +476,36 @@ export_result
  - file: content-disposition response header filename
  - content: file contents
  - category: export category string
+
+
+Debugging and Logging
+---------------------
+
+ The Python standard library ``logging`` module is used to log debug
+ output; by default no debug output is logged.
+
+ In order to obtain debug output the ``logging`` module must be
+ configured: the logging level must be set to one of **DEBUG1**,
+ **DEBUG2**, or **DEBUG3** and a handler must be configured.
+ **DEBUG1** enables basic debugging output and **DEBUG2** and
+ **DEBUG3** specify increasing levels of debug output.
+
+ For example, to configure debug output to **stderr**:
+ ::
+
+  import logging
+
+  if options['debug']:
+      logger = logging.getLogger()
+      if options['debug'] == 3:
+          logger.setLevel(pan.xapi.DEBUG3)
+      elif options['debug'] == 2:
+          logger.setLevel(pan.xapi.DEBUG2)
+      elif options['debug'] == 1:
+          logger.setLevel(pan.xapi.DEBUG1)
+
+      handler = logging.StreamHandler()
+      logger.addHandler(handler)
 
 set and edit
 ------------
