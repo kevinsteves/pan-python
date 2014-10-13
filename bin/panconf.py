@@ -151,7 +151,7 @@ def conf_flat(conf, path, xpath=None):
     return o
 
 
-def conf_set(conf, path, xpath, member_list):
+def conf_set(conf, path, xpath=None, member_list=None):
     try:
         o = conf.set_cli(path, xpath, member_list)
     except pan.config.PanConfigError as msg:
