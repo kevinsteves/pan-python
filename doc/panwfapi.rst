@@ -98,6 +98,7 @@ DESCRIPTION
   2            Windows XP, Adobe Reader 9.4.0, Flash 10, Office 2007
   3            Windows XP, Adobe Reader 11, Flash 11, Office 2010
   4            Windows 7, Adobe Reader 11, Flash 11, Office 2010
+  5            Windows 7 x64 SP1, Adobe Reader 11, Flash 11, Office 2010
   201          Android 2.3, API 10, avd2.3.1
   ===========  ===================
 
