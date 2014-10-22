@@ -1,6 +1,43 @@
 Release History
 ===============
 
+0.5.0 (2014-10-22)
+------------------
+
+- Change debug messages in modules from print to stderr to log using
+  the logging module.  See the section 'Debugging and Logging' in
+  pan.wfapi.rst and pan.xapi.rst for an example of configuring the
+  logging module to enable debug output.
+
+  IMPORTANT NOTE: the debug argument has been removed from the
+  constructors, so programs using them must be modified.
+
+- Add platform ID for Windows 7 64-bit sandbox to WildFire
+  documentaton.
+
+- Fix bug in panconf.py: positional arguments not initialized to none
+  in conf_set()
+
+- Remove undocumented xml_python() method from pan.xapi and pan.wfapi.
+  Use pan.config if you need this.
+
+- Add 'serial' varname to .panrc.  Allows you to have tags which
+  reference a Panorama managed device via redirection.  Suggested by
+  Jonathan Kaplan.
+
+- Add example to panxapi.rst: Print operational command variable using
+  shell pipeline.
+
+- Document --sync, --interval, --timeout for panxapi.py
+
+- Add --validate to panxapy.py which runs commit with a cmd argument
+  of <commit><validate></validate></commit> to validate the
+  configuration.  This is a new feature in PAN-OS 6.0.
+
+- Fix keygen() to return api_key as documented.
+
+- Add support for type=config&action=override.  From btorres-gil
+
 0.4.0 (2014-09-14)
 ------------------
 
