@@ -52,7 +52,7 @@ class PanCommit:
                  force=False,
                  commit_all=False,
                  merge_with_candidate=False):
-        self.log = logging.getLogger(__name__).log
+        self._log = logging.getLogger(__name__).log
         self._validate = validate
         self._force = force
         self._commit_all = commit_all
@@ -135,7 +135,7 @@ class PanCommit:
 
         s += '</shared-policy></commit-all>'
 
-        self.log(DEBUG1, 'commit-all cmd: %s', s)
+        self._log(DEBUG1, 'commit-all cmd: %s', s)
 
         return s
 
@@ -171,7 +171,7 @@ class PanCommit:
 
         s += '</commit>'
 
-        self.log(DEBUG1, 'commit cmd: %s', s)
+        self._log(DEBUG1, 'commit cmd: %s', s)
 
         return s
 

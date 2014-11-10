@@ -120,7 +120,7 @@ class PanWFapi:
                  cacloud=True,
                  cafile=None,
                  capath=None):
-        self.log = logging.getLogger(__name__).log
+        self._log = logging.getLogger(__name__).log
         self.tag = tag
         self.hostname = hostname
         self.api_key = None
@@ -128,9 +128,9 @@ class PanWFapi:
         self.cafile = cafile
         self.capath = capath
 
-        self.log(DEBUG3, 'Python version: %s', sys.version)
-        self.log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
-        self.log(DEBUG3, 'pan-python version: %s', __version__)
+        self._log(DEBUG3, 'Python version: %s', sys.version)
+        self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
+        self._log(DEBUG3, 'pan-python version: %s', __version__)
 
         if ((cacloud and sys.hexversion >= 0x03020000) and
                 (self.cafile is None and self.capath is None)):
@@ -176,7 +176,7 @@ class PanWFapi:
             self.uri = 'https://%s' % self.hostname
 
         if _legacy_urllib:
-            self.log(DEBUG2, 'using legacy urllib')
+            self._log(DEBUG2, 'using legacy urllib')
 
     def __str__(self):
         return '\n'.join((': '.join((k, str(self.__dict__[k]))))
@@ -214,8 +214,8 @@ class PanWFapi:
             body = [x.rstrip() for x in body]
             body = set(body)
 
-        self.log(DEBUG3, '__get_header(%s): %s', name, s)
-        self.log(DEBUG3, '__get_header: %s', body)
+        self._log(DEBUG3, '__get_header(%s): %s', name, s)
+        self._log(DEBUG3, '__get_header: %s', body)
 
         return body
 
@@ -270,7 +270,7 @@ class PanWFapi:
         return True
 
     def __set_xml_response(self, message_body):
-        self.log(DEBUG2, '__set_xml_response: %s', repr(message_body))
+        self._log(DEBUG2, '__set_xml_response: %s', repr(message_body))
         self.response_type = 'xml'
 
         _message_body = message_body.decode(_encoding)
@@ -300,7 +300,7 @@ class PanWFapi:
         return True
 
     def __set_html_response(self, message_body):
-        self.log(DEBUG2, '__set_html_response: %s', repr(message_body))
+        self._log(DEBUG2, '__set_html_response: %s', repr(message_body))
         self.response_type = 'html'
 
         _message_body = message_body.decode()
@@ -322,8 +322,8 @@ class PanWFapi:
         if not s:
             return None
 
-        self.log(DEBUG3, 'xml_root: %s', type(s))
-        self.log(DEBUG3, 'xml_root.decode(): %s', type(s.decode(_encoding)))
+        self._log(DEBUG3, 'xml_root: %s', type(s))
+        self._log(DEBUG3, 'xml_root.decode(): %s', type(s.decode(_encoding)))
         return s.decode(_encoding)
 
     # see http://bugs.python.org/issue18543
@@ -367,19 +367,19 @@ class PanWFapi:
         url = self.uri
         url += request_uri
 
-        self.log(DEBUG1, 'URL: %s', url)
-        self.log(DEBUG1, 'headers: %s', headers)
+        self._log(DEBUG1, 'URL: %s', url)
+        self._log(DEBUG1, 'headers: %s', headers)
 
         # body must by type 'bytes' for 3.x
         if _isunicode(body):
             body = body.encode()
 
-        self.log(DEBUG3, 'body: %s', repr(body))
+        self._log(DEBUG3, 'body: %s', repr(body))
 
         request = Request(url, body, headers)
 
-        self.log(DEBUG1, 'method: %s', request.get_method())
-        self.log(DEBUG1, 'headers: %s', request.header_items())
+        self._log(DEBUG1, 'method: %s', request.get_method())
+        self._log(DEBUG1, 'headers: %s', request.header_items())
 
         kwargs = {
             'url': request,
@@ -402,7 +402,7 @@ class PanWFapi:
 
         # invalid cafile, capath
         except (URLError, IOError) as e:
-            self.log(DEBUG2, 'urlopen() exception: %s', sys.exc_info())
+            self._log(DEBUG2, 'urlopen() exception: %s', sys.exc_info())
             self._msg = str(e)
             return False
 
@@ -420,10 +420,10 @@ class PanWFapi:
             elif self.http_code in responses:
                 self.http_reason = responses[self.http_code]
 
-        self.log(DEBUG2, 'HTTP response code: %s', self.http_code)
-        self.log(DEBUG2, 'HTTP response reason: %s', self.http_reason)
-        self.log(DEBUG2, 'HTTP response headers:')
-        self.log(DEBUG2, '%s', response.info())
+        self._log(DEBUG2, 'HTTP response code: %s', self.http_code)
+        self._log(DEBUG2, 'HTTP response reason: %s', self.http_reason)
+        self._log(DEBUG2, 'HTTP response headers:')
+        self._log(DEBUG2, '%s', response.info())
 
         if not (200 <= self.http_code < 300):
             self._msg = 'HTTP Error %s: %s' % (self.http_code,
@@ -444,16 +444,16 @@ class PanWFapi:
         buf = f.read()
         f.close()
 
-        self.log(DEBUG2, 'path: %s %d', type(path), len(path))
-        self.log(DEBUG2, 'path: %s size: %d', path, len(buf))
+        self._log(DEBUG2, 'path: %s %d', type(path), len(path))
+        self._log(DEBUG2, 'path: %s size: %d', path, len(buf))
         if logging.getLogger(__name__).getEffectiveLevel() == DEBUG3:
             import hashlib
             md5 = hashlib.md5()
             md5.update(buf)
             sha256 = hashlib.sha256()
             sha256.update(buf)
-            self.log(DEBUG3, 'MD5: %s', md5.hexdigest())
-            self.log(DEBUG3, 'SHA256: %s', sha256.hexdigest())
+            self._log(DEBUG3, 'MD5: %s', md5.hexdigest())
+            self._log(DEBUG3, 'SHA256: %s', sha256.hexdigest())
 
         return buf
 
@@ -616,7 +616,7 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
             self._msg = "Can't create cloud cafile: %s" % e
             return None
 
-        self.log(DEBUG2, '__cacloud: %s', tf.name)
+        self._log(DEBUG2, '__cacloud: %s', tf.name)
 
         return tf
 
@@ -637,7 +637,7 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
 
 class _MultiPartFormData:
     def __init__(self):
-        self.log = logging.getLogger(__name__).log
+        self._log = logging.getLogger(__name__).log
         self.parts = []
         self.boundary = self._boundary()
 
@@ -664,11 +664,11 @@ class _MultiPartFormData:
         try:
             import os
             seq = os.urandom(rand_bytes)
-            self.log(DEBUG1, '_MultiPartFormData._boundary: %s',
+            self._log(DEBUG1, '_MultiPartFormData._boundary: %s',
                      'using os.urandom')
         except NotImplementedError:
             import random
-            self.log(DEBUG1, '_MultiPartFormData._boundary: %s',
+            self._log(DEBUG1, '_MultiPartFormData._boundary: %s',
                      'using random')
             seq = bytearray()
             [seq.append(random.randrange(256)) for i in range(rand_bytes)]
@@ -705,7 +705,7 @@ class _MultiPartFormData:
 
 class _FormDataPart:
     def __init__(self, name=None, body=None):
-        self.log = logging.getLogger(__name__).log
+        self._log = logging.getLogger(__name__).log
         self.headers = []
         self.add_header(b'Content-Disposition: form-data')
         self.append_header('name', name)
@@ -715,22 +715,22 @@ class _FormDataPart:
 
     def add_header(self, header):
         self.headers.append(header)
-        self.log(DEBUG1, '_FormDataPart.add_header: %s', self.headers[-1])
+        self._log(DEBUG1, '_FormDataPart.add_header: %s', self.headers[-1])
 
     def append_header(self, name, value):
         self.headers[-1] += b'; ' + self._encode_field(name, value)
-        self.log(DEBUG1, '_FormDataPart.append_header: %s', self.headers[-1])
+        self._log(DEBUG1, '_FormDataPart.append_header: %s', self.headers[-1])
 
     def _encode_field(self, name, value):
-        self.log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+        self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
                  type(name), type(value))
         if not _rfc2231_encode:
             s = '%s="%s"' % (name, value)
-            self.log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+            self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
                      type(s), s)
             if _isunicode(s):
                 s = s.encode('utf-8')
-                self.log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+                self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
                          type(s), s)
             return s
 
@@ -738,9 +738,9 @@ class _FormDataPart:
             try:
                 return ('%s="%s"' % (name, value)).encode('ascii')
             except UnicodeEncodeError:
-                self.log(DEBUG1, 'UnicodeEncodeError 3.x')
+                self._log(DEBUG1, 'UnicodeEncodeError 3.x')
             except UnicodeDecodeError:  # 2.x
-                self.log(DEBUG1, 'UnicodeDecodeError 2.x')
+                self._log(DEBUG1, 'UnicodeDecodeError 2.x')
         # RFC 2231
         value = email.utils.encode_rfc2231(value, 'utf-8')
         return ('%s*=%s' % (name, value)).encode('ascii')
@@ -749,7 +749,7 @@ class _FormDataPart:
         if _isunicode(body):
             body = body.encode('latin-1')
         self.body = body
-        self.log(DEBUG1, '_FormDataPart.add_body: %s %d',
+        self._log(DEBUG1, '_FormDataPart.add_body: %s %d',
                  type(self.body), len(self.body))
 
     def serialize(self):

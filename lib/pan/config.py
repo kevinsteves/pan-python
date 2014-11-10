@@ -36,19 +36,19 @@ class PanConfig:
     def __init__(self,
                  config=None,
                  tags_forcelist=_tags_forcelist):
-        self.log = logging.getLogger(__name__).log
+        self._log = logging.getLogger(__name__).log
         self._config_version = 0  # 0 indicates not yet set
         self._config_panorama = None
         self._config_multi_vsys = None
 
-        self.log(DEBUG3, 'Python version: %s', sys.version)
-        self.log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
-        self.log(DEBUG3, 'pan-python version: %s', __version__)
+        self._log(DEBUG3, 'Python version: %s', sys.version)
+        self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
+        self._log(DEBUG3, 'pan-python version: %s', __version__)
 
         if config is None:
             raise PanConfigError('no config')
 
-        self.log(DEBUG2, '%s', type(config))
+        self._log(DEBUG2, '%s', type(config))
 
         if hasattr(config, 'tag'):
             self.config_root = config
@@ -58,12 +58,12 @@ class PanConfig:
             except etree.ParseError as msg:
                 raise PanConfigError('ElementTree.fromstring ParseError: %s'
                                      % msg)
-        self.log(DEBUG1, 'config_root: %s', self.config_root)
+        self._log(DEBUG1, 'config_root: %s', self.config_root)
 
     def __find_xpath(self, xpath=None):
 # Not a true Xpath
 # http://docs.python.org/dev/library/xml.etree.elementtree.html#xpath-support
-        self.log(DEBUG1, 'xpath: %s', xpath)
+        self._log(DEBUG1, 'xpath: %s', xpath)
         if xpath:
             try:
                 nodes = self.config_root.findall(xpath)
@@ -72,7 +72,7 @@ class PanConfig:
         else:
             nodes = [self.config_root]
 
-        self.log(DEBUG1, 'xpath nodes: %s', nodes)
+        self._log(DEBUG1, 'xpath nodes: %s', nodes)
 
         return nodes
 
@@ -132,8 +132,8 @@ class PanConfig:
         if not s:
             return None
 
-        self.log(DEBUG3, 'xml: %s', type(s))
-        self.log(DEBUG3, 'xml.decode(): %s', type(s.decode(_encoding)))
+        self._log(DEBUG3, 'xml: %s', type(s))
+        self._log(DEBUG3, 'xml.decode(): %s', type(s.decode(_encoding)))
         return s.decode(_encoding)
 
     def python(self, xpath=None):
@@ -160,7 +160,7 @@ class PanConfig:
             text_strip = text.strip()
         attrs = elem.items()
 
-        self.log(DEBUG3, 'TAG(forcelist=%s): "%s"', forcelist, tag)
+        self._log(DEBUG3, 'TAG(forcelist=%s): "%s"', forcelist, tag)
 
         if forcelist:
             if tag not in obj:
@@ -231,12 +231,12 @@ class PanConfig:
             text_strip = text.strip()
         attrs = elem.items()
 
-        self.log(DEBUG3, 'TAG(elem=%d): "%s"', len(elem), tag)
-        self.log(DEBUG3, 'text_strip: "%s"', text_strip)
-        self.log(DEBUG3, 'attrs: %s', attrs)
-        self.log(DEBUG3, 'path: "%s"', path)
-        self.log(DEBUG3, 'obj: %s', obj)
-        self.log(DEBUG3, '')
+        self._log(DEBUG3, 'TAG(elem=%d): "%s"', len(elem), tag)
+        self._log(DEBUG3, 'text_strip: "%s"', text_strip)
+        self._log(DEBUG3, 'attrs: %s', attrs)
+        self._log(DEBUG3, 'path: "%s"', path)
+        self._log(DEBUG3, 'obj: %s', obj)
+        self._log(DEBUG3, '')
 
         if not text_strip:
             obj.append(path)
@@ -286,13 +286,13 @@ class PanConfig:
             text_strip = text.strip()
         attrs = elem.items()
 
-        self.log(DEBUG3, 'TAG(elem=%d member_list=%s): "%s"',
+        self._log(DEBUG3, 'TAG(elem=%d member_list=%s): "%s"',
                  len(elem), member_list, tag)
-        self.log(DEBUG3, 'text_strip: "%s"', text_strip)
-        self.log(DEBUG3, 'attrs: %s', attrs)
-        self.log(DEBUG3, 'path: "%s"', path)
-        self.log(DEBUG3, 'obj: %s', obj)
-        self.log(DEBUG3, '')
+        self._log(DEBUG3, 'text_strip: "%s"', text_strip)
+        self._log(DEBUG3, 'attrs: %s', attrs)
+        self._log(DEBUG3, 'path: "%s"', path)
+        self._log(DEBUG3, 'obj: %s', obj)
+        self._log(DEBUG3, '')
 
         for k, v in attrs:
             if k == 'name':
@@ -300,7 +300,7 @@ class PanConfig:
 
         if member_list:
             nodes = elem.findall('./member')
-            self.log(DEBUG3, 'TAG(members=%d): "%s"', len(nodes), tag)
+            self._log(DEBUG3, 'TAG(members=%d): "%s"', len(nodes), tag)
             if len(nodes) > 1:
                 members = []
                 for e in nodes:
