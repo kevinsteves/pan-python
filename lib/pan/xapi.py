@@ -670,7 +670,7 @@ class PanXapi:
         if not self.__set_response(response):
             raise PanXapiError(self.status_detail)
 
-    def commit(self, cmd=None, action=None, sync=False,
+    def commit(self, cmd=None, action=None, sync=False, sync_all=False,
                interval=None, timeout=None):
         self.__set_api_key()
         self.__clear_response()
@@ -733,9 +733,19 @@ class PanXapi:
             if status is None:
                 raise PanXapiError('no status element in ' +
                                    "'%s' response" % cmd)
-            if status.text == 'FIN':
-                # XXX commit vs. commit-all job status
+            if status.text == 'FIN' and (action != 'all' or (action == 'all' and not sync_all)):
                 return
+
+            if status.text == 'FIN' and action == 'all' and sync_all:
+                device_commits_finished = True
+                path = './result/job/devices/entry/result'
+                device_results = self.element_root.findall(path)
+                for device_result in device_results:
+                    if device_result.text == 'PEND':
+                        device_commits_finished = False
+                        break
+                if device_commits_finished:
+                    return
 
             self._log(DEBUG2, 'job %s status %s', job.text, status.text)
 
