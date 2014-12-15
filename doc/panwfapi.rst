@@ -221,7 +221,7 @@ EXAMPLES
  Add WildFire API key to .panrc file.
  ::
 
-  $ echo 'api_key=wildfire%d3b07384d113edec49eaa6238ad5ff00' >>.panrc
+  $ echo 'api_key%wildfire=d3b07384d113edec49eaa6238ad5ff00' >>.panrc
 
  Submit file to WildFire for analysis and print XML response.
  ::
