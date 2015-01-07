@@ -231,6 +231,11 @@ class PanXapi:
         elif ('application/xml' in content_type and
               'charset=utf-8' in content_type):
             return self.__set_xml_response(message_body)
+
+        # XXX no charset
+        elif ('application/xml' in content_type):
+            return self.__set_xml_response(message_body)
+
         else:
             msg = 'no handler for content-type: %s' % content_type
             self.status_detail = msg
