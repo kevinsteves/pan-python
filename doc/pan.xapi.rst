@@ -477,6 +477,13 @@ export_result
  - content: file contents
  - category: export category string
 
+element_root
+~~~~~~~~~~~~
+
+ The element_root data attribute is set to the root element of the
+ parsed response document XML tree; it is an **Element** object and is
+ set using etree.ElementTree.fromstring().
+
 
 Debugging and Logging
 ---------------------
