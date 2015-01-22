@@ -542,6 +542,27 @@ def print_status(xapi, action, exception_msg=None):
     print(file=sys.stderr)
 
 
+def xml_python(xapi, result=False):
+    if result:
+        if (xapi.element_result is None or
+            not len(xapi.element_result)):
+            return None
+        elem = list(xapi.element_result)[0]
+    else:
+        if xapi.element_root is None:
+            return None
+        elem = xapi.element_root
+
+    try:
+        conf = pan.config.PanConfig(config=elem)
+    except pan.config.PanConfigError as msg:
+        print('pan.config.PanConfigError:', msg, file=sys.stderr)
+        sys.exit(1)
+
+    d = conf.python()
+    return d
+
+
 def print_response(xapi, options):
     if options['print_xml']:
         if options['print_result']:
@@ -551,30 +572,13 @@ def print_response(xapi, options):
         if s is not None:
             print(s)
 
-    if options['print_python'] or options['print_json']:
-        if options['print_result']:
-            if (xapi.element_result is None or
-                    not len(xapi.element_result)):
-                return
-            elem = list(xapi.element_result)[0]
-        else:
-            if xapi.element_root is None:
-                return
-            elem = xapi.element_root
-
-        try:
-            conf = pan.config.PanConfig(config=elem)
-        except pan.config.PanConfigError as msg:
-            print('pan.config.PanConfigError:', msg, file=sys.stderr)
-            sys.exit(1)
-
-        d = conf.python()
-
-        if d:
-            if options['print_python']:
-                print('var1 =', pprint.pformat(d))
-            if options['print_json']:
-                print(json.dumps(d, sort_keys=True, indent=2))
+        if options['print_python'] or options['print_json']:
+            d = xml_python(xapi, options, options['print_result'])
+            if d:
+                if options['print_python']:
+                    print('var1 =', pprint.pformat(d))
+                if options['print_json']:
+                    print(json.dumps(d, sort_keys=True, indent=2))
 
 
 def save_pcap(xapi, options):
@@ -623,7 +627,7 @@ def save_pcap(xapi, options):
 
 
 def pcap_listing(xapi, options):
-    d = xapi.xml_python(result=True)
+    d = xml_python(xapi, result=True)
 
     if d and 'pcap-listing' in d and 'category' in d['pcap-listing']:
         pcap_listing = d['pcap-listing']
