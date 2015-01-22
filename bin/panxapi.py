@@ -573,7 +573,7 @@ def print_response(xapi, options):
             print(s)
 
         if options['print_python'] or options['print_json']:
-            d = xml_python(xapi, options, options['print_result'])
+            d = xml_python(xapi, options['print_result'])
             if d:
                 if options['print_python']:
                     print('var1 =', pprint.pformat(d))
