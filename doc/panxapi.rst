@@ -81,7 +81,7 @@ SYNOPSIS
     -j                    print XML response in JSON to stdout
     -r                    print result content when printing response
     -X                    convert text command to XML
-    --ls                  print formatted pcap-listing to stdout
+    --ls                  print formatted PCAP listing to stdout
     --recursive           recursive export
     -H                    use http URL scheme (default https)
     -G                    use HTTP GET method (default POST)

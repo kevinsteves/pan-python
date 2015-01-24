@@ -172,7 +172,7 @@ def main():
             print_status(xapi, action)
             print_response(xapi, options)
             if options['pcap_listing']:
-                pcap_listing(xapi, options)
+                pcap_listing(xapi, options['export'])
             save_pcap(xapi, options)
 
         if options['log'] is not None:
@@ -626,15 +626,16 @@ def save_pcap(xapi, options):
           file=sys.stderr)
 
 
-def pcap_listing(xapi, options):
+def pcap_listing(xapi, category):
     d = xml_python(xapi, result=True)
 
-    if d and 'pcap-listing' in d and 'category' in d['pcap-listing']:
-        pcap_listing = d['pcap-listing']
-        category = pcap_listing['category']
-        if 'file' in pcap_listing:
+    if d and 'dir-listing' in d:
+        pcap_listing = d['dir-listing']
+        if pcap_listing is None:
+            print('No %s directories' % category)
+        elif 'file' in pcap_listing:
             file = pcap_listing['file']
-            if type(file) == type(''):
+            if isinstance(file, str):
                 file = [file]
             size = len(file)
             print('%d %s files:' % (size, category))
@@ -642,7 +643,7 @@ def pcap_listing(xapi, options):
                 print('    %s' % item)
         elif 'dir' in pcap_listing:
             dir = pcap_listing['dir']
-            if type(dir) == type(''):
+            if isinstance(dir, str):
                 dir = [dir]
             size = len(dir)
             print('%d %s directories:' % (size, category))
@@ -727,7 +728,7 @@ def usage():
     -j                    print XML response in JSON to stdout
     -r                    print result content when printing response
     -X                    convert text command to XML
-    --ls                  print formatted pcap-listing to stdout
+    --ls                  print formatted PCAP listing to stdout
     --recursive           recursive export
     -H                    use http URL scheme (default https)
     -G                    use HTTP GET method (default POST)
