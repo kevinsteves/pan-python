@@ -236,6 +236,11 @@ class PanXapi:
         elif ('application/xml' in content_type):
             return self.__set_xml_response(message_body)
 
+        # XXX bug in 5.0 and 6.0: content-type text/plain for export pcap
+        elif ('text/plain' in content_type and
+              self.__get_header(response, 'content-disposition')):
+            return self.__set_stream_response(response, message_body)
+
         else:
             msg = 'no handler for content-type: %s' % content_type
             self.status_detail = msg
