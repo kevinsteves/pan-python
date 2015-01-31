@@ -2,7 +2,7 @@
  NOTE: derived from documentation in PAN-perl
 
  Copyright (c) 2011 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -354,6 +354,9 @@ op(cmd=None, vsys=None, cmd_xml=False)
 export(category=None, from_name=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+export(category=None, pcapid=None, search_time=None, serialno=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
  The export() method performs the ``type=export`` export file API
  request with the **category** argument and optional **from** argument
  (*from_name* function argument).  If the request is successful, the
@@ -368,8 +371,37 @@ export(category=None, from_name=None)
  **from_name** argument is used to specify the source for a file list
  or file export.
 
+Threat PCAP export
+##################
+
+ In PAN-OS 6.0 the extended packet capture feature was added and is
+ used for threat PCAPs.  As a result the **from** argument is no
+ longer used to specify the source file, and it is not possible to
+ obtain a file list.
+
+ The PCAP is specified using the **pcapid**, **search_time** and
+ **serialno** arguments.
+
+ **pcapid** is a unique numeric identifier for the extended PCAP
+ and is obtained from the **pcap_id** field in the THREAT log.
+
+ **search_time** is used to narrow the search for the PCAP ID and is
+ used to set a time window in the range *-5 minutes* to *+2 hours* of
+ the time specified.  The search time is typically set to the
+ **receive_time** field in the THREAT log.  The PAN-OS log time string
+ format is used, for example: 2015/01/20 10:51:09.
+
+ **search_time** is required in the API request; if not specified in
+ the export() method it will be set to the threat epoch time which is
+ part of the **pcapid**.
+
+ **serialno** is required when exporting from Panorama and is used to
+ specify the device of the PCAP.  It is also currently required when
+ exporting from firewall devices, however this requirement will be
+ removed in a future version of PAN-OS.
+
 log(self, log_type=None, nlogs=None, skip=None, filter=None, interval=None, timeout=None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The log() method performs the ``type=log`` retrieve log API request
  with the **log-type** argument.
@@ -483,7 +515,6 @@ element_root
  The element_root data attribute is set to the root element of the
  parsed response document XML tree; it is an **Element** object and is
  set using etree.ElementTree.fromstring().
-
 
 Debugging and Logging
 ---------------------

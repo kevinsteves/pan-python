@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -261,7 +261,7 @@ class PanXapi:
 
         filename = None
         for type in content_disposition:
-            result = re.search(r'^filename=([-\w]+)$', type)
+            result = re.search(r'^filename=([-\w\d\.]+)$', type)
             if result:
                 filename = result.group(1)
                 break
@@ -783,7 +783,24 @@ class PanXapi:
         if not self.__set_response(response):
             raise PanXapiError(self.status_detail)
 
-    def export(self, category=None, from_name=None, to_name=None):
+    @staticmethod
+    def pcapid_time(pcapid):
+        # bit 25-56 is epoch time of threat
+        mask = 0x01fffffffe000000
+        pcapid &= mask
+        pcapid >>= 25
+
+        return pcapid
+
+    @staticmethod
+    def panos_time(seconds):
+        format = '%Y/%m/%d %H:%M:%S'
+        s = time.strftime(format, time.localtime(seconds))
+
+        return s
+
+    def export(self, category=None, from_name=None, to_name=None,
+               pcapid=None, search_time=None, serialno=None):
         self.__set_api_key()
         self.__clear_response()
 
@@ -796,6 +813,23 @@ class PanXapi:
             query['from'] = from_name
         if to_name is not None:
             query['to'] = to_name
+        if pcapid is not None:
+            query['pcapid'] = pcapid
+        if search_time is not None:
+            query['search-time'] = search_time
+        elif pcapid is not None:
+            if isinstance(pcapid, str):
+                try:
+                    n = int(pcapid)
+                except ValueError:
+                    raise PanXapiError('Invalid pcapid: %s' % pcapid)
+            pcap_time = self.pcapid_time(n)
+            panos_time = self.panos_time(pcap_time)
+            query['search-time'] = panos_time
+            self._log(DEBUG1, 'pcapid time: %s %s', pcap_time,
+                      panos_time)
+        if serialno is not None:
+            query['serialno'] = serialno
 
         response = self.__api_request(query)
         if not response:

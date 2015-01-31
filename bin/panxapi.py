@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -167,8 +167,14 @@ def main():
 
         if options['export'] is not None:
             action = 'export'
-            xapi.export(category=options['export'],
-                        from_name=options['src'])
+            if options['pcapid'] is not None:
+                xapi.export(category=options['export'],
+                            pcapid=options['pcapid'],
+                            search_time=options['stime'],
+                            serialno=options['serial'])
+            else:
+                xapi.export(category=options['export'],
+                            from_name=options['src'])
             print_status(xapi, action)
             print_response(xapi, options)
             if options['pcap_listing']:
@@ -292,6 +298,8 @@ def parse_opts():
         'filter': None,
         'interval': None,
         'job_timeout': None,
+        'stime': None,
+        'pcapid': None,
         'api_key': None,
         'cafile': None,
         'capath': None,
@@ -322,6 +330,7 @@ def parse_opts():
                     'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
                     'interval=', 'timeout=',
+                    'stime=', 'pcapid=',
                     ]
 
     try:
@@ -422,6 +431,10 @@ def parse_opts():
             options['interval'] = arg
         elif opt == '--timeout':
             options['job_timeout'] = arg
+        elif opt == '--stime':
+            options['stime'] = arg
+        elif opt == '--pcapid':
+            options['pcapid'] = arg
         elif opt == '-h':
             options['hostname'] = arg
         elif opt == '-K':
@@ -582,10 +595,15 @@ def print_response(xapi, options):
 
 
 def save_pcap(xapi, options):
-    if xapi.export_result is None or options['src'] is None:
+    if xapi.export_result is None:
         return
 
-    src_dir, src_file = os.path.split(options['src'])
+    if options['src'] is not None:
+        src_dir, src_file = os.path.split(options['src'])
+    else:
+        # 6.0 threat-pcap
+        src_dir = None
+        src_file = xapi.export_result['file']
 
     path = ''
     path_done = False
@@ -714,7 +732,7 @@ def usage():
     -h hostname
     -P port               URL port number
     --serial number       serial number for Panorama redirection/
-                          commit-all
+                          commit-all/threat-pcap
     --group name          device group for commit-all
     --merge               merge with candidate for commit-all
     --nlogs num           retrieve num logs
@@ -722,6 +740,8 @@ def usage():
     --filter filter       log selection filter
     --interval seconds    log/commit job query interval
     --timeout seconds     log/commit job query timeout
+    --stime time          search time for threat-pcap
+    --pcapid id           threat-pcap ID
     -K api_key
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout

@@ -2,7 +2,7 @@
  NOTE: derived from documentation in PAN-perl
 
  Copyright (c) 2011 Palo Alto Networks, Inc. <info@paloaltonetworks.com>
- Copyright (c) 2013 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -67,7 +67,7 @@ SYNOPSIS
     -h hostname
     -P port               URL port number
     --serial number       serial number for Panorama redirection/
-                          commit-all
+                          commit-all/threat-pcap
     --group name          device group for commit-all
     --merge               merge with candidate for commit-all
     --nlogs num           retrieve num logs
@@ -75,6 +75,8 @@ SYNOPSIS
     --filter filter       log selection filter
     --interval seconds    log/commit job query interval
     --timeout seconds     log/commit job query timeout
+    --stime time          search time for threat-pcap
+    --pcapid id           threat-pcap ID
     -K api_key
     -x                    print XML response to stdout
     -p                    print XML response in Python to stdout
@@ -386,6 +388,12 @@ DESCRIPTION
 
   The default is to try forever.
 
+ ``--stime`` *time*
+  Specify the search time for threat-pcap export.
+
+ ``--pcapid`` *id*
+  Specify the PCAP ID for threat-pcap export.
+
  ``-K`` *api_key*
   Specify the **api_key** used in API requests.  This is not required to
   perform API requests if the **api_username** and **api_password** are
@@ -636,6 +644,14 @@ EXAMPLES
 
   $ panxapi.py -C '' --validate --sync
   commit: success: "Configuration is valid"
+
+ Export threat-pcap file on PAN-OS 6.0.
+ ::
+
+  $ panxapi.py --export threat-pcap --pcapid 1200628399744221211 \
+  > --serial 001609032345
+  export: success
+  exported threat-pcap: 1200628399744221211.pcap
 
  Print operational command variable using shell pipeline.
  ::
