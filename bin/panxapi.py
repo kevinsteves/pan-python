@@ -179,7 +179,7 @@ def main():
             print_response(xapi, options)
             if options['pcap_listing']:
                 pcap_listing(xapi, options['export'])
-            save_pcap(xapi, options)
+            save_attachment(xapi, options)
 
         if options['log'] is not None:
             action = 'log'
@@ -594,14 +594,16 @@ def print_response(xapi, options):
                     print(json.dumps(d, sort_keys=True, indent=2))
 
 
-def save_pcap(xapi, options):
+def save_attachment(xapi, options):
     if xapi.export_result is None:
         return
 
     if options['src'] is not None:
+        # pcap
         src_dir, src_file = os.path.split(options['src'])
     else:
         # 6.0 threat-pcap
+        # device-state
         src_dir = None
         src_file = xapi.export_result['file']
 
