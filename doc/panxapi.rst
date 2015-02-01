@@ -82,6 +82,7 @@ SYNOPSIS
     -p                    print XML response in Python to stdout
     -j                    print XML response in JSON to stdout
     -r                    print result content when printing response
+    --text                print text response to stdout
     -X                    convert text command to XML
     --ls                  print formatted PCAP listing to stdout
     --recursive           recursive export
@@ -413,6 +414,11 @@ DESCRIPTION
   <response><result> elements).  If a <result> element is not present
   this prints the entire response.  This option applies to **-x**,
   **-p** and **-j** response output.
+
+ ``--text``
+  Print text (response content-type is text/plain) to *stdout*.
+
+  This is used for retrieving exported response pages.
 
  ``-X``
   Convert a CLI-style *cmd* argument to XML.  This works by converting all

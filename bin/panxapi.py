@@ -307,6 +307,7 @@ def parse_opts():
         'print_result': False,
         'print_python': False,
         'print_json': False,
+        'print_text': False,
         'cmd_xml': False,
         'pcap_listing': False,
         'recursive': False,
@@ -330,7 +331,7 @@ def parse_opts():
                     'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
                     'interval=', 'timeout=',
-                    'stime=', 'pcapid=',
+                    'stime=', 'pcapid=', 'text',
                     ]
 
     try:
@@ -451,6 +452,8 @@ def parse_opts():
             options['print_json'] = True
         elif opt == '-r':
             options['print_result'] = True
+        elif opt == '--text':
+            options['print_text'] = True
         elif opt == '-X':
             options['cmd_xml'] = True
         elif opt == '--ls':
@@ -592,6 +595,9 @@ def print_response(xapi, options):
                     print('var1 =', pprint.pformat(d))
                 if options['print_json']:
                     print(json.dumps(d, sort_keys=True, indent=2))
+
+    if options['print_text'] and xapi.text_document is not None:
+        print(xapi.text_document, end='')
 
 
 def save_attachment(xapi, options):
@@ -749,6 +755,7 @@ def usage():
     -p                    print XML response in Python to stdout
     -j                    print XML response in JSON to stdout
     -r                    print result content when printing response
+    --text                print text response to stdout
     -X                    convert text command to XML
     --ls                  print formatted PCAP listing to stdout
     --recursive           recursive export

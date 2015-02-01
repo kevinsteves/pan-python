@@ -498,11 +498,18 @@ status_detail
  received from the previous API request if one is available.  This is
  the value within a msg or line element.
 
+text_document
+~~~~~~~~~~~~~
+
+ The text_document data attribute contains the message body from the
+ previous API request when the response content-type is text/plain.
+
 export_result
 ~~~~~~~~~~~~~
 
  The export_result data attribute is a dictionary containing the
- result of the previous export() method request and contains the
+ result of the previous export() method request when the response
+ content-disposition is attachment.  The dictionary contains the
  following keys:
 
  - file: content-disposition response header filename

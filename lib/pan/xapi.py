@@ -186,6 +186,7 @@ class PanXapi:
         self.status_code = None
         self.status_detail = None
         self.xml_document = None
+        self.text_document = None
         self.element_root = None
         self.element_result = None
         self.export_result = None
@@ -240,6 +241,10 @@ class PanXapi:
         elif ('text/plain' in content_type and
               self.__get_header(response, 'content-disposition')):
             return self.__set_stream_response(response, message_body)
+
+        elif ('text/plain' in content_type and
+              'charset=utf-8' in content_type):
+            return self.__set_text_response(message_body)
 
         else:
             msg = 'no handler for content-type: %s' % content_type
@@ -313,6 +318,17 @@ class PanXapi:
             return True
         else:
             return False
+
+    def __set_text_response(self, message_body):
+        self.text_document = message_body.decode(_encoding)
+
+        self._log(DEBUG3, 'text_document: %s', self.text_document)
+        self._log(DEBUG3, 'message_body: %s', type(message_body))
+        self._log(DEBUG3, 'message_body.decode(): %s',
+                  type(self.text_document))
+
+        self.status = 'success'
+        return True
 
     def __get_response_msg(self):
         lines = []
