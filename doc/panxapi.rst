@@ -50,7 +50,7 @@ SYNOPSIS
     --ad-hoc query        perform ad hoc request
     --modify              insert known fields in ad hoc query
     -o cmd                execute operational command
-    --export category     export PCAP files
+    --export category     export files
     --log log-type        retrieve log files
     --src src             clone source node xpath
                           export source file/path/directory
@@ -240,13 +240,17 @@ DESCRIPTION
   *stdin*.
 
  ``--export`` *category*
-  Perform the ``action=export`` export packet capture (PCAP) API request.
+  Perform the ``type=export`` export file API request.
 
-  *category* specifies the type of PCAP to export or list:
+  *category* specifies the type of file to export or list:
 
   - application-pcap
   - threat-pcap
   - filter-pcap
+  - dlp-pcap
+  - configuration
+  - certificate
+  - *others* (see XML API Reference)
 
  ``--log`` *log-type*
   Perform the ``type=log`` retrieve log API request with the **log-type**
@@ -271,7 +275,7 @@ DESCRIPTION
   The **src** argument is used to specify:
 
   - date directory for application-pcap and threat-pcap PCAP file listing
-  - PCAP file path for exporting application-pcap and threat-pcap
+  - PCAP file path for exporting application-pcap, threat-pcap and dlp-pcap
   - file name for exporting filter-pcap
 
  ``--dst`` *dst*

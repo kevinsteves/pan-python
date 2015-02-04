@@ -770,7 +770,7 @@ def usage():
     --ad-hoc query        perform ad hoc request
     --modify              insert known fields in ad hoc query
     -o cmd                execute operational command
-    --export category     export PCAP files
+    --export category     export files
     --log log-type        retrieve log files
     --src src             clone source node xpath
                           export source file/path/directory
