@@ -307,8 +307,12 @@ class PanXapi:
             self.status_detail = 'no response element status attribute'
             return False
 
+        self._log(DEBUG2, 'response_attrib: %s', response_attrib)
+
         if 'status' in response_attrib:
             self.status = response_attrib['status']
+        else:
+            self.status = 'success'
         if 'code' in response_attrib:
             self.status_code = response_attrib['code']
 
