@@ -519,7 +519,7 @@ class PanXapi:
 
         return xml
 
-    def keygen(self):
+    def keygen(self, extra_qs=None):
         self.__clear_response()
 
         if (self.api_username is None or
@@ -534,6 +534,8 @@ class PanXapi:
             }
         if self.serial is not None:
             query['target'] = self.serial
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
 
         response = self.__api_request(query)
         if not response:
@@ -552,20 +554,49 @@ class PanXapi:
 
         return self.api_key
 
+    @staticmethod
+    def __qs_to_dict(qs):
+        if isinstance(qs, dict):
+            return qs
+
+        d = {}
+        try:
+            pairs = qs.split('&')
+            for pair in pairs:
+                key, value = pair.split('=', 1)
+                d[key] = value
+        except ValueError:
+            return None
+
+        return d
+
+    def __merge_extra_qs(self, query, qs):
+        if qs is None:
+            return query
+
+        if isinstance(qs, str):
+            d = self.__qs_to_dict(qs)
+            if d is None:
+                raise PanXapiError('Invalid extra_qs: %s:' % qs)
+        elif not isinstance(qs, dict):
+            raise PanXapiError('Invalid extra_qs: not dict or str')
+        else:
+            d = qs
+
+        x = query.copy()
+        x.update(d)
+
+        return x
+
     def ad_hoc(self, qs=None, xpath=None, modify_qs=False):
         self.__set_api_key()
         self.__clear_response()
 
         query = {}
         if qs is not None:
-            try:
-                pairs = qs.split('&')
-                for pair in pairs:
-                    key, value = pair.split('=', 1)
-                    query[key] = value
-            except ValueError:
-                raise PanXapiError('Invalid ad_hoc query: %s: %s' %
-                                   (qs, query))
+            query = self.__qs_to_dict(qs)
+            if query is False:
+                raise PanXapiError('Invalid ad_hoc query: %s' % qs)
 
         if modify_qs:
             if xpath is not None:
@@ -588,41 +619,41 @@ class PanXapi:
         if not self.__set_response(response):
             raise PanXapiError(self.status_detail)
 
-    def show(self, xpath=None):
+    def show(self, xpath=None, extra_qs=None):
         query = {}
         if xpath is not None:
             query['xpath'] = xpath
-        self.__type_config('show', query)
+        self.__type_config('show', query, extra_qs)
 
-    def get(self, xpath=None):
+    def get(self, xpath=None, extra_qs=None):
         query = {}
         if xpath is not None:
             query['xpath'] = xpath
-        self.__type_config('get', query)
+        self.__type_config('get', query, extra_qs)
 
-    def delete(self, xpath=None):
+    def delete(self, xpath=None, extra_qs=None):
         query = {}
         if xpath is not None:
             query['xpath'] = xpath
-        self.__type_config('delete', query)
+        self.__type_config('delete', query, extra_qs)
 
-    def set(self, xpath=None, element=None):
-        query = {}
-        if xpath is not None:
-            query['xpath'] = xpath
-        if element is not None:
-            query['element'] = element
-        self.__type_config('set', query)
-
-    def edit(self, xpath=None, element=None):
+    def set(self, xpath=None, element=None, extra_qs=None):
         query = {}
         if xpath is not None:
             query['xpath'] = xpath
         if element is not None:
             query['element'] = element
-        self.__type_config('edit', query)
+        self.__type_config('set', query, extra_qs)
 
-    def move(self, xpath=None, where=None, dst=None):
+    def edit(self, xpath=None, element=None, extra_qs=None):
+        query = {}
+        if xpath is not None:
+            query['xpath'] = xpath
+        if element is not None:
+            query['element'] = element
+        self.__type_config('edit', query, extra_qs)
+
+    def move(self, xpath=None, where=None, dst=None, extra_qs=None):
         query = {}
         if xpath is not None:
             query['xpath'] = xpath
@@ -630,17 +661,18 @@ class PanXapi:
             query['where'] = where
         if dst is not None:
             query['dst'] = dst
-        self.__type_config('move', query)
+        self.__type_config('move', query, extra_qs)
 
-    def rename(self, xpath=None, newname=None):
+    def rename(self, xpath=None, newname=None, extra_qs=None):
         query = {}
         if xpath is not None:
             query['xpath'] = xpath
         if newname is not None:
             query['newname'] = newname
-        self.__type_config('rename', query)
+        self.__type_config('rename', query, extra_qs)
 
-    def clone(self, xpath=None, xpath_from=None, newname=None):
+    def clone(self, xpath=None, xpath_from=None, newname=None,
+              extra_qs=None):
         query = {}
         if xpath is not None:
             query['xpath'] = xpath
@@ -648,17 +680,17 @@ class PanXapi:
             query['from'] = xpath_from
         if newname is not None:
             query['newname'] = newname
-        self.__type_config('clone', query)
+        self.__type_config('clone', query, extra_qs)
 
-    def override(self, xpath=None, element=None):
+    def override(self, xpath=None, element=None, extra_qs=None):
         query = {}
         if xpath is not None:
             query['xpath'] = xpath
         if element is not None:
             query['element'] = element
-        self.__type_config('override', query)
+        self.__type_config('override', query, extra_qs)
 
-    def __type_config(self, action, query):
+    def __type_config(self, action, query, extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
 
@@ -667,6 +699,8 @@ class PanXapi:
         query['key'] = self.api_key
         if self.serial is not None:
             query['target'] = self.serial
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
 
         response = self.__api_request(query)
         if not response:
@@ -675,7 +709,7 @@ class PanXapi:
         if not self.__set_response(response):
             raise PanXapiError(self.status_detail)
 
-    def user_id(self, cmd=None, vsys=None):
+    def user_id(self, cmd=None, vsys=None, extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
 
@@ -688,6 +722,8 @@ class PanXapi:
             query['vsys'] = vsys
         if self.serial is not None:
             query['target'] = self.serial
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
 
         response = self.__api_request(query)
         if not response:
@@ -697,7 +733,7 @@ class PanXapi:
             raise PanXapiError(self.status_detail)
 
     def commit(self, cmd=None, action=None, sync=False,
-               interval=None, timeout=None):
+               interval=None, timeout=None, extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
 
@@ -728,6 +764,8 @@ class PanXapi:
             query['cmd'] = cmd
         if action is not None:
             query['action'] = action
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
 
         response = self.__api_request(query)
         if not response:
@@ -773,12 +811,12 @@ class PanXapi:
             self._log(DEBUG2, 'sleep %.2f seconds', interval)
             time.sleep(interval)
 
-    def op(self, cmd=None, vsys=None, cmd_xml=False):
+    def op(self, cmd=None, vsys=None, cmd_xml=False, extra_qs=None):
         if cmd is not None and cmd_xml:
             cmd = self.cmd_xml(cmd)
-        self.__type_op(cmd, vsys)
+        self.__type_op(cmd, vsys, extra_qs)
 
-    def __type_op(self, cmd, vsys):
+    def __type_op(self, cmd, vsys, extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
 
@@ -791,6 +829,8 @@ class PanXapi:
         query['key'] = self.api_key
         if self.serial is not None:
             query['target'] = self.serial
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
 
         response = self.__api_request(query)
         if not response:
@@ -816,7 +856,8 @@ class PanXapi:
         return s
 
     def export(self, category=None, from_name=None, to_name=None,
-               pcapid=None, search_time=None, serialno=None):
+               pcapid=None, search_time=None, serialno=None,
+               extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
 
@@ -846,6 +887,8 @@ class PanXapi:
                       panos_time)
         if serialno is not None:
             query['serialno'] = serialno
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
 
         response = self.__api_request(query)
         if not response:
@@ -858,7 +901,7 @@ class PanXapi:
             self.export_result['category'] = category
 
     def log(self, log_type=None, nlogs=None, skip=None, filter=None,
-            interval=None, timeout=None):
+            interval=None, timeout=None, extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
 
@@ -891,6 +934,8 @@ class PanXapi:
             query['skip'] = skip
         if filter is not None:
             query['query'] = filter
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
 
         response = self.__api_request(query)
         if not response:

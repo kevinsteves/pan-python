@@ -76,51 +76,62 @@ def main():
         print('xapi.__str__()===>\n', xapi, '\n<===',
               sep='', file=sys.stderr)
 
-    try:
-        if options['ad_hoc'] is not None:
-            action = 'ad_hoc'
-            xapi.ad_hoc(qs=options['ad_hoc'],
-                        xpath=options['xpath'],
-                        modify_qs=options['modify'])
-            print_status(xapi, action)
-            print_response(xapi, options)
+    extra_qs_used = False
 
+    try:
         if options['keygen']:
             action = 'keygen'
-            xapi.keygen()
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+            xapi.keygen(extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
             print('API key:  "%s"' % xapi.api_key)
 
         if options['show']:
             action = 'show'
-            xapi.show(xpath=options['xpath'])
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+            xapi.show(xpath=options['xpath'],
+                      extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
         if options['get']:
             action = 'get'
-            xapi.get(xpath=options['xpath'])
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+            xapi.get(xpath=options['xpath'],
+                     extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
         if options['delete']:
             action = 'delete'
-            xapi.delete(xpath=options['xpath'])
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+            xapi.delete(xpath=options['xpath'],
+                        extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
         if options['edit']:
             action = 'edit'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
             xapi.edit(xpath=options['xpath'],
-                      element=options['element'])
+                      element=options['element'],
+                      extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
         if options['set']:
             action = 'set'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
             xapi.set(xpath=options['xpath'],
-                     element=options['element'])
+                     element=options['element'],
+                     extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
@@ -129,6 +140,9 @@ def main():
             kwargs = {
                 'cmd': options['cmd'],
                 }
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+                kwargs['extra_qs'] = options['ad_hoc']
             if len(options['vsys']):
                 kwargs['vsys'] = options['vsys'][0]
             xapi.user_id(**kwargs)
@@ -137,44 +151,60 @@ def main():
 
         if options['move'] is not None:
             action = 'move'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
             xapi.move(xpath=options['xpath'],
                       where=options['move'],
-                      dst=options['dst'])
+                      dst=options['dst'],
+                      extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
         if options['rename']:
             action = 'rename'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
             xapi.rename(xpath=options['xpath'],
-                        newname=options['dst'])
+                        newname=options['dst'],
+                        extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
         if options['clone']:
             action = 'clone'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
             xapi.clone(xpath=options['xpath'],
                        xpath_from=options['src'],
-                       newname=options['dst'])
+                       newname=options['dst'],
+                       extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
         if options['override']:
             action = 'override'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
             xapi.override(xpath=options['xpath'],
-                          element=options['element'])
+                          element=options['element'],
+                          extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
         if options['export'] is not None:
             action = 'export'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
             if options['pcapid'] is not None:
                 xapi.export(category=options['export'],
                             pcapid=options['pcapid'],
                             search_time=options['stime'],
-                            serialno=options['serial'])
+                            serialno=options['serial'],
+                            extra_qs=options['ad_hoc'])
             else:
                 xapi.export(category=options['export'],
-                            from_name=options['src'])
+                            from_name=options['src'],
+                            extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
             if options['pcap_listing']:
@@ -183,12 +213,15 @@ def main():
 
         if options['log'] is not None:
             action = 'log'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
             xapi.log(log_type=options['log'],
                      nlogs=options['nlogs'],
                      skip=options['skip'],
                      filter=options['filter'],
                      interval=options['interval'],
-                     timeout=options['job_timeout'])
+                     timeout=options['job_timeout'],
+                     extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
 
@@ -198,6 +231,9 @@ def main():
                 'cmd': options['op'],
                 'cmd_xml': options['cmd_xml'],
                 }
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+                kwargs['extra_qs'] = options['ad_hoc']
             if len(options['vsys']):
                 kwargs['vsys'] = options['vsys'][0]
             xapi.op(**kwargs)
@@ -243,11 +279,22 @@ def main():
                 'interval': options['interval'],
                 'timeout': options['job_timeout'],
                 }
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+                kwargs['extra_qs'] = options['ad_hoc']
             if options['commit_all']:
                 kwargs['action'] = 'all'
 
             action = 'commit'
             xapi.commit(**kwargs)
+            print_status(xapi, action)
+            print_response(xapi, options)
+
+        if not extra_qs_used and options['ad_hoc'] is not None:
+            action = 'ad_hoc'
+            xapi.ad_hoc(qs=options['ad_hoc'],
+                        xpath=options['xpath'],
+                        modify_qs=options['modify'])
             print_status(xapi, action)
             print_response(xapi, options)
 

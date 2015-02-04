@@ -207,12 +207,17 @@ DESCRIPTION
   **--vsys** options specified.
 
  ``--ad-hoc`` *query*
-  Perform an ad hoc (custom) API request using the query string specified.
+
+  When no other API request is specified, this performs an ad hoc
+  (custom) API request using the **query** string specified.  When
+  other API requests are specified, this is used to modify (replace)
+  and augment (add to) the standard parameters in the request.
+
   Query string must be field=value pairs separated by ampersand (**&**).
   The string will be URL-encoded before performing the API request.
 
   **--ad-hoc** can be used to construct API requests that are not
-  directly supported by PanXapi.
+  directly supported by **pan.xapi** or **panxapi.py**.
 
  ``--modify``
   Modify an ad hoc query by inserting known fields.  By default
@@ -658,6 +663,14 @@ EXAMPLES
   > --serial 001609032345
   export: success
   exported threat-pcap: 1200628399744221211.pcap
+
+ Export certificate with additional parameters:
+ ::
+
+  $ panxapi.py --export certificate \
+  > --ad-hoc 'certificate-name=GlobalProtectCA&format=pem&include-key=yes&passphrase=paloalto'
+  export: success
+  exported certificate: globalprotectca.pem
 
  Print operational command variable using shell pipeline.
  ::

@@ -182,12 +182,14 @@ keygen()
 ad_hoc(qs=None, xpath=None, modify_qs=False)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- The ad_hoc() method performs an ad hoc (custom) API request using the query
- string (**qs**) specified.  Query string must be field=value pairs
- separated by ampersand (**&**).  The string will be URL-encoded before
- performing the API request.  **modify_qs** can be set to *True* to
- insert known fields into the query string; the known fields that can
- be inserted are:
+ The ad_hoc() method performs an ad hoc (custom) API request using
+ the request parameters in **qs**.
+
+ **qs** is either a query string with field=value pairs separated by
+ ampersand (**&**) or a dictionary of field, value pairs.  The
+ parameters will be URL-encoded before performing the API request.
+ **modify_qs** can be set to *True* to insert known fields into the
+ query string; the known fields that can be inserted are:
 
  - xpath
  - key (api_key)
@@ -461,6 +463,17 @@ log(self, log_type=None, nlogs=None, skip=None, filter=None, interval=None, time
   The maximum number of seconds to wait for the job to finish.
 
   The default is to try forever (**timeout** is set to *None* or 0).
+
+extra_qs=None
+~~~~~~~~~~~~~
+
+ All API methods have an additional argument that can be used to
+ modify (replace) and augment (add to) the standard parameters in the
+ request.
+
+ **extra_qs** is either a query string with field=value pairs
+ separated by ampersand (**&**) or a dictionary of field, value pairs.
+ The parameters will be URL-encoded before performing the API request.
 
 xml_root()
 ~~~~~~~~~~
