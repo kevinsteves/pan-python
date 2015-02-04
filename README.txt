@@ -5,7 +5,7 @@ Firewalls and WildFire cloud.  It provides:
   - a command line program for managing PAN-OS XML configurations
   - a Python and command line interface to the WildFire API
 
-Python versions 2.7, 3.2 and 3.3 are supported with a single code
+Python versions 2.7, 3.2, 3.3 and 3.4 are supported with a single code
 base.  There are no external modules required to use pan-python.
 
 The pan package contains the following modules:

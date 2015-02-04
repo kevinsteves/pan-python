@@ -47,6 +47,7 @@ setup(name='pan-python',
           'Programming Language :: Python :: 3',
           'Programming Language :: Python :: 3.2',
           'Programming Language :: Python :: 3.3',
+          'Programming Language :: Python :: 3.4',
       ],
 
       package_dir={'': 'lib'},
