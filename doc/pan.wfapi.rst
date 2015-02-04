@@ -287,6 +287,12 @@ SEE ALSO
 
  panwfapi.py
 
+ WildFire Administrator's Guide
+  https://www.paloaltonetworks.com/documentation/61/wildfire/wf_admin.pdf.html
+
+ WildFire API
+  https://www.paloaltonetworks.com/documentation/61/wildfire/wf_admin/section_6.html
+
 AUTHORS
 =======
 
