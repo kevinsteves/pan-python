@@ -430,6 +430,10 @@ class PanXapi:
             return None
 
         s = ''.encode()
+
+        if self.element_result.text:
+            s += self.element_result.text.encode(_encoding)
+
         for elem in self.element_result:
             s += etree.tostring(elem, encoding=_encoding)
 
