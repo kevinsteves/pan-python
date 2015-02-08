@@ -635,13 +635,13 @@ def print_response(xapi, options):
         if s is not None:
             print(s)
 
-        if options['print_python'] or options['print_json']:
-            d = xml_python(xapi, options['print_result'])
-            if d:
-                if options['print_python']:
-                    print('var1 =', pprint.pformat(d))
-                if options['print_json']:
-                    print(json.dumps(d, sort_keys=True, indent=2))
+    if options['print_python'] or options['print_json']:
+        d = xml_python(xapi, options['print_result'])
+        if d:
+            if options['print_python']:
+                print('var1 =', pprint.pformat(d))
+            if options['print_json']:
+                print(json.dumps(d, sort_keys=True, indent=2))
 
     if options['print_text'] and xapi.text_document is not None:
         print(xapi.text_document, end='')
