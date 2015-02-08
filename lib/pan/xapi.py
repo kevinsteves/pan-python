@@ -510,18 +510,31 @@ class PanXapi:
             self._log(DEBUG1, 'autoset api_key: "%s"', self.api_key)
 
     def cmd_xml(self, cmd):
-        xml = ''
-        args = cmd.split()
-        for arg in args:
-            result = re.search(r'^"(.*)"$', arg)
-            if result:
-                xml += result.group(1)
+        def _cmd_xml(args, obj):
+            if not args:
+                return
+            arg = args.pop(0)
+            if args:
+                result = re.search(r'^"(.*)"$', args[0])
+                if result:
+                    obj.append('<%s>' % arg)
+                    obj.append(result.group(1))
+                    obj.append('</%s>' % arg)
+                    args.pop(0)
+                    _cmd_xml(args, obj)
+                else:
+                    obj.append('<%s>' % arg)
+                    _cmd_xml(args, obj)
+                    obj.append('</%s>' % arg)
             else:
-                xml += '<%s>' % arg
-        args.reverse()
-        for arg in args:
-            if re.search(r'^".*"$', arg) is None:
-                xml += '</%s>' % arg
+                obj.append('<%s>' % arg)
+                _cmd_xml(args, obj)
+                obj.append('</%s>' % arg)
+
+        args = cmd.split()
+        obj = []
+        _cmd_xml(args, obj)
+        xml = ''.join(obj)
 
         self._log(DEBUG2, 'cmd_xml: "%s"', xml)
 
