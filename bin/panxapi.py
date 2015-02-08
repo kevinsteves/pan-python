@@ -540,6 +540,11 @@ def parse_opts():
         s = pprint.pformat(options, indent=4)
         print(s, file=sys.stderr)
 
+    if options['print_result'] and not (options['print_xml'] or
+                                        options['print_json'] or
+                                        options['print_python']):
+        options['print_xml'] = True
+
     return options
 
 

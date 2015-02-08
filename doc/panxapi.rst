@@ -422,7 +422,8 @@ DESCRIPTION
   Print result content when printing the response (removes outer
   <response><result> elements).  If a <result> element is not present
   this prints the entire response.  This option applies to **-x**,
-  **-p** and **-j** response output.
+  **-p** and **-j** response output; if none of these options are
+  specified **-x** is implied.
 
  ``--text``
   Print text (response content-type is text/plain) to *stdout*.
