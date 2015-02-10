@@ -287,7 +287,7 @@ class PanConfig:
         attrs = elem.items()
 
         self._log(DEBUG3, 'TAG(elem=%d member_list=%s): "%s"',
-                 len(elem), member_list, tag)
+                  len(elem), member_list, tag)
         self._log(DEBUG3, 'text_strip: "%s"', text_strip)
         self._log(DEBUG3, 'attrs: %s', attrs)
         self._log(DEBUG3, 'path: "%s"', path)
@@ -475,6 +475,19 @@ class PanConfig:
 ./mgt-config
 '''
 
+        # remove: predefined
+        xpaths_panorama_6_1 = '''
+./devices/entry[@name='localhost.localdomain']/deviceconfig
+./devices/entry[@name='localhost.localdomain']/device-group
+./devices/entry[@name='localhost.localdomain']/template
+./devices/entry[@name='localhost.localdomain']/log-collector
+./devices/entry[@name='localhost.localdomain']/log-collector-group
+./devices/entry[@name='localhost.localdomain']/vmware-service-manager
+./panorama
+./shared
+./mgt-config
+'''
+
         xpaths_panos = xpaths_panos_4_1
         xpaths_panos_multi_vsys = xpaths_panos_multi_vsys_4_1
         xpaths_panorama = xpaths_panorama_4_1
@@ -486,6 +499,9 @@ class PanConfig:
             elif self.config_version() in ['6.0.0']:
                 xpaths_panos = xpaths_panos_6_0
                 xpaths_panorama = xpaths_panorama_6_0
+            elif self.config_version() in ['6.0.1']:
+                xpaths_panos = xpaths_panos_6_0
+                xpaths_panorama = xpaths_panorama_6_1
 
         if self.config_multi_vsys():
             xpaths = xpaths_panos_multi_vsys
