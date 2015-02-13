@@ -224,7 +224,8 @@ class PanWFapi:
 
         content_type = self.__get_header(response, 'content-type')
         if not content_type:
-            self._msg = 'no content-type response header'
+            if self._msg is None:
+                self._msg = 'no content-type response header'
             return False
 
         if 'application/octet-stream' in content_type:
