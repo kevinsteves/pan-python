@@ -533,8 +533,10 @@ def parse_opts():
             assert False, 'unhandled option %s' % opt
 
     if len(args) > 0:
-        s = get_element(args[0])
+        s = get_element(args.pop(0))
         options['xpath'] = s.rstrip('\r\n')
+        if len(args) > 0:
+            print('Extra options after xpath:', args, file=sys.stderr)
 
     if options['debug'] > 2:
         s = pprint.pformat(options, indent=4)
