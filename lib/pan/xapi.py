@@ -26,16 +26,26 @@ import sys
 import re
 import time
 import logging
+try:
+    import ssl
+except ImportError:
+    raise ValueError('SSL support not available')
 
 try:
     # 3.2
-    from urllib.request import Request, urlopen
+    from urllib.request import Request, urlopen, \
+        build_opener, install_opener, HTTPSHandler
     from urllib.error import URLError
     from urllib.parse import urlencode
     _legacy_urllib = False
 except ImportError:
     # 2.7
-    from urllib2 import Request, urlopen, URLError
+    from urllib2 import Request, urlopen, URLError, \
+        build_opener, install_opener
+    try:
+        from urllib2 import HTTPSHandler
+    except:
+        pass
     from urllib import urlencode
     _legacy_urllib = True
 
@@ -70,8 +80,7 @@ class PanXapi:
                  use_http=False,
                  use_get=False,
                  timeout=None,
-                 cafile=None,
-                 capath=None):
+                 ssl_context=None):
         self._log = logging.getLogger(__name__).log
         self.tag = tag
         self.api_username = None
@@ -82,8 +91,7 @@ class PanXapi:
         self.serial = serial
         self.use_get = use_get
         self.timeout = timeout
-        self.cafile = cafile
-        self.capath = capath
+        self.ssl_context = ssl_context
 
         self._log(DEBUG3, 'Python version: %s', sys.version)
         self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
@@ -104,6 +112,12 @@ class PanXapi:
                     raise ValueError
             except ValueError:
                 raise PanXapiError('Invalid timeout: %s' % self.timeout)
+
+        if self.ssl_context is not None:
+            try:
+                ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            except AttributeError:
+                raise PanXapiError('SSL module has no SSLContext()')
 
         init_panrc = {}  # .panrc args from constructor
         if api_username is not None:
@@ -476,10 +490,19 @@ class PanXapi:
         kwargs = {
             'url': request,
             }
-        # Changed in version 3.2: cafile and capath were added.
-        if sys.hexversion >= 0x03020000:
-            kwargs['cafile'] = self.cafile
-            kwargs['capath'] = self.capath
+
+        if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
+                sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
+            # see PEP 476; urlopen() has context
+            if self.ssl_context is None:
+                # don't perform certificate verification
+                kwargs['context'] = ssl._create_unverified_context()
+            else:
+                kwargs['context'] = self.ssl_context
+        elif self.ssl_context is not None:
+            https_handler = HTTPSHandler(context=self.ssl_context)
+            opener = build_opener(https_handler)
+            install_opener(opener)
 
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout

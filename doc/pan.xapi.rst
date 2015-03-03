@@ -97,8 +97,7 @@ class pan.xapi.PanXapi()
                          use_http=False,
                          use_get=False,
                          timeout=None,
-                         cafile=None,
-                         capath=None)
+                         ssl_context=None)
 
  **tag**
   .panrc tagname.
@@ -149,17 +148,21 @@ class pan.xapi.PanXapi()
  **timeout**
   The ``timeout`` value for urlopen().
 
- **cafile**
-  The ``cafile`` value for urlopen().  ``cafile`` is a file containing
-  CA certificates to be used for SSL server certificate
-  verification. By default the SSL server certificate is not verified.
-  ``cafile`` is only supported in Python version 3.2 and greater.
+ **ssl_context**
+  An ssl.SSLContext() to use for HTTPS requests.  An SSL context holds
+  data such as SSL configuration options and certificates.
 
- **capath**
-  The ``capath`` value for urlopen().  ``capath`` is a directory of
-  hashed certificate files to be used for SSL server certificate
-  verification. By default the SSL server certificate is not verified.
-  ``capath`` is only supported in Python version 3.2 and greater.
+  This can be used to specify the ``cafile``, ``capath`` and other SSL
+  configuration options.
+
+  SSL contexts are supported starting in Python versions 2.7.9
+  and 3.2.
+
+  Starting with Python versions 2.7.9 and 3.4.3 SSL server certificate
+  verification is performed by default as described in PEP 476.
+  Because many PAN-OS systems use a self-signed certificate, pan.xapi
+  will disable the default starting with these versions.
+  **ssl_context** can be used to enable verification.
 
 exception pan.xapi.PanXapiError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

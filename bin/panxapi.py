@@ -24,6 +24,7 @@ import re
 import json
 import pprint
 import logging
+import ssl
 
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
@@ -54,6 +55,12 @@ def main():
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
+    if options['cafile'] or options['capath']:
+        ssl_context = create_ssl_context(options['cafile'],
+                                         options['capath'])
+    else:
+        ssl_context = None
+
     try:
         xapi = pan.xapi.PanXapi(timeout=options['timeout'],
                                 tag=options['tag'],
@@ -65,8 +72,7 @@ def main():
                                 hostname=options['hostname'],
                                 port=options['port'],
                                 serial=options['serial'],
-                                cafile=options['cafile'],
-                                capath=options['capath'])
+                                ssl_context=ssl_context)
 
     except pan.xapi.PanXapiError as msg:
         print('pan.xapi.PanXapi:', msg, file=sys.stderr)
@@ -550,6 +556,31 @@ def parse_opts():
     return options
 
 
+def create_ssl_context(cafile, capath):
+    if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
+            sys.version_info.major == 3 and sys.hexversion >= 0x03020000):
+        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+        context.options |= ssl.OP_NO_SSLv2
+        context.options |= ssl.OP_NO_SSLv3
+        context.verify_mode = ssl.CERT_REQUIRED
+        # added 3.4
+        if hasattr(context, 'check_hostname'):
+            context.check_hostname = True
+        try:
+            context.load_verify_locations(cafile=cafile, capath=capath)
+        except Exception as e:
+            print('cafile or capath invalid: %s' % e, file=sys.stderr)
+            sys.exit(1)
+
+        return context
+
+    print('Warning: Python %d.%d: cafile and capath ignored' %
+          (sys.version_info.major, sys.version_info.minor),
+          file=sys.stderr)
+
+    return None
+
+
 def get_vsys(s):
     list = []
     vsys = s.split(',')
@@ -615,7 +646,7 @@ def print_status(xapi, action, exception_msg=None):
 def xml_python(xapi, result=False):
     if result:
         if (xapi.element_result is None or
-            not len(xapi.element_result)):
+                not len(xapi.element_result)):
             return None
         elem = list(xapi.element_result)[0]
     else:
