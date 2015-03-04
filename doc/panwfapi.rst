@@ -33,12 +33,15 @@ SYNOPSIS
  panwfapi.py [options]
     --submit path|url     submit file or URL to WildFire for analysis
     --report              get WildFire report
+    --verdict             get WildFire sample verdict
     --sample              get WildFire sample file
     --pcap                get WildFire PCAP files
+    --changed             get changed verdicts
     --hash hash           query MD5 or SHA256 hash
     --platform id         platform ID for sandbox environment
     --testfile            get sample malware test file
     --format format       report output format
+    --date date           start date for changed verdicts (YYYY-MM-DD)
     --dst dst             save file to directory or path
     -K api_key            WildFire API key
     -h hostname           WildFire hostname
@@ -73,6 +76,10 @@ DESCRIPTION
   Get analysis report for a previously uploaded sample.  The
   sample can be specified by its MD5 or SHA256 hash (**--hash**).
 
+ ``--verdict``
+  Get the verdict(s) for previously uploaded samples.  The samples can
+  be specified by their MD5 or SHA256 hash (**--hash**).
+
  ``--sample``
   Get a previously uploaded sample file.  The sample can be specified
   by its MD5 or SHA256 hash (**--hash**).
@@ -85,8 +92,15 @@ DESCRIPTION
   is specified a PCAP from an environment that resulted in a *Malware*
   verdict is returned.
 
+ ``--changed``
+  Get the hashes of samples whose verdicts have changed within the
+  last 30 days starting at the date specified with **--date**.
+
  ``--hash`` *hash*
-  MD5 or SHA256 hash for a WildFire sample.
+  MD5 or SHA256 hash for a WildFire sample.  **--hash** can be
+  specified multiple times for queries which allow multiple hashes.
+  It can also be a path to a file containing the hashes or **'-'** to
+  specify that hashes be read from *stdin*.
 
  ``--platform`` *id*
   Platform ID for sandbox environment.  Valid platform IDs are:
@@ -114,6 +128,11 @@ DESCRIPTION
   WildFire report output format string.  This can be **xml** or **pdf**.
 
   The default is **xml**.
+
+ ``--date`` *date*
+
+  Start date for **--changed** query.  The format for the
+  *date* argument is *YYYY-MM-DD*.
 
  ``--dst`` *dst*
   Save file to the directory or path specified in *dst*.  By default

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2014 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -471,6 +471,66 @@ class PanWFapi:
             query['hash'] = hash
         if format is not None:
             query['format'] = format
+
+        response = self.__api_request(request_uri=request_uri,
+                                      body=urlencode(query))
+        if not response:
+            raise PanWFapiError(self._msg)
+
+        if not self.__set_response(response):
+            raise PanWFapiError(self._msg)
+
+    def verdict(self,
+                hash=None):
+        self.__clear_response()
+
+        request_uri = '/publicapi/get/verdict'
+
+        query = {}
+        query['apikey'] = self.api_key
+        if hash is not None:
+            query['hash'] = hash
+
+        response = self.__api_request(request_uri=request_uri,
+                                      body=urlencode(query))
+        if not response:
+            raise PanWFapiError(self._msg)
+
+        if not self.__set_response(response):
+            raise PanWFapiError(self._msg)
+
+    def verdicts(self,
+                 hashes=None):
+        self.__clear_response()
+
+        request_uri = '/publicapi/get/verdicts'
+
+        form = _MultiPartFormData()
+        form.add_field('apikey', self.api_key)
+        if hashes is not None:
+            form.add_field('file', '\n'.join(hashes))
+
+        headers = form.http_headers()
+        body = form.http_body()
+
+        response = self.__api_request(request_uri=request_uri,
+                                      body=body, headers=headers)
+        if not response:
+            raise PanWFapiError(self._msg)
+
+        if not self.__set_response(response):
+            raise PanWFapiError(self._msg)
+
+    def verdicts_changed(self,
+                         date=None):
+        self.__clear_response()
+
+        request_uri = '/publicapi/get/verdicts/changed'
+
+        query = {}
+        query['apikey'] = self.api_key
+        if date is not None:
+            query['date'] = date
 
         response = self.__api_request(request_uri=request_uri,
                                       body=urlencode(query))

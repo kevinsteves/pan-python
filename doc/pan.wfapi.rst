@@ -1,5 +1,5 @@
 ..
- Copyright (c) 2014 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2014-2015 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -67,6 +67,9 @@ DESCRIPTION
  get previously uploaded sample   /publicapi/get/sample
  get sample PCAP                  /publicapi/get/pcap
  get sample analysis report       /publicapi/get/report
+ get sample verdict               /publicapi/get/verdict
+ get sample verdicts              /publicapi/get/verdicts
+ get verdicts changed             /publicapi/get/verdicts/changed
  get sample malware test file     /publicapi/test/pe
  ==============================   ========
 
@@ -169,6 +172,38 @@ report(hash=None, format=None)
  The ``report()`` method gets an analysis report for a previously uploaded
  sample.  The sample can be specified by its MD5 or SHA256 hash.
  The report format can be ``xml`` or ``pdf``.  The default is ``xml``.
+
+verdict(hash=None)
+~~~~~~~~~~~~~~~~~~
+
+verdicts(hashes=None)
+~~~~~~~~~~~~~~~~~~~~~
+
+ The ``verdict()`` and ``verdicts()`` methods get the verdict(s) for
+ previously uploaded samples.  The sample can be specified by its MD5
+ or SHA256 hash.  The ``verdict()`` **hash** argument is a single hash
+ and the ``verdicts()`` **hashes** argument is a list of hashes.
+
+ The result is an XML document with verdict represented as an integer:
+
+ =====  ========  ===========
+ Value  Verdict   Description
+ =====  ========  ===========
+ 0      benign
+ 1      malware
+ 2      grayware
+ -100   pending   sample exists and verdict not known
+ -101   error     sample is in error state
+ -102   unknown   sample does not exist
+ -103   invalid   hash is invalid (verdicts() method only)
+ =====  ========  ===========
+
+verdicts_changed(date=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The ``verdicts_changed()`` method gets the hashes of samples whose
+ verdicts have changed within the last 30 days starting at the date
+ specified.  The format for the **date** argument is *YYYY-MM-DD*.
 
 pcap(hash=None, platform=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
