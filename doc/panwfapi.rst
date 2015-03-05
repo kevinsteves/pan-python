@@ -315,7 +315,7 @@ SEE ALSO
   https://www.paloaltonetworks.com/documentation/61/wildfire/wf_admin.pdf.html
 
  WildFire API
-  https://www.paloaltonetworks.com/documentation/61/wildfire/wf_admin/section_6.html
+  https://www.paloaltonetworks.com/documentation/61/wildfire/wf_admin/wildfire-api.html
 
 AUTHORS
 =======
