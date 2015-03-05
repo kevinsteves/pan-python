@@ -258,6 +258,25 @@ http_code
  The ``http_code`` data attribute contains the HTTP response status
  code.
 
+ Status codes that can be returned include:
+
+ ===============================  ===========
+ HTTP status-code, reason-phrase  Description
+ ===============================  ===========
+ 401 Unauthorized                 API key invalid
+ 403 Forbidden                    Permission denied
+ 405 Method Not Allowed           Must use method POST
+ 413 Request Entity Too Large     Sample size exceeds maximum
+ 418                              Invalid file type
+ 419 Quota Exceeded               Maximum daily uploads exceeded
+ 419 Quota Exceeded               Maximum daily queries exceeded
+ 420 Insufficient Arguments       Missing required request parameter
+ 421 Invalid Argument             Invalid request parameter
+ 422 URL Download Error           URL download error
+ 456                              Invalid request
+ 513                              File upload failed
+ ===============================  ===========
+
 http_reason
 ~~~~~~~~~~~
 
