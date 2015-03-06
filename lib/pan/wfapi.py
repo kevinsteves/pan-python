@@ -744,11 +744,11 @@ class _MultiPartFormData:
             import os
             seq = os.urandom(rand_bytes)
             self._log(DEBUG1, '_MultiPartFormData._boundary: %s',
-                     'using os.urandom')
+                      'using os.urandom')
         except NotImplementedError:
             import random
             self._log(DEBUG1, '_MultiPartFormData._boundary: %s',
-                     'using random')
+                      'using random')
             seq = bytearray()
             [seq.append(random.randrange(256)) for i in range(rand_bytes)]
 
@@ -802,15 +802,15 @@ class _FormDataPart:
 
     def _encode_field(self, name, value):
         self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
-                 type(name), type(value))
+                  type(name), type(value))
         if not _rfc2231_encode:
             s = '%s="%s"' % (name, value)
             self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
-                     type(s), s)
+                      type(s), s)
             if _isunicode(s):
                 s = s.encode('utf-8')
                 self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
-                         type(s), s)
+                          type(s), s)
             return s
 
         if not [ch for ch in '\r\n\\' if ch in value]:
@@ -829,7 +829,7 @@ class _FormDataPart:
             body = body.encode('latin-1')
         self.body = body
         self._log(DEBUG1, '_FormDataPart.add_body: %s %d',
-                 type(self.body), len(self.body))
+                  type(self.body), len(self.body))
 
     def serialize(self):
         bio = BytesIO()
