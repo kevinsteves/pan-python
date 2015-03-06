@@ -73,8 +73,8 @@ DESCRIPTION
  get sample malware test file     /publicapi/test/pe
  ==============================   ========
 
-pan.wfapi Attributes
---------------------
+pan.wfapi Constants
+-------------------
 
  **__version__**
   pan package version string.

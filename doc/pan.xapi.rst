@@ -70,8 +70,8 @@ DESCRIPTION
  - dynamic object update: ``type=user-id``
  - log retrieval: ``type=log``
 
-pan.xapi Attributes
--------------------
+pan.xapi Constants
+------------------
 
  **__version__**
   pan package version string.
