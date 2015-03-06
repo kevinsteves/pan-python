@@ -73,8 +73,6 @@ _encoding = 'utf-8'
 _rfc2231_encode = False
 _wildfire_responses = {
     418: 'Unsupported File Type',
-    419: 'Sample Upload or Request Quota Exceeded',
-    422: 'URL Download Error',
 }
 
 BENIGN = 0
