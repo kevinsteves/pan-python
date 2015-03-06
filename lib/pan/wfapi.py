@@ -77,6 +77,24 @@ _wildfire_responses = {
     422: 'URL Download Error',
 }
 
+BENIGN = 0
+MALWARE = 1
+GRAYWARE = 2
+PENDING = -100
+ERROR = -101
+UNKNOWN = -102
+INVALID = -103
+
+VERDICTS = {
+    BENIGN: ('benign', None),
+    MALWARE: ('malware', None),
+    GRAYWARE: ('grayware', None),
+    PENDING: ('pending', 'sample exists and verdict not known'),
+    ERROR: ('error', 'sample is in error state'),
+    UNKNOWN: ('unknown', 'sample does not exist'),
+    INVALID: ('invalid', 'hash is invalid'),
+}
+
 
 def _isunicode(s):
     try:

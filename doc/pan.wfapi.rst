@@ -83,6 +83,13 @@ pan.wfapi Constants
   Python ``logging`` module debug levels (see **Debugging and
   Logging** below).
 
+ **BENIGN**, **MALWARE**, **GRAYWARE**, **PENDING**, **ERROR**, **UNKNOWN**, **INVALID**
+  Constants for the integer verdict values.
+
+ **VERDICTS**
+  A dictionary which maps the integer verdict values to a tuple
+  of (name, description).
+
 
 pan.wfapi Constructor and Exception Class
 -----------------------------------------
