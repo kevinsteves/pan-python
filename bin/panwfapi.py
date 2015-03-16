@@ -225,6 +225,9 @@ def process_hashes(list):
 
 
 def validate_hash(hash):
+    if debug > 0:
+        return
+
     if not (len(hash) == 32 or len(hash) == 64):
         print('hash length must be 32 (MD5) or 64 (SHA256)',
               file=sys.stderr)
