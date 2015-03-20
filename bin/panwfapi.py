@@ -38,7 +38,12 @@ debug = 0
 
 
 def main():
-    signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    try:
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    except AttributeError:
+        # Windows
+        pass
+
 #    set_encoding()
     options = parse_opts()
 

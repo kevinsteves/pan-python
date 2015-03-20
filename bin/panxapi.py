@@ -25,6 +25,7 @@ import json
 import pprint
 import logging
 import ssl
+import signal
 
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
@@ -36,6 +37,12 @@ debug = 0
 
 
 def main():
+    try:
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    except AttributeError:
+        # Windows
+        pass
+
     set_encoding()
     options = parse_opts()
 
