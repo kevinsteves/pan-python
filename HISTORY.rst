@@ -1,6 +1,100 @@
 Release History
 ===============
 
+0.6.0 (2015-03-20)
+------------------
+
+- Don't name the internal log function log as this steps on the log()
+  method in pan.xapi; change in all modules for consistency.
+
+- panwfapi.rst: Typo in WildFire .panrc example.
+
+- pan.xapi: type=report&reporttype=predefined response does not return
+  charset in content-type. Fix to be more liberal in what we accept.
+
+- pan.wfapi.rst: Fix wrong variable in Debugging and Logging example.
+
+- pan.xapi: Document element_root data attribute.
+
+- panxapi.py: Missed a use of pan.xapi.xml_python() when it was
+  removed.
+
+- panxapi.py: Fix --ls (formatted PCAP listing), which has been broken
+  since 5.0 due to XML response format changes.
+
+- pan.xapi: Workaround bug in 5.0 and 6.0: export PCAP response
+  incorrectly uses content-type text/plain instead of
+  application/octet-stream.
+
+- panxapi.py, pan.xapi: Add support for the extended packet capture
+  feature added in PAN-OS 6.0 which is used for threat PCAPs.
+
+- panxapi.py: Files besides PCAP can be exported that are returned as
+  attachments (e.g., device-state), so rename save_pcap() to
+  save_attachment().
+
+- pan.xapi: Add text_document data attribute which contains the
+  message body from the previous API request when the response
+  content-type is text/plain.
+
+- panxapi.py: Add --text option to print text to stdout.
+
+- panxapi.py, pan.xapi: Allow --ad-hoc to be used to modify (replace)
+  and augment (add to) the standard parameters in the request.
+
+- Add reference to PAN-OS and WildFire documentation to SEE ALSO
+  sections of the documentation.
+
+- panxapi.py: Can export more than PCAP files; update documentation
+  and usage.
+
+- Add Python 3.4 to supported list.
+
+- pan.xapi: When an XML response does not contain a status attribute
+  (e.g., export configuration), set to 'success'.
+
+- pan.xapi: If ElementTree has text use for start of xml_result()
+  string.
+
+- pan.xapi.op(): Handle multiple double quoted arguments for
+  cmd_xml=True.
+
+- panxapi.py: When -r is specified without any of -xjp, -x is now
+  implied.
+
+- pan.config: Add PAN-OS 6.1 for set CLI.
+
+- pan.wfapi: Don't override self._msg in __set_response() if already
+  set.  Handle case on non 2XX HTTP code and no content-type in
+  response.
+
+- panxapi.py: Print warning if extra arguments after xpath.
+
+- pan.xapi: Address changes to Python 2.7.9 and 3.4.3 which now
+  perform SSL server certificate verification by default (see PEP
+  476).  Maintains past behaviour of no verification by default.
+
+  NOTE: this removes the cafile and capath arguments from PanXapi()
+  and adds ssl_context.
+
+- pan.wfapi, panwfapi.py: Add support for:
+    get sample verdict               /publicapi/get/verdict
+    get sample verdicts              /publicapi/get/verdicts
+    get verdicts changed             /publicapi/get/verdicts/changed
+
+- pan.wfapi.rst: Add table with HTTP status codes that can be
+  returned.
+
+- pan.wfapi: Add constants for verdict integer values.
+
+- pan.wfapi: Remove HTTP status code reason phrases that are returned
+  by default now.
+
+- Set SIGPIPE to SIG_DFL in panxapi.py for consistency with panconf.py
+  and panwfapi.py.  This is needed on some systems when piping to
+  programs like head so we don't see BrokenPipeError.  Also handle
+  AttributeError for Windows which doesn't have SIGPIPE.
+
 0.5.0 (2014-10-22)
 ------------------
 
