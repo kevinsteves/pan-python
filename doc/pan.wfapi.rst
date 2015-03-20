@@ -272,6 +272,7 @@ http_code
  ===============================  ===========
  401 Unauthorized                 API key invalid
  403 Forbidden                    Permission denied
+ 404 Not Found                    Report/sample/pcap not found
  405 Method Not Allowed           Must use method POST
  413 Request Entity Too Large     Sample size exceeds maximum
  418                              Invalid file type
