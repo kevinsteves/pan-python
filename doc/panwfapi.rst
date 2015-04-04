@@ -78,7 +78,8 @@ DESCRIPTION
 
  ``--verdict``
   Get the verdict(s) for previously uploaded samples.  The samples can
-  be specified by their MD5 or SHA256 hash (**--hash**).
+  be specified by their MD5 or SHA256 hash (**--hash**).  Up to 500
+  hashes can be specified.
 
  ``--sample``
   Get a previously uploaded sample file.  The sample can be specified

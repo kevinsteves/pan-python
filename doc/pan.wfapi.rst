@@ -189,7 +189,8 @@ verdicts(hashes=None)
  The ``verdict()`` and ``verdicts()`` methods get the verdict(s) for
  previously uploaded samples.  The sample can be specified by its MD5
  or SHA256 hash.  The ``verdict()`` **hash** argument is a single hash
- and the ``verdicts()`` **hashes** argument is a list of hashes.
+ and the ``verdicts()`` **hashes** argument is a list of up to 500
+ hashes.
 
  The result is an XML document with verdict represented as an integer:
 
