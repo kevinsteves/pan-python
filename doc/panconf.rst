@@ -28,6 +28,7 @@ NAME
 
 SYNOPSIS
 ========
+::
 
  panconf.py [options] [pseudo-xpath]
     --config path         path to XML config or '-' for stdin
