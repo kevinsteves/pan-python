@@ -228,7 +228,7 @@ FILES
 =====
 
  ``.panrc``
-  .panrc file.  See PanXapi documentation for .panrc format.
+  .panrc file.
 
 EXIT STATUS
 ===========
@@ -310,7 +310,7 @@ EXAMPLES
 SEE ALSO
 ========
 
- pan.xapi
+ pan.wfapi
 
  WildFire Administrator's Guide
   https://www.paloaltonetworks.com/documentation/61/wildfire/wf_admin.pdf.html

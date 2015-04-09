@@ -499,7 +499,7 @@ FILES
 =====
 
  ``.panrc``
-  .panrc file.  See PanXapi documentation for .panrc format.
+  .panrc file.
 
 EXIT STATUS
 ===========

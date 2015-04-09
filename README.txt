@@ -34,6 +34,7 @@ Documentation:
     https://github.com/kevinsteves/pan-python/blob/master/doc/pan.xapi.rst
     https://github.com/kevinsteves/pan-python/blob/master/doc/panwfapi.rst
     https://github.com/kevinsteves/pan-python/blob/master/doc/pan.wfapi.rst
+    https://github.com/kevinsteves/pan-python/blob/master/doc/panrc.rst
 
   HTML from source distribution:
 
@@ -42,6 +43,7 @@ Documentation:
     doc/pan.xapi.html
     doc/panwfapi.html
     doc/pan.wfapi.html
+    doc/panrc.html
 
 Install:
 

@@ -120,7 +120,7 @@ class pan.xapi.PanXapi()
 
  **api_username**, **api_password**, **hostname**, **port** and
  **api_key** can be passed as function arguments, or specified using a
- .panrc file as described below.  Either **api_username** and
+ .panrc file.  Either **api_username** and
  **api_password** or **api_key** must be provided.  When
  **api_username** and **api_password** are provided the **api_key**
  will be generated automatically using the API ``type=keygen`` request
@@ -603,73 +603,6 @@ get and show
 
  - return values only if the XPath results in exactly one node
  - return the result even if the matched node is a text node
-
-.panrc
-------
-
- .panrc files contain hostname, port, serial number, username,
- password and key variables for XML API access on PAN-OS firewalls.  A
- .panrc file consists of lines with the format:
- ::
-
-  varname[%tagname]=value
-
- Empty lines and lines starting with pound (**#**) are ignored.  For
- example:
- ::
-
-  api_username=api
-  api_password=admin
-  hostname=192.168.1.1
-
-  # admin API key
-  api_key=C2M1P2h1tDEz8zF3SwhF2dWC1gzzhnE1qU39EmHtGZM=
-  hostname=192.168.1.1
-
- *tagname* is optional and can be appended to *varname* with percent
- (**%**).  This form is used to allow a single .panrc file to contain
- variables for multiple systems.  The PanXapi constructor has an
- optional **tag** argument to specify that only a *varname* with the
- given *tagname* be used.  For example:
- ::
-
-  # no tag
-  hostname=172.29.9.122
-  api_username=admin
-  api_password=goodpw
-
-  # fw-test
-  hostname%fw-test=172.29.9.123
-  api_username%fw-test=admin
-  api_password%fw-test=admin
-
-  # eng-fw
-  hostname%eng-fw=172.29.9.124
-  api_key%eng-fw=C2M1P2h1tDEz8zF3SwhF2dWC1gzzhnE1qU39EmHtGZM=
-
- *tagname* must match the regular expression **/^[\w-]+$/** (1 or more
- alphanumeric characters plus "-" and "_").
-
-Recognized varname Values
-~~~~~~~~~~~~~~~~~~~~~~~~~
-
- The following *varname* values are recognized:
-
- - **hostname**
- - **port**
- - **serial**
- - **api_username**
- - **api_password**
- - **api_key**
-
-.panrc Locations and Variable Merging
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
- A .panrc file can reside in the current working directory
- ($PWD/.panrc) and in the user's home directory ($HOME/.panrc).
- .panrc variables can also be specified in the PanXapi constructor.
- When a variable exists from multiple sources, the priority for
- merging variables is: __init__(), $PWD/.panrc, $HOME/.panrc.
 
 FILES
 =====
