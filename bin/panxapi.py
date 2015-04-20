@@ -651,11 +651,14 @@ def print_status(xapi, action, exception_msg=None):
 
 
 def xml_python(xapi, result=False):
+    xpath = None
     if result:
         if (xapi.element_result is None or
                 not len(xapi.element_result)):
             return None
-        elem = list(xapi.element_result)[0]
+        elem = xapi.element_result
+        # select all child elements
+        xpath = '*'
     else:
         if xapi.element_root is None:
             return None
@@ -667,7 +670,7 @@ def xml_python(xapi, result=False):
         print('pan.config.PanConfigError:', msg, file=sys.stderr)
         sys.exit(1)
 
-    d = conf.python()
+    d = conf.python(xpath)
     return d
 
 

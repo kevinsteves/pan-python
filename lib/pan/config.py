@@ -144,8 +144,7 @@ class PanConfig:
         d = {}
         if len(nodes) > 1:
             for elem in nodes:
-                d[elem.tag] = {}
-                self.__serialize_py(elem, d[elem.tag])
+                self.__serialize_py(elem, d)
         else:
             self.__serialize_py(nodes[0], d)
 
