@@ -94,6 +94,16 @@ Recognized varname Values
  **api_key**        X       X
  ================   ======  ========
 
+.panrc File Permissions
+~~~~~~~~~~~~~~~~~~~~~~~
+
+ Because .panrc contains authentication material it should have strict
+ file permissions (read/write for the owner and not accessable by
+ group or other).  For example:
+ ::
+
+  $ chmod 600 ~/.panrc
+
 .panrc Locations and Variable Merging
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
