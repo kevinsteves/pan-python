@@ -310,6 +310,9 @@ class PanXapi:
 
         self.element_root = element
         self.element_result = self.element_root.find('result')  # can be None
+        if self.element_result is None:
+            # type=report
+            self.element_result = self.element_root.find('report/result')
 
         self._log(DEBUG3, 'xml_document: %s', self.xml_document)
         self._log(DEBUG3, 'message_body: %s', type(message_body))
