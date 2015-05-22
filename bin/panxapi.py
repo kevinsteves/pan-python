@@ -681,7 +681,7 @@ def print_response(xapi, options):
         else:
             s = xapi.xml_root()
         if s is not None:
-            print(s.rstrip())
+            print(s.lstrip().rstrip())
 
     if options['print_python'] or options['print_json']:
         d = xml_python(xapi, options['print_result'])
