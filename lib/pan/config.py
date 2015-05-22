@@ -498,7 +498,7 @@ class PanConfig:
             elif self.config_version() in ['6.0.0']:
                 xpaths_panos = xpaths_panos_6_0
                 xpaths_panorama = xpaths_panorama_6_0
-            elif self.config_version() in ['6.0.1']:
+            elif self.config_version() in ['6.1.0']:
                 xpaths_panos = xpaths_panos_6_0
                 xpaths_panorama = xpaths_panorama_6_1
 
