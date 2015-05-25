@@ -1,6 +1,25 @@
 Release History
 ===============
 
+0.7.0 (2015-05-25)
+------------------
+
+- pan.xapi: Allow xml_result() to match result in report output.
+
+- pan.config: Fix typo causing Panorama 6.1 xpaths to not be used.
+
+- panrc.rst:  Add section on .panrc file permissions.
+
+- panxapi.py: Use lstrip('\r\n').rstrip() on response XML and message
+  before printing.
+
+- Fix a bug where we only processed the first node for -pjr when there
+  was more than one node.
+
+- Move .panrc documentation to a separate document.
+
+- Documentation: /publicapi/get/verdicts allows up to 500 hashes.
+
 0.6.0 (2015-03-20)
 ------------------
 
