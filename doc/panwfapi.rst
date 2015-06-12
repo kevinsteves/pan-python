@@ -32,6 +32,7 @@ SYNOPSIS
 
  panwfapi.py [options]
     --submit path|url     submit file or URL to WildFire for analysis
+    --change-request      request review of sample's verdict
     --report              get WildFire report
     --verdict             get WildFire sample verdict
     --sample              get WildFire sample file
@@ -39,6 +40,9 @@ SYNOPSIS
     --changed             get changed verdicts
     --hash hash           query MD5 or SHA256 hash
     --platform id         platform ID for sandbox environment
+    --new-verdict verdict benign|malware|grayware
+    --email address       notification e-mail address
+    --comment comment     change request explanation
     --testfile            get sample malware test file
     --format format       report output format
     --date date           start date for changed verdicts (YYYY-MM-DD)
@@ -71,6 +75,11 @@ DESCRIPTION
   Submit a file or URL to WildFire for analysis.  Valid URL
   schemes for *url* are: **file**, **http**, **https** and **ftp**.
   A **file** *url* is the same as specifying *path*.
+
+ ``--change-request``
+  Request  a manual review
+  of a sample's verdict by the Threat Research Team.  Requires
+  **--hash**, **--new-verdict**, **--email** and **--comment** arguments.
 
  ``--report``
   Get analysis report for a previously uploaded sample.  The
@@ -155,6 +164,18 @@ DESCRIPTION
   - Malware test file (**--testfile**)
 
     wildfire-test-pe-file.exe
+
+ ``--new-verdict`` *verdict*
+  The suggested verdict.  Can be specified as a string (*benign*,
+  *malware* or *grayware*) or an integer.
+
+ ``--email`` *address*
+  Notification e-mail address.
+
+ ``--comment`` *comment*
+  Explanation for the change request.  Can be up to 2048 bytes.
+  *comment* can be a string, a path to a file containing the comment or
+  **'-'** to specify the comment be read from *stdin*.
 
  ``-K`` *api_key*
   Specify the **api_key** used in API requests.  This can also be

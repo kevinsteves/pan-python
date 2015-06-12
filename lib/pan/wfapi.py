@@ -650,6 +650,37 @@ class PanWFapi:
         if not self.__set_response(response):
             raise PanWFapiError(self._msg)
 
+    def change_request(self,
+                       hash=None,
+                       verdict=None,
+                       email=None,
+                       comment=None):
+        self.__clear_response()
+
+        request_uri = '/publicapi/submit/change-request'
+
+        form = _MultiPartFormData()
+        form.add_field('apikey', self.api_key)
+        if hash is not None:
+            form.add_field('hash', hash)
+        if verdict is not None:
+            form.add_field('verdict', verdict)
+        if email is not None:
+            form.add_field('email', email)
+        if comment is not None:
+            form.add_field('comment', comment)
+
+        headers = form.http_headers()
+        body = form.http_body()
+
+        response = self.__api_request(request_uri=request_uri,
+                                      body=body, headers=headers)
+        if not response:
+            raise PanWFapiError(self._msg)
+
+        if not self.__set_response(response):
+            raise PanWFapiError(self._msg)
+
     def __cacloud(self):
         # WildFire cloud cafile:
         #   https://certs.godaddy.com/anonymous/repository.pki

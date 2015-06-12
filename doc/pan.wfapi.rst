@@ -64,6 +64,7 @@ DESCRIPTION
  ==============================   ========
  submit file                      /publicapi/submit/file
  submit URL                       /publicapi/submit/url
+ submit verdict change request    /publicapi/submit/change-request
  get previously uploaded sample   /publicapi/get/sample
  get sample PCAP                  /publicapi/get/pcap
  get sample analysis report       /publicapi/get/report
@@ -166,6 +167,24 @@ submit(file=None, url=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``submit()`` method submits a file or URL to WildFire for analysis.
+
+change_request(hash=None, verdict=None, email=None, comment=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The ``change_request()`` method is used to request a manual review
+ of a sample's verdict by the Threat Research Team.
+
+ **hash**
+  The SHA256 hash for the sample.
+
+ **verdict**
+  The suggested integer verdict.
+
+ **email**
+  Notification e-mail address.
+
+ **comment**
+  Explanation for the change request.  Can be up to 2048 bytes.
 
 sample(hash=None)
 ~~~~~~~~~~~~~~~~~

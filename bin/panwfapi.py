@@ -112,6 +112,25 @@ def main():
             print_status(wfapi, action)
             print_response(wfapi, options)
 
+        if options['change-request']:
+            action = 'change-request'
+            kwargs = {}
+            if len(hashes) > 1:
+                print('Only 1 hash allowed for %s' % action, file=sys.stderr)
+                sys.exit(1)
+            if len(hashes) == 1:
+                kwargs['hash'] = hashes[0]
+            if options['new-verdict'] is not None:
+                kwargs['verdict'] = process_verdict(options['new-verdict'])
+            if options['email'] is not None:
+                kwargs['email'] = options['email']
+            if options['comment'] is not None:
+                kwargs['comment'] = process_arg(options['comment'])
+
+            wfapi.change_request(**kwargs)
+            print_status(wfapi, action)
+            print_response(wfapi, options)
+
         if options['report']:
             action = 'report'
             kwargs = {}
@@ -239,9 +258,47 @@ def validate_hash(hash):
         sys.exit(1)
 
 
+def process_arg(s):
+    stdin_char = '-'
+
+    if s == stdin_char:
+        lines = sys.stdin.readlines()
+    else:
+        try:
+            f = open(s)
+            lines = f.readlines()
+            f.close()
+        except IOError:
+            lines = [s]
+
+    lines = ''.join(lines)
+
+    if debug > 1:
+        print('lines:', lines, file=sys.stderr)
+
+    return lines
+
+
+def process_verdict(verdict):
+    verdicts = {
+        'benign': pan.wfapi.BENIGN,
+        'malware': pan.wfapi.MALWARE,
+        'grayware': pan.wfapi.GRAYWARE,
+    }
+
+    try:
+        int(verdict)
+        return verdict
+    except ValueError:
+        if verdict in verdicts:
+            return str(verdicts[verdict])
+        return verdict
+
+
 def parse_opts():
     options = {
         'submit': None,
+        'change-request': False,
         'report': False,
         'verdict': False,
         'sample': False,
@@ -249,6 +306,9 @@ def parse_opts():
         'changed': False,
         'hash': [],
         'platform': None,
+        'new-verdict': None,
+        'email': None,
+        'comment': None,
         'testfile': False,
         'format': None,
         'date': None,
@@ -270,9 +330,10 @@ def parse_opts():
 
     short_options = 'K:h:xpjHDt:T:'
     long_options = ['version', 'help',
-                    'submit=', 'report', 'verdict', 'sample',
+                    'submit=', 'change-request', 'report', 'verdict', 'sample',
                     'pcap', 'changed',
                     'hash=', 'platform=', 'testfile',
+                    'new-verdict=', 'email=', 'comment=',
                     'format=', 'date=', 'dst=',
                     'http', 'nocacloud', 'cafile=', 'capath=',
                     ]
@@ -290,6 +351,8 @@ def parse_opts():
             pass
         elif opt == '--submit':
             options['submit'] = arg
+        elif opt == '--change-request':
+            options['change-request'] = True
         elif opt == '--report':
             options['report'] = True
         elif opt == '--verdict':
@@ -304,6 +367,12 @@ def parse_opts():
             options['hash'].append(arg)
         elif opt == '--platform':
             options['platform'] = arg
+        elif opt == '--new-verdict':
+            options['new-verdict'] = arg
+        elif opt == '--email':
+            options['email'] = arg
+        elif opt == '--comment':
+            options['comment'] = arg
         elif opt == '--testfile':
             options['testfile'] = True
         elif opt == '--format':
@@ -480,6 +549,7 @@ def set_encoding():
 def usage():
     usage = '''%s [options]
     --submit path|url     submit file or URL to WildFire for analysis
+    --change-request      request review of sample's verdict
     --report              get WildFire report
     --verdict             get WildFire sample verdict
     --sample              get WildFire sample file
@@ -487,6 +557,9 @@ def usage():
     --changed             get changed verdicts
     --hash hash           query MD5 or SHA256 hash
     --platform id         platform ID for sandbox environment
+    --new-verdict verdict benign|malware|grayware
+    --email address       notification e-mail address
+    --comment comment     change request explanation
     --testfile            get sample malware test file
     --format format       report output format
     --date date           start date for changed verdicts (YYYY-MM-DD)
