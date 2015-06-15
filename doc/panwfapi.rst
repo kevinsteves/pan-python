@@ -151,7 +151,6 @@ DESCRIPTION
   The default is **xml**.
 
  ``--date`` *date*
-
   Start date for **--changed** query.  The format for the
   *date* argument is *YYYY-MM-DD*.
 

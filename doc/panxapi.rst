@@ -207,7 +207,6 @@ DESCRIPTION
   **--vsys** options specified.
 
  ``--ad-hoc`` *query*
-
   When no other API request is specified, this performs an ad hoc
   (custom) API request using the **query** string specified.  When
   other API requests are specified, this is used to modify (replace)
