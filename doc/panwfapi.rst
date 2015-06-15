@@ -32,6 +32,7 @@ SYNOPSIS
 
  panwfapi.py [options]
     --submit path|url     submit file or URL to WildFire for analysis
+    --submit-link link    submit links to WildFire for analysis
     --change-request      request review of sample's verdict
     --report              get WildFire report
     --verdict             get WildFire sample verdict
@@ -75,6 +76,16 @@ DESCRIPTION
   Submit a file or URL to WildFire for analysis.  Valid URL
   schemes for *url* are: **file**, **http**, **https** and **ftp**.
   A **file** *url* is the same as specifying *path*.
+
+ ``--submit-link`` *link*
+  Submit links to WildFire for analysis.  A link is a URL to a
+  web page.
+
+  *link* can be a single link or a path to a file containing multiple
+  newline delimited links or **-** to specify that links be read from
+  *stdin*.
+
+  A maximum of 1,000 links can be submitted in a request.
 
  ``--change-request``
   Request  a manual review

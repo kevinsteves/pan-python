@@ -64,6 +64,8 @@ DESCRIPTION
  ==============================   ========
  submit file                      /publicapi/submit/file
  submit URL                       /publicapi/submit/url
+ submit link                      /publicapi/submit/link
+ submit links                     /publicapi/submit/links
  submit verdict change request    /publicapi/submit/change-request
  get previously uploaded sample   /publicapi/get/sample
  get sample PCAP                  /publicapi/get/pcap
@@ -163,10 +165,23 @@ exception pan.wfapi.PanWFapiError
 pan.wfapi.PanWFapi Methods
 --------------------------
 
-submit(file=None, url=None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+submit(file=None, url=None, links=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- The ``submit()`` method submits a file or URL to WildFire for analysis.
+ The ``submit()`` method submits a file, URL or web page links to
+ WildFire for analysis.
+
+ **file**
+  Path to a file to submit for analysis.
+
+ **url**
+  URL to a file to submit for analysis.
+
+ **links**
+  List of links (URLs to web pages) to submit for analysis.
+  A maximum of 1,000 links can be submitted in a request.
+
+ You must submit one of **file**, **url** or **links**.
 
 change_request(hash=None, verdict=None, email=None, comment=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

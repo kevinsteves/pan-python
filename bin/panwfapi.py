@@ -112,6 +112,15 @@ def main():
             print_status(wfapi, action)
             print_response(wfapi, options)
 
+        if options['submit-link'] is not None:
+            action = 'submit'
+            kwargs = {}
+            kwargs['links'] = process_arg(options['submit-link'], list=True)
+
+            wfapi.submit(**kwargs)
+            print_status(wfapi, action)
+            print_response(wfapi, options)
+
         if options['change-request']:
             action = 'change-request'
             kwargs = {}
@@ -258,7 +267,7 @@ def validate_hash(hash):
         sys.exit(1)
 
 
-def process_arg(s):
+def process_arg(s, list=False):
     stdin_char = '-'
 
     if s == stdin_char:
@@ -271,11 +280,14 @@ def process_arg(s):
         except IOError:
             lines = [s]
 
-    lines = ''.join(lines)
-
     if debug > 1:
         print('lines:', lines, file=sys.stderr)
 
+    if list:
+        l = [x.rstrip('\r\n') for x in lines]
+        return l
+
+    lines = ''.join(lines)
     return lines
 
 
@@ -298,6 +310,7 @@ def process_verdict(verdict):
 def parse_opts():
     options = {
         'submit': None,
+        'submit-link': None,
         'change-request': False,
         'report': False,
         'verdict': False,
@@ -330,7 +343,8 @@ def parse_opts():
 
     short_options = 'K:h:xpjHDt:T:'
     long_options = ['version', 'help',
-                    'submit=', 'change-request', 'report', 'verdict', 'sample',
+                    'submit=', 'submit-link=',
+                    'change-request', 'report', 'verdict', 'sample',
                     'pcap', 'changed',
                     'hash=', 'platform=', 'testfile',
                     'new-verdict=', 'email=', 'comment=',
@@ -351,6 +365,8 @@ def parse_opts():
             pass
         elif opt == '--submit':
             options['submit'] = arg
+        elif opt == '--submit-link':
+            options['submit-link'] = arg
         elif opt == '--change-request':
             options['change-request'] = True
         elif opt == '--report':
@@ -549,6 +565,7 @@ def set_encoding():
 def usage():
     usage = '''%s [options]
     --submit path|url     submit file or URL to WildFire for analysis
+    --submit-link link    submit links to WildFire for analysis
     --change-request      request review of sample's verdict
     --report              get WildFire report
     --verdict             get WildFire sample verdict

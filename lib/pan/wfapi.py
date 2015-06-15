@@ -614,21 +614,25 @@ class PanWFapi:
 
     def submit(self,
                file=None,
-               url=None):
+               url=None,
+               links=None):
         self.__clear_response()
 
-        if (file is not None and url is not None):
-            raise PanWFapiError('must submit file or url, not both')
+        if (sum(bool(x) for x in [file, url, links]) != 1):
+            raise PanWFapiError('must submit one of file, url or links')
 
         if file is not None:
             request_uri = '/publicapi/submit/file'
         elif url is not None:
             request_uri = '/publicapi/submit/url'
-        else:
-            raise PanWFapiError('file or url not specified')
+        elif len(links) < 2:
+            request_uri = '/publicapi/submit/link'
+        elif len(links) > 1:
+            request_uri = '/publicapi/submit/links'
 
         form = _MultiPartFormData()
         form.add_field('apikey', self.api_key)
+
         if file is not None:
             buf = self._read_file(file)
             if buf is None:
@@ -638,6 +642,14 @@ class PanWFapi:
 
         if url is not None:
             form.add_field('url', url)
+
+        if links is not None:
+            magic = 'panlnk\r\n'  # XXX remove in future
+            if len(links) == 1:
+                form.add_field('link', links[0])
+            elif len(links) > 1:
+                # XXX requires filename in Content-Disposition header
+                form.add_file(filename='pan', body=magic + '\n'.join(links))
 
         headers = form.http_headers()
         body = form.http_body()
