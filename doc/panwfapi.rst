@@ -344,10 +344,10 @@ SEE ALSO
  pan.wfapi
 
  WildFire Administrator's Guide
-  https://www.paloaltonetworks.com/documentation/61/wildfire/wf_admin.pdf.html
+  https://www.paloaltonetworks.com/documentation/70/wildfire/wf_admin.html
 
  WildFire API
-  https://www.paloaltonetworks.com/documentation/61/wildfire/wf_admin/wildfire-api.html
+  https://www.paloaltonetworks.com/documentation/70/wildfire/wf_admin/use-the-wildfire-api.html
 
 AUTHORS
 =======

@@ -690,8 +690,8 @@ SEE ALSO
 
  pan.xapi, panconf.py
 
- PAN-OS 6.1 XML API Reference
-  https://www.paloaltonetworks.com/documentation/61/pan-os.html
+ PAN-OS 7.0 XML API Reference
+  https://www.paloaltonetworks.com/documentation/70/pan-os.html
 
 AUTHORS
 =======
