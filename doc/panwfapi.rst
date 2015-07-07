@@ -46,7 +46,8 @@ SYNOPSIS
     --comment comment     change request explanation
     --testfile            get sample malware test file
     --format format       report output format
-    --date date           start date for changed verdicts (YYYY-MM-DD)
+    --date date           start date for changed verdicts
+                          (YYYY-MM-DD or -days)
     --dst dst             save file to directory or path
     -K api_key            WildFire API key
     -h hostname           WildFire hostname
@@ -152,7 +153,9 @@ DESCRIPTION
 
  ``--date`` *date*
   Start date for **--changed** query.  The format for the
-  *date* argument is *YYYY-MM-DD*.
+  *date* argument is *YYYY-MM-DD* or *-days* to specify a date
+  relative to the current day.  *0* can be also be used to specify
+  the current date.
 
  ``--dst`` *dst*
   Save file to the directory or path specified in *dst*.  By default

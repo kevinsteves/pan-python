@@ -17,6 +17,7 @@
 #
 
 from __future__ import print_function
+from datetime import date, timedelta
 import sys
 import os
 import signal
@@ -209,6 +210,18 @@ def main():
             kwargs = {}
             if options['date'] is not None:
                 kwargs['date'] = options['date']
+                try:
+                    x = int(options['date'])
+                except ValueError:
+                    pass
+                else:
+                    if x < 1:
+                        d = date.today()
+                        d = d - timedelta(-x)
+                        kwargs['date'] = d.isoformat()
+                        if options['debug']:
+                            print('relative date(%d): %s' % (x, kwargs['date']),
+                                  file=sys.stderr)
 
             wfapi.verdicts_changed(**kwargs)
             print_status(wfapi, action)
@@ -579,7 +592,8 @@ def usage():
     --comment comment     change request explanation
     --testfile            get sample malware test file
     --format format       report output format
-    --date date           start date for changed verdicts (YYYY-MM-DD)
+    --date date           start date for changed verdicts
+                          (YYYY-MM-DD or -days)
     --dst dst             save file to directory or path
     -K api_key            WildFire API key
     -h hostname           WildFire hostname
