@@ -198,8 +198,8 @@ DESCRIPTION
   Specify the **hostname** used in API requests.  This can also be
   specified in a .panrc file using the ``hostname`` *varname*.
 
-  This is used to test alternate clouds (e.g.,
-  ``beta.wildfire.paloaltonetworks.com``).
+  This is used to specify an alternate cloud (e.g.,
+  ``beta.wildfire.paloaltonetworks.com``) or a WildFire appliance.
 
   The default is ``wildfire.paloaltonetworks.com``.
 
