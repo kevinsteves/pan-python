@@ -129,6 +129,9 @@ DESCRIPTION
   used to generate an API key for the **-K** argument or a
   .panrc file.
 
+  If a .panrc tagname is specified the output will be **hostname**
+  and **api_key** *varname* values for use in a .panrc file.
+
  ``-s``
   Perform the ``action=show`` device configuration API request with
   the optional **xpath** argument.  ``show`` is used to retrieve the

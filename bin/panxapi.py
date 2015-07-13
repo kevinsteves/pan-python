@@ -17,6 +17,7 @@
 #
 
 from __future__ import print_function
+from datetime import datetime
 import sys
 import os
 import getopt
@@ -99,7 +100,17 @@ def main():
             xapi.keygen(extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
-            print('API key:  "%s"' % xapi.api_key)
+            if (options['api_username'] and options['api_password'] and
+                    options['hostname'] and options['tag']):
+                # .panrc
+                d = datetime.now()
+                print('# %s generated: %s' % (os.path.basename(sys.argv[0]),
+                                              d.strftime('%Y/%m/%d %H:%M:%S')))
+                print('hostname%%%s=%s' % (options['tag'],
+                                           options['hostname']))
+                print('api_key%%%s=%s' % (options['tag'], xapi.api_key))
+            else:
+                print('API key:  "%s"' % xapi.api_key)
 
         if options['show']:
             action = 'show'
