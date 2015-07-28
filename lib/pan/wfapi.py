@@ -14,10 +14,11 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-"""Interface to the WildFire  API
+"""Interface to the WildFire API
 
 The pan.wfapi module implements the PanWFapi class.  It provides an
-interface to the WildFire API on Palo Alto Networks' WildFire Cloud.
+interface to the WildFire API on Palo Alto Networks' WildFire Cloud
+and WildFire appliance.
 """
 
 # XXX Using the requests module which uses urllib3 and has support
