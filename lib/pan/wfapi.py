@@ -603,7 +603,6 @@ class PanWFapi:
             form.add_field('url', url)
 
         if links is not None:
-            magic = 'panlnk\r\n'  # XXX remove in future
             if len(links) == 1:
                 form.add_field('link', links[0])
             elif len(links) > 1:
