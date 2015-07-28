@@ -25,6 +25,7 @@ import getopt
 import json
 import pprint
 import logging
+import ssl
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -64,15 +65,20 @@ def main():
         handler.setFormatter(formatter)
         logger.addHandler(handler)
 
+    if options['cafile'] or options['capath'] or options['ssl']:
+        ssl_context = create_ssl_context(options['cafile'],
+                                         options['capath'],
+                                         options['ssl'])
+    elif options['ssl'] is None:
+        ssl_context = pan.wfapi.cloud_ssl_context()
+
     try:
         wfapi = pan.wfapi.PanWFapi(tag=options['tag'],
                                    api_key=options['api_key'],
                                    hostname=options['hostname'],
                                    timeout=options['timeout'],
                                    http=options['http'],
-                                   cacloud=options['cacloud'],
-                                   cafile=options['cafile'],
-                                   capath=options['capath'])
+                                   ssl_context=ssl_context)
 
     except pan.wfapi.PanWFapiError as msg:
         print('pan.wfapi.PanWFapi:', msg, file=sys.stderr)
@@ -342,7 +348,7 @@ def parse_opts():
         'api_key': None,
         'hostname': None,
         'http': False,
-        'cacloud': True,
+        'ssl': None,
         'cafile': None,
         'capath': None,
         'print_xml': False,
@@ -362,7 +368,7 @@ def parse_opts():
                     'hash=', 'platform=', 'testfile',
                     'new-verdict=', 'email=', 'comment=',
                     'format=', 'date=', 'dst=',
-                    'http', 'nocacloud', 'cafile=', 'capath=',
+                    'http', 'ssl=', 'cafile=', 'capath=',
                     ]
 
     try:
@@ -416,8 +422,12 @@ def parse_opts():
             options['hostname'] = arg
         elif opt == '--http':
             options['http'] = True
-        elif opt == '--nocacloud':
-            options['cacloud'] = False
+        elif opt == '--ssl':
+            if arg in ['default', 'noverify', 'cacloud']:
+                options['ssl'] = arg
+            else:
+                print('Invalid --ssl option:', arg)
+                sys.exit(1)
         elif opt == '--cafile':
             options['cafile'] = arg
         elif opt == '--capath':
@@ -456,6 +466,36 @@ def parse_opts():
         print(s, file=sys.stderr)
 
     return options
+
+
+def create_ssl_context(cafile, capath, ssl_option):
+    # PEP 0476
+    if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
+            sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
+        if cafile or capath:
+            try:
+                ssl_context = ssl.create_default_context(
+                    purpose=ssl.Purpose.SERVER_AUTH,
+                    cafile=cafile,
+                    capath=capath)
+            except Exception as e:
+                print('cafile or capath invalid: %s' % e, file=sys.stderr)
+                sys.exit(1)
+        elif ssl_option:
+            if ssl_option == 'cacloud':
+                ssl_context = pan.wfapi.cloud_ssl_context()
+            elif ssl_option == 'noverify':
+                ssl_context = ssl._create_unverified_context()
+            elif ssl_option == 'default':
+                ssl_context = None
+
+        return ssl_context
+
+    print('Warning: Python %d.%d.%d: cafile, capath and ssl ignored' %
+          (sys.version_info.major, sys.version_info.minor,
+           sys.version_info.micro), file=sys.stderr)
+
+    return None
 
 
 def print_status(wfapi, action, exception_msg=None):
@@ -604,7 +644,7 @@ def usage():
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
     --http                use http URL scheme (default https)
-    --nocacloud           disable default cloud CA certificate verification
+    --ssl opt             SSL verify option: default|noverify|cacloud
     --cafile path         file containing CA certificates
     --capath path         directory of hashed certificate files
     --version             display version

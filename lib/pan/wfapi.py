@@ -30,15 +30,14 @@ from __future__ import print_function
 import sys
 import re
 import os
-from tempfile import NamedTemporaryFile
 from io import BytesIO
 import email.utils
 import logging
 try:
     # 3.2
     from urllib.request import Request, urlopen, \
-        build_opener, install_opener, HTTPErrorProcessor
-    from urllib.request import HTTPSHandler, OpenerDirector
+        build_opener, install_opener
+    from urllib.request import HTTPSHandler
     from urllib.error import URLError
     from urllib.parse import urlencode
     from http.client import responses
@@ -46,7 +45,7 @@ try:
 except ImportError:
     # 2.7
     from urllib2 import Request, urlopen, URLError, \
-        build_opener, install_opener, HTTPErrorProcessor
+        build_opener, install_opener, HTTPSHandler
     from urllib import urlencode
     from httplib import responses
     _legacy_urllib = True
@@ -55,18 +54,10 @@ import xml.etree.ElementTree as etree
 from . import __version__, DEBUG1, DEBUG2, DEBUG3
 import pan.rc
 
-import socket
 try:
     import ssl
 except ImportError:
     raise ValueError('SSL support not available')
-
-try:
-    ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-except AttributeError:
-    _have_sslcontext = False
-else:
-    _have_sslcontext = True
 
 _cloud_server = 'wildfire.paloaltonetworks.com'
 _encoding = 'utf-8'
@@ -133,28 +124,17 @@ class PanWFapi:
                  api_key=None,
                  timeout=None,
                  http=False,
-                 cacloud=True,
-                 cafile=None,
-                 capath=None):
+                 ssl_context=None):
         self._log = logging.getLogger(__name__).log
         self.tag = tag
         self.hostname = hostname
         self.api_key = None
         self.timeout = timeout
-        self.cafile = cafile
-        self.capath = capath
+        self.ssl_context = ssl_context
 
         self._log(DEBUG3, 'Python version: %s', sys.version)
         self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
         self._log(DEBUG3, 'pan-python version: %s', __version__)
-
-        if ((cacloud and sys.hexversion >= 0x03020000) and
-                (self.cafile is None and self.capath is None)):
-            tempfile = self.__cacloud()
-            if tempfile is None:
-                raise PanWFapiError(self._msg)
-            self.cacloud_tempfile = tempfile
-            self.cafile = self.cacloud_tempfile.name
 
         if self.timeout is not None:
             try:
@@ -163,6 +143,12 @@ class PanWFapi:
                     raise ValueError
             except ValueError:
                 raise PanWFapiError('Invalid timeout: %s' % self.timeout)
+
+        if ssl_context is not None:
+            try:
+                ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+            except AttributeError:
+                raise PanXapiError('SSL module has no SSLContext()')
 
         init_panrc = {}  # .panrc args from constructor
         if hostname is not None:
@@ -343,32 +329,6 @@ class PanWFapi:
         self._log(DEBUG3, 'xml_root.decode(): %s', type(s.decode(_encoding)))
         return s.decode(_encoding)
 
-    # see http://bugs.python.org/issue18543
-    # this is a modified urllib.request.urlopen()
-    @staticmethod
-    def _urlopen(url, data=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
-                 cafile=None, capath=None, cadefault=False):
-
-        def http_response(request, response):
-            return response
-
-        http_error_processor = HTTPErrorProcessor()
-        http_error_processor.https_response = http_response
-
-        if _have_sslcontext and (cafile or capath or cadefault):
-            context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-            context.options |= ssl.OP_NO_SSLv2
-            context.verify_mode = ssl.CERT_REQUIRED
-            if cafile or capath:
-                context.load_verify_locations(cafile, capath)
-            else:
-                context.set_default_verify_paths()
-            https_handler = HTTPSHandler(context=context, check_hostname=True)
-            opener = build_opener(https_handler, http_error_processor)
-        else:
-            opener = build_opener(http_error_processor)
-        return opener.open(url, data, timeout)
-
 # XXX Unicode notes
 # 2.7
 # decode() str (bytes) -> unicode
@@ -401,23 +361,22 @@ class PanWFapi:
         kwargs = {
             'url': request,
             }
-        # Changed in version 3.2: cafile and capath were added.
-        if sys.hexversion >= 0x03020000:
-            kwargs['cafile'] = self.cafile
-            kwargs['capath'] = self.capath
-        # Changed in version 3.3: cadefault added
-        if sys.hexversion >= 0x03030000:
-            pass
-#            kwargs['cadefault'] = True
+
+        if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
+                sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
+            # see PEP 476; urlopen() has context
+            if self.ssl_context is not None:
+                kwargs['context'] = self.ssl_context
+        elif self.ssl_context is not None:
+            https_handler = HTTPSHandler(context=self.ssl_context)
+            opener = build_opener(https_handler)
+            install_opener(opener)
 
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout
 
         try:
-
-            response = PanWFapi._urlopen(**kwargs)
-
-        # invalid cafile, capath
+            response = urlopen(**kwargs)
         except (URLError, IOError) as e:
             self._log(DEBUG2, 'urlopen() exception: %s', sys.exc_info())
             self._msg = str(e)
@@ -693,15 +652,16 @@ class PanWFapi:
         if not self.__set_response(response):
             raise PanWFapiError(self._msg)
 
-    def __cacloud(self):
-        # WildFire cloud cafile:
-        #   https://certs.godaddy.com/anonymous/repository.pki
-        #   Go Daddy Class 2 Certification Authority Root Certificate
-        # use:
-        #   $ openssl x509 -in wfapi.py -text
-        # to view text form.
 
-        gd_class2_root_crt = b'''
+def cloud_ssl_context():
+    # WildFire cloud cafile:
+    #   https://certs.godaddy.com/anonymous/repository.pki
+    #   Go Daddy Class 2 Certification Authority Root Certificate
+    # use:
+    #   $ openssl x509 -in wfapi.py -text
+    # to view text form.
+
+    gd_class2_root_crt = b'''
 -----BEGIN CERTIFICATE-----
 MIIEADCCAuigAwIBAgIBADANBgkqhkiG9w0BAQUFADBjMQswCQYDVQQGEwJVUzEh
 MB8GA1UEChMYVGhlIEdvIERhZGR5IEdyb3VwLCBJbmMuMTEwLwYDVQQLEyhHbyBE
@@ -728,17 +688,15 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
 -----END CERTIFICATE-----
 '''
 
-        try:
-            tf = NamedTemporaryFile(suffix='.crt')
-            tf.write(gd_class2_root_crt)
-            tf.flush()
-        except (OSError, IOError) as e:
-            self._msg = "Can't create cloud cafile: %s" % e
-            return None
-
-        self._log(DEBUG2, '__cacloud: %s', tf.name)
-
-        return tf
+    if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
+            sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
+        # XXX python >= 2.7.9 needs catada as Unicode, or we get:
+        # 'ssl.SSLError: nested asn1 error'
+        return ssl.create_default_context(
+            purpose=ssl.Purpose.SERVER_AUTH,
+            cadata=gd_class2_root_crt.decode())
+    else:
+        return None
 
 
 # Minimal RFC 2388 implementation
