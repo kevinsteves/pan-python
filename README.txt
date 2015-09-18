@@ -1,9 +1,10 @@
 pan-python is a Python package for Palo Alto Networks' Next-Generation
-Firewalls and WildFire cloud.  It provides:
+Firewalls, WildFire and AutoFocus.  It provides:
 
   - a Python and command line interface to the PAN-OS and Panorama XML API
   - a command line program for managing PAN-OS XML configurations
   - a Python and command line interface to the WildFire API
+  - a Python and command line interface to the AutoFocus API
 
 Python versions 2.7, 3.2, 3.3 and 3.4 are supported with a single code
 base.  There are no external modules required to use pan-python.
@@ -15,6 +16,8 @@ The pan package contains the following modules:
     pan.rc:     pan.rc.PanRc class (internal)
     pan.config: pan.config.PanConfig class (internal)
     pan.wfapi:  pan.wfapi.PanWFapi class
+    pan.afapi:  pan.afapi.PanAFapi class factory
+    pan.http:   pan.http.PanHttp class (internal)
 
 bin/panxapi.py is a command line program for accessing the XML API and
 uses the pan.xapi and pan.commit modules.
@@ -24,6 +27,9 @@ XML configurations and uses the pan.config module.
 
 bin/panwfapi.py is a command line program for accessing the WildFire
 API and uses the pan.wfapi module.
+
+bin/panafapi.py is a command line program for accessing the AutoFocus
+API and uses the pan.afapi module.
 
 Documentation:
 
