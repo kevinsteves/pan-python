@@ -607,8 +607,14 @@ class PanWFapi:
             if len(links) == 1:
                 form.add_field('link', links[0])
             elif len(links) > 1:
+                magic = 'panlnk'  # XXX should be optional in future
                 # XXX requires filename in Content-Disposition header
-                form.add_file(filename='pan', body=magic + '\n'.join(links))
+                if links[0] == magic:
+                    form.add_file(filename='pan',
+                                  body='\n'.join(links))
+                else:
+                    form.add_file(filename='pan',
+                                  body=magic + '\n' + '\n'.join(links))
 
         headers = form.http_headers()
         body = form.http_body()
