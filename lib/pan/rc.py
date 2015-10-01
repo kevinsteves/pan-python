@@ -38,11 +38,7 @@ _indent = 2
 
 
 class PanRcError(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        return self.msg
+    pass
 
 
 class PanRc:

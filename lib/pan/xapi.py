@@ -59,13 +59,7 @@ _job_query_interval = 0.5
 
 
 class PanXapiError(Exception):
-    def __init__(self, msg):
-        self.msg = msg
-
-    def __str__(self):
-        if self.msg is None:
-            return ''
-        return self.msg
+    pass
 
 
 class PanXapi:
