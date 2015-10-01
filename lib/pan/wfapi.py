@@ -28,6 +28,7 @@ and WildFire appliance.
 # to be revisited as some parts of this are not clean.
 
 from __future__ import print_function
+import socket
 import sys
 import re
 import os
@@ -36,17 +37,16 @@ import email.utils
 import logging
 try:
     # 3.2
-    from urllib.request import Request, urlopen, \
-        build_opener, install_opener
-    from urllib.request import HTTPSHandler
+    from urllib.request import Request, \
+        build_opener, HTTPErrorProcessor, HTTPSHandler
     from urllib.error import URLError
     from urllib.parse import urlencode
     from http.client import responses
     _legacy_urllib = False
 except ImportError:
     # 2.7
-    from urllib2 import Request, urlopen, URLError, \
-        build_opener, install_opener, HTTPSHandler
+    from urllib2 import Request, URLError, \
+        build_opener, HTTPErrorProcessor, HTTPSHandler
     from urllib import urlencode
     from httplib import responses
     _legacy_urllib = True
@@ -363,21 +363,14 @@ class PanWFapi:
             'url': request,
             }
 
-        if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
-                sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
-            # see PEP 476; urlopen() has context
-            if self.ssl_context is not None:
-                kwargs['context'] = self.ssl_context
-        elif self.ssl_context is not None:
-            https_handler = HTTPSHandler(context=self.ssl_context)
-            opener = build_opener(https_handler)
-            install_opener(opener)
+        if self.ssl_context is not None:
+            kwargs['context'] = self.ssl_context
 
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout
 
         try:
-            response = urlopen(**kwargs)
+            response = self._urlopen(**kwargs)
         except (URLError, IOError) as e:
             self._log(DEBUG2, 'urlopen() exception: %s', sys.exc_info())
             self._msg = str(e)
@@ -658,6 +651,29 @@ class PanWFapi:
         if not self.__set_response(response):
             raise PanWFapiError(self._msg)
 
+    # allow non-2XX error codes
+    # see http://bugs.python.org/issue18543 for why we can't just
+    # install a new HTTPErrorProcessor()
+    @staticmethod
+    def _urlopen(url, data=None,
+                 timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                 cafile=None, capath=None, cadefault=False,
+                 context=None):
+
+        def http_response(request, response):
+            return response
+
+        http_error_processor = HTTPErrorProcessor()
+        http_error_processor.https_response = http_response
+
+        if context:
+            https_handler = HTTPSHandler(context=context)
+            opener = build_opener(https_handler, http_error_processor)
+        else:
+            opener = build_opener(http_error_processor)
+
+        return opener.open(url, data, timeout)
+
 
 def cloud_ssl_context():
     # WildFire cloud cafile:
@@ -704,7 +720,6 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
     else:
         return None
 
-
 # Minimal RFC 2388 implementation
 
 # Content-Type: multipart/form-data; boundary=___XXX
@@ -718,6 +733,7 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
 #
 # XXXfilecontents
 # --___XXX--
+
 
 class _MultiPartFormData:
     def __init__(self):
