@@ -301,10 +301,16 @@ def print_status(afapi, action, exception_msg=None):
                 print(' %s%%' % afapi.json['af_complete_percentage'],
                       end='', file=sys.stderr)
             if 'hits' in afapi.json:
-                print(' hits=%d' % len(afapi.json['hits']),
-                      end='', file=sys.stderr)
+                if 'hits' in afapi.json['hits']:
+                    hits = len(afapi.json['hits']['hits'])
+                else:
+                    hits = len(afapi.json['hits'])
+                print(' hits=%d' % hits, end='', file=sys.stderr)
             if 'total' in afapi.json:
                 print(' total=%d' % afapi.json['total'],
+                      end='', file=sys.stderr)
+            elif 'hits' in afapi.json and 'total' in afapi.json['hits']:
+                print(' total=%d' % afapi.json['hits']['total'],
                       end='', file=sys.stderr)
             if 'took' in afapi.json and afapi.json['took'] is not None:
                 d = datetime.timedelta(milliseconds=afapi.json['took'])
