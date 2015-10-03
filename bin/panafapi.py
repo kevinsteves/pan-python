@@ -310,6 +310,9 @@ def print_status(afapi, action, exception_msg=None):
             elif 'tags' in afapi.json:
                 print(' tags=%d' % len(afapi.json['tags']),
                       end='', file=sys.stderr)
+            elif 'top_tags' in afapi.json:
+                print(' top_tags=%d' % len(afapi.json['top_tags']),
+                      end='', file=sys.stderr)
 
             if 'total' in afapi.json:
                 print(' total=%d' % afapi.json['total'],
