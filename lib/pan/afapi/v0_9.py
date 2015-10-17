@@ -16,7 +16,6 @@
 
 import json
 import logging
-import re
 import sys
 
 from .. import __version__, DEBUG1, DEBUG2, DEBUG3
