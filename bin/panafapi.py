@@ -169,13 +169,30 @@ def tags(afapi, options):
         else:
             query = dict(parse_qsl(options['query_string']))
 
-        if options['num_results'] is not None:
-            query['pageSize'] = options['num_results']
-        if options['scope'] is not None:
-            query['scope'] = options['scope']
 
-        afapi.tags(data=options['json_request'],
-                   query=query)
+        if afapi.api_version.hex() < 0x0100:
+            if options['num_results'] is not None:
+                query['pageSize'] = options['num_results']
+            if options['scope'] is not None:
+                query['scope'] = options['scope']
+        else:
+            request = options['json_request']
+            try:
+                obj = json.loads(request)
+                if options['num_results'] is not None:
+                    obj['pageSize'] = options['num_results']
+                if options['scope'] is not None:
+                    obj['scope'] = options['scope']
+                request = json.dumps(obj)
+            except ValueError as e:
+                print(e, file=sys.stderr)
+                sys.exit(1)
+
+        if afapi.api_version.hex() < 0x0100:
+            afapi.tags(data=options['json_request'],
+                       query=query)
+        else:
+            afapi.tags(data=request)
 
         print_status(afapi, action)
         print_response(afapi, options)
@@ -213,7 +230,9 @@ def question(afapi, options,
                 print(e, file=sys.stderr)
                 sys.exit(1)
 
-        if options['scope'] is not None and options['samples']:
+        if options['scope'] is not None and \
+           (afapi.api_version.hex() >= 0x0100 or \
+           options['samples']):
             try:
                 obj = json.loads(request)
                 obj['scope'] = options['scope']
@@ -223,7 +242,8 @@ def question(afapi, options,
                 sys.exit(1)
 
         action = action_search
-        if (search == afapi.sessions_histogram_search or
+        if afapi.api_version.hex() < 0x0100 and \
+           (search == afapi.sessions_histogram_search or
            search == afapi.sessions_aggregate_search or
            search == afapi.top_tags_search):
             search(data=request,
