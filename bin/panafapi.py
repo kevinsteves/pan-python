@@ -170,7 +170,7 @@ def tags(afapi, options):
             query = dict(parse_qsl(options['query_string']))
 
 
-        if afapi.api_version.hex() < 0x0100:
+        if int(afapi.api_version) < 0x0100:
             if options['num_results'] is not None:
                 query['pageSize'] = options['num_results']
             if options['scope'] is not None:
@@ -188,7 +188,7 @@ def tags(afapi, options):
                 print(e, file=sys.stderr)
                 sys.exit(1)
 
-        if afapi.api_version.hex() < 0x0100:
+        if int(afapi.api_version) < 0x0100:
             afapi.tags(data=options['json_request'],
                        query=query)
         else:
@@ -231,7 +231,7 @@ def question(afapi, options,
                 sys.exit(1)
 
         if options['scope'] is not None and \
-           (afapi.api_version.hex() >= 0x0100 or \
+           (int(afapi.api_version) >= 0x0100 or \
            options['samples']):
             try:
                 obj = json.loads(request)
@@ -242,7 +242,7 @@ def question(afapi, options,
                 sys.exit(1)
 
         action = action_search
-        if afapi.api_version.hex() < 0x0100 and \
+        if int(afapi.api_version) < 0x0100 and \
            (search == afapi.sessions_histogram_search or
            search == afapi.sessions_aggregate_search or
            search == afapi.top_tags_search):
