@@ -32,7 +32,8 @@ class _ApiVersion(namedtuple('api_version',
         return 'v%d.%d' % (self.major, self.minor)
 
     def __int__(self):
-        return self.major << 8 | self.minor
+        # reserve lower 8 bits for 'future' use
+        return self.major << 16 | self.minor << 8
 
 
 class PanAFapiError(Exception):
@@ -50,7 +51,7 @@ def PanAFapi(api_version=None, *args, **kwargs):
             raise PanAFapiError('Invalid api_version: %s' % api_version)
         x = int(r.group(1)), int(r.group(2))
     _api_version = _ApiVersion(*x)
-    _log(DEBUG1, 'api_version: %s, 0x%04x',
+    _log(DEBUG1, 'api_version: %s, 0x%06x',
          _api_version, _api_version)
 
     _package = 'pan.afapi'
