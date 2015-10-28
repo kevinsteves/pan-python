@@ -21,7 +21,7 @@ import sys
 
 from .. import __version__, DEBUG1, DEBUG2, DEBUG3
 
-_default_api_version = (0, 9)
+_default_api_version = (1, 0)
 DEFAULT_API_VERSION = 'v%d.%d' % _default_api_version
 
 

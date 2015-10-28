@@ -25,10 +25,6 @@ import os
 import pprint
 import sys
 import time
-try:
-    from urlparse import parse_qsl
-except ImportError:
-    from urllib.parse import parse_qsl
 
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
@@ -161,34 +157,21 @@ def tag(afapi, options):
 def tags(afapi, options):
     try:
         action = 'tags'
-        if options['query_string'] is None:
-            query = {}
-        else:
-            query = dict(parse_qsl(options['query_string']))
+        query = {}
 
-        if int(afapi.api_version) < 0x010000:
+        request = options['json_request']
+        try:
+            obj = json.loads(request)
             if options['num_results'] is not None:
-                query['pageSize'] = options['num_results']
+                obj['pageSize'] = options['num_results']
             if options['scope'] is not None:
-                query['scope'] = options['scope']
-        else:
-            request = options['json_request']
-            try:
-                obj = json.loads(request)
-                if options['num_results'] is not None:
-                    obj['pageSize'] = options['num_results']
-                if options['scope'] is not None:
-                    obj['scope'] = options['scope']
-                request = json.dumps(obj)
-            except ValueError as e:
-                print(e, file=sys.stderr)
-                sys.exit(1)
+                obj['scope'] = options['scope']
+            request = json.dumps(obj)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
 
-        if int(afapi.api_version) < 0x010000:
-            r = afapi.tags(data=options['json_request'],
-                           query=query)
-        else:
-            r = afapi.tags(data=request)
+        r = afapi.tags(data=request)
 
         print_status(action, r)
         print_response(r, options)
@@ -224,9 +207,7 @@ def question(afapi, options,
                 print(e, file=sys.stderr)
                 sys.exit(1)
 
-        if options['scope'] is not None and \
-           (int(afapi.api_version) >= 0x010000 or
-           options['samples']):
+        if options['scope'] is not None:
             try:
                 obj = json.loads(request)
                 obj['scope'] = options['scope']
@@ -236,14 +217,7 @@ def question(afapi, options,
                 sys.exit(1)
 
         action = action_search
-        if int(afapi.api_version) < 0x010000 and \
-           (search == afapi.sessions_histogram_search or
-           search == afapi.sessions_aggregate_search or
-           search == afapi.top_tags_search):
-            r = search(data=request,
-                       scope=options['scope'])
-        else:
-            r = search(data=request)
+        r = search(data=request)
 
         print_status(action, r)
         if debug > 2:
@@ -443,7 +417,6 @@ def parse_opts():
         'json_requests': [],
         'json_request': None,
         'json_request_obj': None,
-        'query_string': None,
         'num_results': None,
         'scope': None,
         'hash': None,
@@ -458,7 +431,7 @@ def parse_opts():
         'timeout': None,
         }
 
-    short_options = 'AHK:V:h:pjHDt:T:r:q:n:'
+    short_options = 'AHK:V:h:pjHDt:T:r:n:'
     long_options = [
         'sessions', 'session=', 'samples', 'sample-analysis',
         'top-tags', 'tags', 'tag=', 'export',
@@ -500,14 +473,6 @@ def parse_opts():
             options['export'] = True
         elif opt == '-r':
             options['json_requests'].append(process_arg(arg))
-        elif opt == '-q':
-            options['query_string'] = process_arg(arg)
-            try:
-                parse_qsl(options['query_string'],
-                          strict_parsing=True)
-            except ValueError as e:
-                print('Invalid query: %s' % e, file=sys.stderr)
-                sys.exit(1)
         elif opt == '-n':
             try:
                 options['num_results'] = int(arg)
@@ -596,7 +561,6 @@ def usage():
     --tag name            get AutoFocus tag
     --export              export AutoFocus list
     -r json               JSON API request (multiple -r's allowed)
-    -q query-string       request URL QUERY_STRING
     -n num                request num results
     --scope scope         search scope
     --hash hash           sample hash
