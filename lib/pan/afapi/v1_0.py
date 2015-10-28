@@ -26,6 +26,17 @@ from pan.afapi import PanAFapiError
 _cloud_server = 'autofocus.paloaltonetworks.com'
 
 
+class PanAFapiRequest:
+    def __init__(self):
+        self.http_code = None
+        self.http_reason = None
+        self.http_headers = None
+        self.http_encoding = None
+        self.http_content = None
+        self.http_text = None
+        self.json = None
+
+
 class PanAFapi:
     def __init__(self,
                  api_version=None,
@@ -83,32 +94,25 @@ class PanAFapi:
             s = 'using urllib'
         self._log(DEBUG2, s)
 
-    def _init_attributes(self):
-        self.http_code = None
-        self.http_reason = None
-        self.http_headers = None
-        self.http_encoding = None
-        self.http_content = None
-        self.http_text = None
-        self.json = None
-
-    def _set_attributes(self):
-        self.http_code = self.http.code
-        self.http_reason = self.http.reason
-        self.http_headers = self.http.headers
-        self.http_encoding = self.http.encoding
-        if self.http_encoding is None:
-            self.http_encoding = 'utf8'
-        self.http_content = self.http.content
-        self.http_text = self.http.text
-        if self.http_headers is not None:
-            x = self.http_headers.get('content-type')
+    def _set_attributes(self, r):
+        r.http_code = self.http.code
+        r.http_reason = self.http.reason
+        r.http_headers = self.http.headers
+        r.http_encoding = self.http.encoding
+        if r.http_encoding is None:
+            r.http_encoding = 'utf8'
+        self._log(DEBUG2, r.http_encoding)
+        self._log(DEBUG2, r.http_headers)
+        r.http_content = self.http.content
+        r.http_text = self.http.text
+        if r.http_headers is not None:
+            x = r.http_headers.get('content-type')
             if x is not None and x.startswith('application/json'):
                 try:
-                    self.json = json.loads(self.http_text)
+                    r.json = json.loads(r.http_text)
                 except ValueError as e:
                     self._log(DEBUG1, 'json.loads: ', e)
-        self._log(DEBUG3, self.http.text)
+        self._log(DEBUG3, r.http_text)
 
     def _set_apikey(self, data):
         try:
@@ -124,7 +128,6 @@ class PanAFapi:
             self._log(DEBUG1, params)
         self._log(DEBUG1, data)
 
-        self._init_attributes()
         data = self._set_apikey(data)
 
         try:
@@ -133,78 +136,92 @@ class PanAFapi:
                                    data=data,
                                    params=params)
         except pan.http.PanHttpError as e:
-            self._set_attributes()
             raise PanAFapiError(str(e))
 
-        self._set_attributes()
+        r = PanAFapiRequest()
+        self._set_attributes(r)
+        return r
 
     def samples_search(self, data):
         endpoint = '/samples/search/'
         url = self.base_uri + endpoint
-        self._api_request(url, self.headers, data)
+        r = self._api_request(url, self.headers, data)
+        return r
 
     def samples_results(self, jobid):
         endpoint = '/samples/results/'
         url = self.base_uri + endpoint + jobid
-        self._api_request(url, self.headers, '{}')
+        r = self._api_request(url, self.headers, '{}')
+        return r
 
     def sessions_search(self, data):
         endpoint = '/sessions/search/'
         url = self.base_uri + endpoint
-        self._api_request(url, self.headers, data)
+        r = self._api_request(url, self.headers, data)
+        return r
 
     def sessions_results(self, jobid):
         endpoint = '/sessions/results/'
         url = self.base_uri + endpoint + jobid
-        self._api_request(url, self.headers, '{}')
+        r = self._api_request(url, self.headers, '{}')
+        return r
 
     def sessions_histogram_search(self, data):
         endpoint = '/sessions/histogram/search/'
         url = self.base_uri + endpoint
-        self._api_request(url, self.headers, data)
+        r = self._api_request(url, self.headers, data)
+        return r
 
     def sessions_histogram_results(self, jobid):
         endpoint = '/sessions/histogram/results/'
         url = self.base_uri + endpoint + jobid
-        self._api_request(url, self.headers, '{}')
+        r = self._api_request(url, self.headers, '{}')
+        return r
 
     def sessions_aggregate_search(self, data):
         endpoint = '/sessions/aggregate/search/'
         url = self.base_uri + endpoint
-        self._api_request(url, self.headers, data)
+        r = self._api_request(url, self.headers, data)
+        return r
 
     def sessions_aggregate_results(self, jobid):
         endpoint = '/sessions/aggregate/results/'
         url = self.base_uri + endpoint + jobid
-        self._api_request(url, self.headers, '{}')
+        r = self._api_request(url, self.headers, '{}')
+        return r
 
     def session(self, sessionid=None):
         endpoint = '/session/'
         if sessionid is not None:
             url = self.base_uri + endpoint + sessionid
-        self._api_request(url, self.headers, '{}')
+        r = self._api_request(url, self.headers, '{}')
+        return r
 
     def top_tags_search(self, data):
         endpoint = '/top-tags/search/'
         url = self.base_uri + endpoint
-        self._api_request(url, self.headers, data)
+        r = self._api_request(url, self.headers, data)
+        return r
 
     def top_tags_results(self, jobid):
         endpoint = '/top-tags/results/'
         url = self.base_uri + endpoint + jobid
-        self._api_request(url, self.headers, '{}')
+        r = self._api_request(url, self.headers, '{}')
+        return r
 
     def tags(self, data):
         endpoint = '/tags'
         url = self.base_uri + endpoint
-        self._api_request(url, self.headers, data)
+        r = self._api_request(url, self.headers, data)
+        return r
 
     def tag(self, tagname=None):
         endpoint = '/tag/'
         url = self.base_uri + endpoint
         if tagname is not None:
             url += tagname
-        self._api_request(url, self.headers, '{}')
+        r = self._api_request(url, self.headers, '{}')
+        return r
 
     def sample_analysis(self, data, sampleid=None):
         endpoint = '/sample/'
@@ -212,9 +229,11 @@ class PanAFapi:
         if sampleid is not None:
             url += sampleid + '/'
         url += 'analysis'
-        self._api_request(url, self.headers, data)
+        r = self._api_request(url, self.headers, data)
+        return r
 
     def export(self, data):
         endpoint = '/export/'
         url = self.base_uri + endpoint
-        self._api_request(url, self.headers, data)
+        r = self._api_request(url, self.headers, data)
+        return r

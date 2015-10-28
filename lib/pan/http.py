@@ -165,7 +165,6 @@ class PanHttp:
 
         self.content = response.read()
         self.text = self.content.decode(self.encoding)
-        self._raise_for_status()
 
     def _http_request_requests(self, url, headers, data, params):
         kwargs = {
@@ -196,7 +195,6 @@ class PanHttp:
         self.encoding = r.encoding
         self.content = r.content
         self.text = r.text
-        self._raise_for_status()
 
     # allow non-2XX error codes
     # see http://bugs.python.org/issue18543 for why we can't just

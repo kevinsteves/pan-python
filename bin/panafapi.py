@@ -124,40 +124,37 @@ def main():
 def export(afapi, options):
     try:
         action = 'export'
-        afapi.export(data=options['json_request'])
-        print_status(afapi, action)
-        print_response(afapi, options)
+        r = afapi.export(data=options['json_request'])
+        print_status(action, r)
+        print_response(r, options)
 
     except pan.afapi.PanAFapiError as e:
-        print_status(afapi, action, e)
-        print_response(afapi, options)
+        print_exception(action, e)
         sys.exit(1)
 
 
 def sample_analysis(afapi, options):
     try:
         action = 'sample-analysis'
-        afapi.sample_analysis(data=options['json_request'],
-                              sampleid=options['hash'])
-        print_status(afapi, action)
-        print_response(afapi, options)
+        r = afapi.sample_analysis(data=options['json_request'],
+                                  sampleid=options['hash'])
+        print_status(action, r)
+        print_response(r, options)
 
     except pan.afapi.PanAFapiError as e:
-        print_status(afapi, action, e)
-        print_response(afapi, options)
+        print_exception(action, e)
         sys.exit(1)
 
 
 def tag(afapi, options):
     try:
         action = 'tag'
-        afapi.tag(tagname=options['tag'])
-        print_status(afapi, action)
-        print_response(afapi, options)
+        r = afapi.tag(tagname=options['tag'])
+        print_status(action, r)
+        print_response(r, options)
 
     except pan.afapi.PanAFapiError as e:
-        print_status(afapi, action, e)
-        print_response(afapi, options)
+        print_exception(action, e)
         sys.exit(1)
 
 
@@ -168,7 +165,6 @@ def tags(afapi, options):
             query = {}
         else:
             query = dict(parse_qsl(options['query_string']))
-
 
         if int(afapi.api_version) < 0x010000:
             if options['num_results'] is not None:
@@ -189,30 +185,28 @@ def tags(afapi, options):
                 sys.exit(1)
 
         if int(afapi.api_version) < 0x010000:
-            afapi.tags(data=options['json_request'],
-                       query=query)
+            r = afapi.tags(data=options['json_request'],
+                           query=query)
         else:
-            afapi.tags(data=request)
+            r = afapi.tags(data=request)
 
-        print_status(afapi, action)
-        print_response(afapi, options)
+        print_status(action, r)
+        print_response(r, options)
 
     except pan.afapi.PanAFapiError as e:
-        print_status(afapi, action, e)
-        print_response(afapi, options)
+        print_exception(action, e)
         sys.exit(1)
 
 
 def session(afapi, options):
     try:
         action = 'session'
-        afapi.session(sessionid=options['session'])
-        print_status(afapi, action)
-        print_response(afapi, options)
+        r = afapi.session(sessionid=options['session'])
+        print_status(action, r)
+        print_response(r, options)
 
     except pan.afapi.PanAFapiError as e:
-        print_status(afapi, action, e)
-        print_response(afapi, options)
+        print_exception(action, e)
         sys.exit(1)
 
 
@@ -231,7 +225,7 @@ def question(afapi, options,
                 sys.exit(1)
 
         if options['scope'] is not None and \
-           (int(afapi.api_version) >= 0x010000 or \
+           (int(afapi.api_version) >= 0x010000 or
            options['samples']):
             try:
                 obj = json.loads(request)
@@ -246,16 +240,17 @@ def question(afapi, options,
            (search == afapi.sessions_histogram_search or
            search == afapi.sessions_aggregate_search or
            search == afapi.top_tags_search):
-            search(data=request,
-                   scope=options['scope'])
+            r = search(data=request,
+                       scope=options['scope'])
         else:
-            search(data=request)
+            r = search(data=request)
 
-        print_status(afapi, action)
+        print_status(action, r)
         if debug > 2:
-            print_response(afapi, options)
+            print_response(r, options)
 
-        obj = afapi.json
+        exit_for_http_status(r)
+        obj = r.json
         if obj is None:
             print('Response not JSON', file=sys.stderr)
             sys.exit(1)
@@ -268,113 +263,120 @@ def question(afapi, options,
         while True:
             time.sleep(3)  # XXX
             action = action_results
-            results(jobid=jobid)
-            print_status(afapi, action)
+            r = results(jobid=jobid)
+            print_status(action, r)
 
-            obj = afapi.json
+            obj = r.json
             if obj is None:
                 print('Response not JSON', file=sys.stderr)
                 sys.exit(1)
 
             msg = obj.get('af_message')
             if msg is not None and msg == 'complete':
-                print_response(afapi, options)
+                print_response(r, options)
                 break
             if debug > 2:
-                print_response(afapi, options)
+                print_response(r, options)
 
     except pan.afapi.PanAFapiError as e:
-        print_status(afapi, action, e)
-        print_response(afapi, options)
+        print_exception(action, e)
         sys.exit(1)
 
 
-def print_status(afapi, action, exception_msg=None):
-    if debug > 1:
-        print(afapi.http_encoding, file=sys.stderr)
-        print(afapi.http_headers, file=sys.stderr)
+def print_exception(action, e):
+    print('%s:' % action, end='', file=sys.stderr)
+    print(' "%s"' % e, file=sys.stderr)
 
+
+def print_status(action, r):
     print('%s:' % action, end='', file=sys.stderr)
 
-    if exception_msg is not None:
-        print(' "%s"' % exception_msg, end='', file=sys.stderr)
-        if afapi.json is not None and 'message' in afapi.json:
-            print(' "%s"' % afapi.json['message'],
+    if r.http_code is not None:
+        print(' %s' % r.http_code, end='', file=sys.stderr)
+    if r.http_reason is not None:
+        print(' %s' % r.http_reason, end='', file=sys.stderr)
+
+    if r.http_headers is not None:
+        # XXX
+        content_type = r.http_headers.get('content-type')
+        if False and content_type is not None:
+            print(' %s' % content_type, end='', file=sys.stderr)
+        length = r.http_headers.get('content-length')
+        if length is not None:
+            print(' %s' % length, end='', file=sys.stderr)
+
+    if r.json is not None:
+        if 'message' in r.json:
+            print(' "%s"' % r.json['message'],
                   end='', file=sys.stderr)
-    else:
-        if afapi.http_code is not None:
-            print(' %s' % afapi.http_code, end='', file=sys.stderr)
-        if afapi.http_reason is not None:
-            print(' %s' % afapi.http_reason, end='', file=sys.stderr)
 
-        if afapi.http_headers is not None:
-            # XXX
-            content_type = afapi.http_headers.get('content-type')
-            if False and content_type is not None:
-                print(' %s' % content_type, end='', file=sys.stderr)
-            length = afapi.http_headers.get('content-length')
-            if length is not None:
-                print(' %s' % length, end='', file=sys.stderr)
+        if 'af_complete_percentage' in r.json:
+            print(' %s%%' % r.json['af_complete_percentage'],
+                  end='', file=sys.stderr)
 
-        if afapi.json is not None:
-            if 'af_complete_percentage' in afapi.json:
-                print(' %s%%' % afapi.json['af_complete_percentage'],
-                      end='', file=sys.stderr)
+        if 'hits' in r.json:
+            if 'hits' in r.json['hits']:
+                hits = len(r.json['hits']['hits'])
+            else:
+                hits = len(r.json['hits'])
+            print(' hits=%d' % hits, end='', file=sys.stderr)
+        elif 'tags' in r.json:
+            print(' tags=%d' % len(r.json['tags']),
+                  end='', file=sys.stderr)
+        elif 'top_tags' in r.json:
+            print(' top_tags=%d' % len(r.json['top_tags']),
+                  end='', file=sys.stderr)
 
-            if 'hits' in afapi.json:
-                if 'hits' in afapi.json['hits']:
-                    hits = len(afapi.json['hits']['hits'])
-                else:
-                    hits = len(afapi.json['hits'])
-                print(' hits=%d' % hits, end='', file=sys.stderr)
-            elif 'tags' in afapi.json:
-                print(' tags=%d' % len(afapi.json['tags']),
-                      end='', file=sys.stderr)
-            elif 'top_tags' in afapi.json:
-                print(' top_tags=%d' % len(afapi.json['top_tags']),
-                      end='', file=sys.stderr)
+        if 'total' in r.json:
+            print(' total=%d' % r.json['total'],
+                  end='', file=sys.stderr)
+        elif 'hits' in r.json and 'total' in r.json['hits']:
+            print(' total=%d' % r.json['hits']['total'],
+                  end='', file=sys.stderr)
+        elif 'total_count' in r.json:
+            print(' total_count=%d' % r.json['total_count'],
+                  end='', file=sys.stderr)
 
-            if 'total' in afapi.json:
-                print(' total=%d' % afapi.json['total'],
-                      end='', file=sys.stderr)
-            elif 'hits' in afapi.json and 'total' in afapi.json['hits']:
-                print(' total=%d' % afapi.json['hits']['total'],
-                      end='', file=sys.stderr)
-            elif 'total_count' in afapi.json:
-                print(' total_count=%d' % afapi.json['total_count'],
-                      end='', file=sys.stderr)
+        if 'took' in r.json and r.json['took'] is not None:
+            d = datetime.timedelta(milliseconds=r.json['took'])
+            print(' time=%s' % d,
+                  end='', file=sys.stderr)
 
-            if 'took' in afapi.json and afapi.json['took'] is not None:
-                d = datetime.timedelta(milliseconds=afapi.json['took'])
-                print(' time=%s' % d,
-                      end='', file=sys.stderr)
-
-            if 'af_message' in afapi.json:
-                print(' "%s"' % afapi.json['af_message'],
-                      end='', file=sys.stderr)
+        if 'af_message' in r.json:
+            print(' "%s"' % r.json['af_message'],
+                  end='', file=sys.stderr)
 
     print(file=sys.stderr)
 
 
-def print_response(afapi, options):
-    if afapi.http_text is None:
+def print_response(r, options):
+    if r.http_text is None:
         return
 
-    if afapi.http_headers is not None:
-        x = afapi.http_headers.get('content-type')
+    if r.http_headers is not None:
+        x = r.http_headers.get('content-type')
         if x is None:
             return
 
     if x.startswith('text/html'):
         # XXX
-        print(afapi.http_text)
+        print(r.http_text)
 
     elif x.startswith('application/json'):
         if options['print_json']:
-            print_json(afapi.http_text, isjson=True)
+            print_json(r.http_text, isjson=True)
 
         if options['print_python']:
-            print_python(afapi.http_text, isjson=True)
+            print_python(r.http_text, isjson=True)
+
+
+def exit_for_http_status(r):
+    if r.http_code is not None:
+        if not (200 <= r.http_code < 300):
+            sys.exit(1)
+        else:
+            return
+    sys.exit(1)
 
 
 def print_python(obj, isjson=False):
