@@ -275,7 +275,7 @@ def print_status(action, r):
 
         if 'took' in r.json and r.json['took'] is not None:
             d = datetime.timedelta(milliseconds=r.json['took'])
-            print(' time=%s' % d,
+            print(' time=%s' % str(d)[:-3],
                   end='', file=sys.stderr)
 
         if 'af_message' in r.json:
