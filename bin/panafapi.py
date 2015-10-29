@@ -24,7 +24,6 @@ import logging
 import os
 import pprint
 import sys
-import time
 
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
@@ -77,36 +76,27 @@ def main():
         sample_analysis(afapi, options)
 
     elif options['samples']:
-        question(afapi, options,
-                 'samples-search', afapi.samples_search,
-                 'samples-results', afapi.samples_results)
+        search_results(afapi, options,
+                       afapi.samples_search_results)
 
     elif options['sessions'] and options['histogram']:
-        question(afapi, options,
-                 'sessions-histogram-search',
-                 afapi.sessions_histogram_search,
-                 'sessions-histogram-results',
-                 afapi.sessions_histogram_results)
+        search_results(afapi, options,
+                       afapi.sessions_histogram_search_results)
 
     elif options['sessions'] and options['aggregate']:
-        question(afapi, options,
-                 'sessions-aggregate-search',
-                 afapi.sessions_aggregate_search,
-                 'sessions-aggregate-results',
-                 afapi.sessions_aggregate_results)
+        search_results(afapi, options,
+                       afapi.sessions_aggregate_search_results)
 
     elif options['sessions']:
-        question(afapi, options,
-                 'sessions-search', afapi.sessions_search,
-                 'sessions-results', afapi.sessions_results)
+        search_results(afapi, options,
+                       afapi.sessions_search_results)
 
     elif options['session'] is not None:
         session(afapi, options)
 
     elif options['top_tags']:
-        question(afapi, options,
-                 'top-tags-search', afapi.top_tags_search,
-                 'top-tags-results', afapi.top_tags_results)
+        search_results(afapi, options,
+                       afapi.top_tags_search_results)
 
     elif options['tags']:
         tags(afapi, options)
@@ -193,67 +183,39 @@ def session(afapi, options):
         sys.exit(1)
 
 
-def question(afapi, options,
-             action_search, search,
-             action_results, results):
+def search_results(afapi,
+                   options,
+                   search):
+    request = options['json_request']
+
+    if options['num_results'] is not None:
+        try:
+            obj = json.loads(request)
+            obj['size'] = options['num_results']
+            request = json.dumps(obj)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
+
+    if options['scope'] is not None:
+        try:
+            obj = json.loads(request)
+            obj['scope'] = options['scope']
+            request = json.dumps(obj)
+        except ValueError as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
+
     try:
-        request = options['json_request']
-        if options['num_results'] is not None:
-            try:
-                obj = json.loads(request)
-                obj['size'] = options['num_results']
-                request = json.dumps(obj)
-            except ValueError as e:
-                print(e, file=sys.stderr)
-                sys.exit(1)
-
-        if options['scope'] is not None:
-            try:
-                obj = json.loads(request)
-                obj['scope'] = options['scope']
-                request = json.dumps(obj)
-            except ValueError as e:
-                print(e, file=sys.stderr)
-                sys.exit(1)
-
-        action = action_search
-        r = search(data=request)
-
-        print_status(action, r)
-        if debug > 2:
-            print_response(r, options)
-
-        exit_for_http_status(r)
-        obj = r.json
-        if obj is None:
-            print('Response not JSON', file=sys.stderr)
-            sys.exit(1)
-
-        jobid = obj.get('af_cookie')
-        if jobid is None:
-            print('No af_cookie in response', file=sys.stderr)
-            sys.exit(1)
-
-        while True:
-            time.sleep(3)  # XXX
-            action = action_results
-            r = results(jobid=jobid)
-            print_status(action, r)
-
-            obj = r.json
-            if obj is None:
-                print('Response not JSON', file=sys.stderr)
-                sys.exit(1)
-
-            msg = obj.get('af_message')
-            if msg is not None and msg == 'complete':
-                print_response(r, options)
-                break
+        for r in search(data=request, terminal=options['terminal']):
+            print_status(r.name, r)
             if debug > 2:
                 print_response(r, options)
+        if debug <= 2:
+            print_response(r, options)
 
     except pan.afapi.PanAFapiError as e:
-        print_exception(action, e)
+        print_exception(search.__name__, e)
         sys.exit(1)
 
 
@@ -420,6 +382,7 @@ def parse_opts():
         'num_results': None,
         'scope': None,
         'hash': None,
+        'terminal': False,
         'api_key': None,
         'api_version': None,
         'hostname': None,
@@ -435,7 +398,7 @@ def parse_opts():
     long_options = [
         'sessions', 'session=', 'samples', 'sample-analysis',
         'top-tags', 'tags', 'tag=', 'export',
-        'scope=', 'hash=',
+        'scope=', 'hash=', 'terminal',
         'ssl=',
         'version', 'help',
     ]
@@ -484,6 +447,8 @@ def parse_opts():
         elif opt == '--hash':
             x = process_arg(arg)
             options['hash'] = x.rstrip('\r\n')
+        elif opt == '--terminal':
+            options['terminal'] = True
         elif opt == '-K':
             options['api_key'] = arg
         elif opt == '-V':
@@ -564,6 +529,7 @@ def usage():
     -n num                request num results
     --scope scope         search scope
     --hash hash           sample hash
+    --terminal            get only final search result
     -t tag                .panrc tagname
     -K api_key            AutoFocus API key
     -V api_version        AutoFocus API version (default %s)

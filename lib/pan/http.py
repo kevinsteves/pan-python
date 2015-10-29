@@ -90,7 +90,7 @@ class PanHttp:
         self._init_attributes()
         self._http_request(url, headers, data, params)
 
-    def _raise_for_status(self):
+    def raise_for_status(self):
         if self.code is None:
             return None
 

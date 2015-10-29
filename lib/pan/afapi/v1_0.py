@@ -14,9 +14,11 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
+import inspect
 import json
 import logging
 import sys
+import time
 
 from .. import __version__, DEBUG1, DEBUG2, DEBUG3
 import pan.rc
@@ -27,7 +29,8 @@ _cloud_server = 'autofocus.paloaltonetworks.com'
 
 
 class PanAFapiRequest:
-    def __init__(self):
+    def __init__(self, name=None):
+        self.name = name
         self.http_code = None
         self.http_reason = None
         self.http_headers = None
@@ -138,7 +141,7 @@ class PanAFapi:
         except pan.http.PanHttpError as e:
             raise PanAFapiError(str(e))
 
-        r = PanAFapiRequest()
+        r = PanAFapiRequest(inspect.stack()[1][3])
         self._set_attributes(r)
         return r
 
@@ -154,6 +157,57 @@ class PanAFapi:
         r = self._api_request(url, self.headers, '{}')
         return r
 
+    def samples_search_results(self, data, terminal=True):
+        return self._search_results(data,
+                                    self.samples_search,
+                                    self.samples_results,
+                                    terminal)
+
+    def _search_results(self, data, search, results, terminal):
+        r = search(data=data)
+        try:
+            self.http.raise_for_status()
+        except pan.http.PanHttpError as e:
+            x = str(e)
+            if r.json is not None and 'message' in r.json:
+                x += ' ' + r.json['message']
+            raise PanAFapiError(x)
+
+        if not terminal:
+            yield r
+
+        obj = r.json
+        if obj is None:
+            raise PanAFapiError('Response not JSON')
+
+        jobid = obj.get('af_cookie')
+        if jobid is None:
+            raise PanAFapiError('No af_cookie in response')
+
+        while True:
+            time.sleep(3)  # XXX
+            r = results(jobid=jobid)
+            try:
+                self.http.raise_for_status()
+            except pan.http.PanHttpError as e:
+                x = str(e)
+                if r.json is not None and 'message' in r.json:
+                    x += ' ' + r.json['message']
+                raise PanAFapiError(x)
+
+            if not terminal:
+                yield r
+
+            obj = r.json
+            if obj is None:
+                raise PanAFapiError('Response not JSON')
+
+            msg = obj.get('af_message')
+            if msg is not None and msg == 'complete':
+                if terminal:
+                    yield r
+                break
+
     def sessions_search(self, data):
         endpoint = '/sessions/search/'
         url = self.base_uri + endpoint
@@ -165,6 +219,12 @@ class PanAFapi:
         url = self.base_uri + endpoint + jobid
         r = self._api_request(url, self.headers, '{}')
         return r
+
+    def sessions_search_results(self, data, terminal=True):
+        return self._search_results(data,
+                                    self.sessions_search,
+                                    self.sessions_results,
+                                    terminal)
 
     def sessions_histogram_search(self, data):
         endpoint = '/sessions/histogram/search/'
@@ -178,6 +238,12 @@ class PanAFapi:
         r = self._api_request(url, self.headers, '{}')
         return r
 
+    def sessions_histogram_search_results(self, data, terminal=True):
+        return self._search_results(data,
+                                    self.sessions_histogram_search,
+                                    self.sessions_histogram_results,
+                                    terminal)
+
     def sessions_aggregate_search(self, data):
         endpoint = '/sessions/aggregate/search/'
         url = self.base_uri + endpoint
@@ -189,6 +255,12 @@ class PanAFapi:
         url = self.base_uri + endpoint + jobid
         r = self._api_request(url, self.headers, '{}')
         return r
+
+    def sessions_aggregate_search_results(self, data, terminal=True):
+        return self._search_results(data,
+                                    self.sessions_aggregate_search,
+                                    self.sessions_aggregate_results,
+                                    terminal)
 
     def session(self, sessionid=None):
         endpoint = '/session/'
@@ -208,6 +280,12 @@ class PanAFapi:
         url = self.base_uri + endpoint + jobid
         r = self._api_request(url, self.headers, '{}')
         return r
+
+    def top_tags_search_results(self, data, terminal=True):
+        return self._search_results(data,
+                                    self.top_tags_search,
+                                    self.top_tags_results,
+                                    terminal)
 
     def tags(self, data):
         endpoint = '/tags'
