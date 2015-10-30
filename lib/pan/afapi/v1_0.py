@@ -47,7 +47,8 @@ class PanAFapi:
                  hostname=None,
                  api_key=None,
                  timeout=None,
-                 verify_cert=True):
+                 verify_cert=True,
+                 sleeper=None):
         self._log = logging.getLogger(__name__).log
         self.api_version = api_version
         self.panrc_tag = panrc_tag
@@ -55,6 +56,7 @@ class PanAFapi:
         self.api_key = api_key
         self.timeout = timeout
         self.verify_cert = verify_cert
+        self.sleeper = _Sleeper if sleeper is None else sleeper
 
         self._log(DEBUG3, 'Python version: %s', sys.version)
         self._log(DEBUG3, 'pan-python version: %s', __version__)
@@ -184,8 +186,9 @@ class PanAFapi:
         if jobid is None:
             raise PanAFapiError('No af_cookie in response')
 
+        sleeper = self.sleeper(obj)
+
         while True:
-            time.sleep(3)  # XXX
             r = results(jobid=jobid)
             try:
                 self.http.raise_for_status()
@@ -207,6 +210,9 @@ class PanAFapi:
                 if terminal:
                     yield r
                 break
+
+            x = sleeper.sleep(obj)
+            self._log(DEBUG1, 'ZZZ %.2f', x)
 
     def sessions_search(self, data):
         endpoint = '/sessions/search/'
@@ -315,3 +321,28 @@ class PanAFapi:
         url = self.base_uri + endpoint
         r = self._api_request(url, self.headers, data)
         return r
+
+
+class _Sleeper:
+    START = 0.5
+    STEP = 2
+    MAX = 10
+    INCREASE = 10  # percent
+
+    def __init__(self, obj):
+        self._percent = obj.get('af_complete_percentage', 0)
+        self._sleep = _Sleeper.START
+        time.sleep(self._sleep)
+
+    def sleep(self, obj):
+        percent = obj.get('af_complete_percentage', 0)
+        if percent - self._percent < _Sleeper.INCREASE:
+            self._sleep += _Sleeper.STEP
+            if self._sleep > _Sleeper.MAX:
+                self._sleep = _Sleeper.MAX
+        else:
+            self._sleep = _Sleeper.START
+
+        self._percent = percent
+        time.sleep(self._sleep)
+        return self._sleep
