@@ -39,6 +39,20 @@ class PanAFapiRequest:
         self.http_text = None
         self.json = None
 
+    def raise_for_status(self):
+        if self.http_code is None:
+            return None
+
+        if not (200 <= self.http_code < 300):
+            e = 'HTTP Error %s' % self.http_code
+            if self.http_reason is not None:
+                e += ': %s' % self.http_reason
+            if self.json is not None and 'message' in self.json:
+                e += ' ' + self.json['message']
+            raise PanAFapiError(e)
+
+        return None
+
 
 class PanAFapi:
     def __init__(self,
@@ -167,13 +181,7 @@ class PanAFapi:
 
     def _search_results(self, data, search, results, terminal):
         r = search(data=data)
-        try:
-            self.http.raise_for_status()
-        except pan.http.PanHttpError as e:
-            x = str(e)
-            if r.json is not None and 'message' in r.json:
-                x += ' ' + r.json['message']
-            raise PanAFapiError(x)
+        r.raise_for_status()
 
         if not terminal:
             yield r
@@ -190,13 +198,7 @@ class PanAFapi:
 
         while True:
             r = results(jobid=jobid)
-            try:
-                self.http.raise_for_status()
-            except pan.http.PanHttpError as e:
-                x = str(e)
-                if r.json is not None and 'message' in r.json:
-                    x += ' ' + r.json['message']
-                raise PanAFapiError(x)
+            r.raise_for_status()
 
             if not terminal:
                 yield r
