@@ -113,6 +113,7 @@ def export(afapi, options):
         r = afapi.export(data=options['json_request'])
         print_status(action, r)
         print_response(r, options)
+        exit_for_http_status(r)
 
     except pan.afapi.PanAFapiError as e:
         print_exception(action, e)
@@ -126,6 +127,7 @@ def sample_analysis(afapi, options):
                                   sampleid=options['hash'])
         print_status(action, r)
         print_response(r, options)
+        exit_for_http_status(r)
 
     except pan.afapi.PanAFapiError as e:
         print_exception(action, e)
@@ -138,6 +140,7 @@ def tag(afapi, options):
         r = afapi.tag(tagname=options['tag'])
         print_status(action, r)
         print_response(r, options)
+        exit_for_http_status(r)
 
     except pan.afapi.PanAFapiError as e:
         print_exception(action, e)
@@ -165,6 +168,7 @@ def tags(afapi, options):
 
         print_status(action, r)
         print_response(r, options)
+        exit_for_http_status(r)
 
     except pan.afapi.PanAFapiError as e:
         print_exception(action, e)
@@ -177,6 +181,7 @@ def session(afapi, options):
         r = afapi.session(sessionid=options['session'])
         print_status(action, r)
         print_response(r, options)
+        exit_for_http_status(r)
 
     except pan.afapi.PanAFapiError as e:
         print_exception(action, e)
