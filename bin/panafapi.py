@@ -267,6 +267,9 @@ def print_status(action, r):
         elif 'top_tags' in r.json:
             print(' top_tags=%d' % len(r.json['top_tags']),
                   end='', file=sys.stderr)
+        elif 'export_list' in r.json:
+            print(' export_list=%d' % len(r.json['export_list']),
+                  end='', file=sys.stderr)
 
         if 'total' in r.json:
             print(' total=%d' % r.json['total'],
