@@ -212,6 +212,10 @@ class PanAFapi:
             if msg is not None and msg == 'complete':
                 if terminal:
                     yield r
+                try:
+                    self._log(DEBUG1, 'ZZZ total %.2f', float(sleeper))
+                except AttributeError:
+                    pass
                 break
 
             x = sleeper.sleep(obj)
@@ -344,7 +348,9 @@ class _Sleeper:
     def __init__(self, obj):
         self._percent = obj.get('af_complete_percentage', 0)
         self._sleep = _Sleeper.START
+        self._total = 0
         time.sleep(self._sleep)
+        self._total += self._sleep
 
     def sleep(self, obj):
         percent = obj.get('af_complete_percentage', 0)
@@ -357,4 +363,8 @@ class _Sleeper:
 
         self._percent = percent
         time.sleep(self._sleep)
+        self._total += self._sleep
         return self._sleep
+
+    def __float__(self):
+        return self._total
