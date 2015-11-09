@@ -1,6 +1,49 @@
 Release History
 ===============
 
+0.8.0 (2015-10-17)
+------------------
+
+- Don't override default Exception class __init__() and __str__()
+  methods since we don't change anything.
+
+- pan.wfapi: Restore behaviour of allowing non-2XX response codes to
+  fall through urlopen() that was erroneously removed in previous SSL
+  handling/PEP 476 changes.
+
+- pan.xapi: For commit sync=True, sleep at the top of the loop so we
+  don't poll immediately after commit.
+
+- pan.wfapi: Mention WildFire appliance in the module docstring.
+
+- pan.wfapi, panwfapi.py: Rework SSL handling to use SSL context and
+  recognize PEP 476 changes in Python 2.7.9 and 3.4.3.  Greatly
+  simplifies SSL certificate verification.
+
+  NOTE INCOMPATIBLE CHANGES:
+
+  pan.wfapi.PanWFapi(): cacloud, cafile, capath removed.
+  ssl_context added.
+
+  panwfapi.py: --cacloud removed.  --ssl added.
+
+- panxapi.py: If a .panrc tagname is specified with -k the output will
+  be hostname and api_key varname values for use in a .panrc file.
+
+- panwfapi.rst: hostname can also specify a WildFire appliance.
+
+- panwfapi.py: Allow --date to be specified as -days or 0 for today.
+
+- Use 7.0 links to documentation.
+
+- reStructuredText blank line cleanup.
+
+- pan.wfapi, panwfapi.py: Add support for /publicapi/submit/link(s)
+  requests.
+
+- pan.wfapi, panwfapi.py: Add support for WildFire API
+  /publicapi/submit/change-request request.
+
 0.7.0 (2015-05-25)
 ------------------
 

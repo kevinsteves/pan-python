@@ -16,7 +16,7 @@
 
 import logging
 
-__version__ = '0.7.0-current'
+__version__ = '0.8.0-current'
 
 DEBUG1 = logging.DEBUG
 DEBUG2 = DEBUG1 - 1
