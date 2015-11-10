@@ -256,10 +256,7 @@ def print_status(action, r):
                   end='', file=sys.stderr)
 
         if 'hits' in r.json:
-            if 'hits' in r.json['hits']:
-                hits = len(r.json['hits']['hits'])
-            else:
-                hits = len(r.json['hits'])
+            hits = len(r.json['hits'])
             print(' hits=%d' % hits, end='', file=sys.stderr)
         elif 'tags' in r.json:
             print(' tags=%d' % len(r.json['tags']),
@@ -273,9 +270,6 @@ def print_status(action, r):
 
         if 'total' in r.json:
             print(' total=%d' % r.json['total'],
-                  end='', file=sys.stderr)
-        elif 'hits' in r.json and 'total' in r.json['hits']:
-            print(' total=%d' % r.json['hits']['total'],
                   end='', file=sys.stderr)
         elif 'total_count' in r.json:
             print(' total_count=%d' % r.json['total_count'],
