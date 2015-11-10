@@ -168,9 +168,11 @@ class PanAFapi:
         r = self._api_request(url, self.headers, data)
         return r
 
-    def samples_results(self, jobid):
+    def samples_results(self, af_cookie=None):
         endpoint = '/samples/results/'
-        url = self.base_uri + endpoint + jobid
+        url = self.base_uri + endpoint
+        if af_cookie is not None:
+            url += af_cookie
         r = self._api_request(url, self.headers, '{}')
         return r
 
@@ -191,14 +193,14 @@ class PanAFapi:
         if obj is None:
             raise PanAFapiError('Response not JSON')
 
-        jobid = obj.get('af_cookie')
-        if jobid is None:
+        af_cookie = obj.get('af_cookie')
+        if af_cookie is None:
             raise PanAFapiError('No af_cookie in response')
 
         sleeper = self.sleeper(obj)
 
         while True:
-            r = results(jobid=jobid)
+            r = results(af_cookie=af_cookie)
             r.raise_for_status()
 
             if not terminal:
@@ -227,11 +229,11 @@ class PanAFapi:
         r = self._api_request(url, self.headers, data)
         return r
 
-    def sessions_results(self, jobid=None):
+    def sessions_results(self, af_cookie=None):
         endpoint = '/sessions/results/'
         url = self.base_uri + endpoint
-        if jobid is not None:
-            url += jobid
+        if af_cookie is not None:
+            url += af_cookie
         r = self._api_request(url, self.headers)
         return r
 
@@ -247,11 +249,11 @@ class PanAFapi:
         r = self._api_request(url, self.headers, data)
         return r
 
-    def sessions_histogram_results(self, jobid=None):
+    def sessions_histogram_results(self, af_cookie=None):
         endpoint = '/sessions/histogram/results/'
         url = self.base_uri + endpoint
-        if jobid is not None:
-            url += jobid
+        if af_cookie is not None:
+            url += af_cookie
         r = self._api_request(url, self.headers)
         return r
 
@@ -267,11 +269,11 @@ class PanAFapi:
         r = self._api_request(url, self.headers, data)
         return r
 
-    def sessions_aggregate_results(self, jobid=None):
+    def sessions_aggregate_results(self, af_cookie=None):
         endpoint = '/sessions/aggregate/results/'
         url = self.base_uri + endpoint
-        if jobid is not None:
-            url += jobid
+        if af_cookie is not None:
+            url += af_cookie
         r = self._api_request(url, self.headers)
         return r
 
@@ -295,11 +297,11 @@ class PanAFapi:
         r = self._api_request(url, self.headers, data)
         return r
 
-    def top_tags_results(self, jobid=None):
+    def top_tags_results(self, af_cookie=None):
         endpoint = '/top-tags/results/'
         url = self.base_uri + endpoint
-        if jobid is not None:
-            url += jobid
+        if af_cookie is not None:
+            url += af_cookie
         r = self._api_request(url, self.headers)
         return r
 
