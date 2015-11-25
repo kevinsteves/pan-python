@@ -30,9 +30,10 @@ and WildFire appliance.
 from __future__ import print_function
 import socket
 import sys
-import re
 import os
 from io import BytesIO
+import email
+import email.errors
 import email.utils
 import logging
 try:
@@ -189,51 +190,24 @@ class PanWFapi:
         self.xml_element_root = None
         self.attachment = None
 
-    def __get_header(self, response, name):
-        """use getheader() method depending or urllib in use"""
-
-        s = None
-        body = set()
-
-        if hasattr(response, 'getheader'):
-            # 3.2, http.client.HTTPResponse
-            s = response.getheader(name)
-        elif hasattr(response.info(), 'getheader'):
-            # 2.7, httplib.HTTPResponse
-            s = response.info().getheader(name)
-        else:
-            raise PanWFapiError('no getheader() method found in ' +
-                                'urllib response')
-
-        if s is not None:
-            body = [x.lower() for x in s.split(';')]
-            body = [x.lstrip() for x in body]
-            body = [x.rstrip() for x in body]
-            body = set(body)
-
-        self._log(DEBUG3, '__get_header(%s): %s', name, s)
-        self._log(DEBUG3, '__get_header: %s', body)
-
-        return body
-
     def __set_response(self, response):
         message_body = response.read()
 
-        content_type = self.__get_header(response, 'content-type')
+        content_type = self._message.get_content_type()
         if not content_type:
             if self._msg is None:
                 self._msg = 'no content-type response header'
             return False
 
-        if 'application/octet-stream' in content_type:
+        if content_type == 'application/octet-stream':
             return self.__set_stream_response(response, message_body)
 
         # XXX text/xml RFC 3023
-        elif ('application/xml' in content_type or
-              'text/xml' in content_type):
+        elif (content_type == 'application/xml' or
+              content_type == 'text/xml'):
             return self.__set_xml_response(message_body)
 
-        elif 'text/html' in content_type:
+        elif content_type == 'text/html':
             return self.__set_html_response(message_body)
 
         else:
@@ -242,24 +216,10 @@ class PanWFapi:
             return False
 
     def __set_stream_response(self, response, message_body):
-        content_disposition = self.__get_header(response,
-                                                'content-disposition')
-        if not content_disposition:
+        filename = self._message.get_filename()
+        if not filename:
             self._msg = 'no content-disposition response header'
             return False
-
-        if 'attachment' not in content_disposition:
-            msg = 'no handler for content-disposition: %s' % \
-                content_disposition
-            self._msg = msg
-            return False
-
-        filename = None
-        for type in content_disposition:
-            result = re.search(r'^filename=([-\w\.]+)$', type)
-            if result:
-                filename = result.group(1)
-                break
 
         attachment = {}
         attachment['filename'] = filename
@@ -384,10 +344,15 @@ class PanWFapi:
             elif self.http_code in responses:
                 self.http_reason = responses[self.http_code]
 
+        try:
+            self._message = email.message_from_string(str(response.info()))
+        except (TypeError, email.errors.MessageError) as e:
+            raise PanWFapiError('email.message_from_string() %s' % e)
+
         self._log(DEBUG2, 'HTTP response code: %s', self.http_code)
         self._log(DEBUG2, 'HTTP response reason: %s', self.http_reason)
         self._log(DEBUG2, 'HTTP response headers:')
-        self._log(DEBUG2, '%s', response.info())
+        self._log(DEBUG2, '%s', self._message)
 
         if not (200 <= self.http_code < 300):
             self._msg = 'HTTP Error %s: %s' % (self.http_code,
