@@ -280,8 +280,9 @@ def validate_hash(hash):
     if debug > 0:
         return
 
-    if not (len(hash) == 32 or len(hash) == 64):
-        print('hash length must be 32 (MD5) or 64 (SHA256)',
+    x = len(hash)
+    if not (x in [32, 64]):
+        print('hash length (%d) must be 32 (MD5) or 64 (SHA256)' % x,
               file=sys.stderr)
         sys.exit(1)
 
