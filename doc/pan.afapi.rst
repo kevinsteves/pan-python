@@ -528,11 +528,11 @@ Debugging and Logging
   if options['debug']:
       logger = logging.getLogger()
       if options['debug'] == 3:
-          logger.setLevel(pan.wfapi.DEBUG3)
+          logger.setLevel(pan.afapi.DEBUG3)
       elif options['debug'] == 2:
-          logger.setLevel(pan.wfapi.DEBUG2)
+          logger.setLevel(pan.afapi.DEBUG2)
       elif options['debug'] == 1:
-          logger.setLevel(pan.wfapi.DEBUG1)
+          logger.setLevel(pan.afapi.DEBUG1)
 
       handler = logging.StreamHandler()
       logger.addHandler(handler)
