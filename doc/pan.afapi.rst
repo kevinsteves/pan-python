@@ -475,8 +475,8 @@ pan.afapi._ApiVersion class Attributes and Methods
 __str__()
 ~~~~~~~~~
 
- Major and minor version as a string in the format v{major}.{minor}
- (e.g., *v1.0*).
+ Major and minor version as a string in the format v\ **major**.\
+ **minor** (e.g., *v1.0*).
 
 __int__()
 ~~~~~~~~~
