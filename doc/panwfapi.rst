@@ -61,6 +61,7 @@ SYNOPSIS
     --ssl opt             SSL verify option: default|noverify|cacloud
     --cafile path         file containing CA certificates
     --capath path         directory of hashed certificate files
+    --proxy               proxy to use for http(s) requests
     --version             display version
     --help                display usage
 
@@ -252,6 +253,9 @@ DESCRIPTION
  ``--capath`` *path*
   ``capath`` is a directory of hashed certificate files to be used for
    SSL server certificate verification.
+
+ ``--proxy`` *http://user:pass@proxy-hostname:port*
+  ``proxy`` is the proxy to use for HTTP(S) requests
 
  ``--version``
   Display version.

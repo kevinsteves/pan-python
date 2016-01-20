@@ -97,7 +97,8 @@ class pan.xapi.PanXapi()
                          use_http=False,
                          use_get=False,
                          timeout=None,
-                         ssl_context=None)
+                         ssl_context=None,
+                         proxy=None)
 
  **tag**
   .panrc tagname.
@@ -163,6 +164,9 @@ class pan.xapi.PanXapi()
   Because many PAN-OS systems use a self-signed certificate, pan.xapi
   will disable the default starting with these versions.
   **ssl_context** can be used to enable verification.
+
+ **proxy**
+  A proxy to use for HTTP(S) requests.
 
 exception pan.xapi.PanXapiError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
