@@ -1,6 +1,19 @@
 Release History
 ===============
 
+0.9.0 (2016-01-27)
+------------------
+
+- AutoFocus API support.
+
+- panwfapi.py: Add hash length to hash invalid length message.
+
+- pan.wfapi: Use email package for HTTP header retrieval and parsing;
+  also fixes potential issue with not handling a quoted filename in
+  content-disposition header.
+
+      content-disposition: attachment; filename="sample"
+
 0.8.0 (2015-10-17)
 ------------------
 
