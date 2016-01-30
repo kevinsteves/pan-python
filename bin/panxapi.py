@@ -44,8 +44,8 @@ def main():
         # Windows
         pass
 
-    set_encoding()
     options = parse_opts()
+    set_encoding()  # XXX impacts raw_input()
 
     if options['debug']:
         logger = logging.getLogger()
@@ -330,6 +330,21 @@ def main():
     sys.exit(0)
 
 
+def passwd_prompt():
+    prompt = 'Password: '
+    try:
+        try:
+            x = raw_input(prompt)
+        except NameError:
+            x = input(prompt)
+    except EOFError:
+        return None
+    except KeyboardInterrupt:
+        sys.exit(0)
+
+    return x
+
+
 def parse_opts():
     options = {
         'delete': False,
@@ -482,9 +497,8 @@ def parse_opts():
                 (options['api_username'],
                  options['api_password']) = arg.split(':', 1)
             except ValueError:
-                print('Invalid api_username:api_password: "%s"' %
-                      arg, file=sys.stderr)
-                sys.exit(1)
+                options['api_username'] = arg
+                options['api_password'] = passwd_prompt()
         elif opt == '-P':
             options['port'] = arg
         elif opt == '--serial':
@@ -842,7 +856,7 @@ def usage():
     --override element    override template object at xpath
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command
-    -l api_username:api_password
+    -l api_username[:api_password]
     -h hostname
     -P port               URL port number
     --serial number       serial number for Panorama redirection/

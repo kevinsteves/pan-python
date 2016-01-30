@@ -63,7 +63,7 @@ SYNOPSIS
     --override element    override template object at xpath
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command
-    -l api_username:api_password
+    -l api_username[:api_password]
     -h hostname
     -P port               URL port number
     --serial number       serial number for Panorama redirection/
@@ -338,9 +338,12 @@ DESCRIPTION
   Multiple virtual systems can be specified by using multiple
   **--vsys** options or separating each *vsys* with comma (,).
 
- ``-l`` *api_username:api_password*
+ ``-l`` *api_username[:api_password]*
   Specify the **api_username** and **api_password** which are used
   to generate the **api_key** used in API requests.
+
+  **api_password** is optional and when not specified the password is
+  read from *stdin*.
 
  ``-h`` *hostname*
   Specify the **hostname** which is used to generate the URI
