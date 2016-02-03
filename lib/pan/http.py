@@ -166,26 +166,12 @@ class PanHttp:
         self.content = response.read()
         self.text = self.content.decode(self.encoding)
 
-    def _http_request_requests(self, url, headers, data, params):
-        kwargs = {
-            'verify': self.verify_cert,
-        }
-        if url is not None:
-            kwargs['url'] = url
-        if headers is not None:
-            kwargs['headers'] = headers
-        if data is not None:
-            kwargs['data'] = data
-        if params is not None:
-            kwargs['params'] = params
-        if self.timeout is not None:
-            kwargs['timeout'] = self.timeout
-
+    def _http_request_requests(self, **kwargs):
         try:
-            if data is None:
-                r = requests.get(**kwargs)
-            else:
+            if kwargs.get('data'):
                 r = requests.post(**kwargs)
+            else:
+                r = requests.get(**kwargs)
         except requests.exceptions.RequestException as e:
             raise PanHttpError(str(e))
 
