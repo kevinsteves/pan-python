@@ -135,8 +135,9 @@ class PanHttp:
 
         try:
             response = self._urlopen(**kwargs)
-        except (URLError, IOError) as e:
+        except (URLError, IOError, ssl.CertificateError) as e:
             # IOError for urllib timeouts
+            # ssl.CertificateError for mismatching hostname
             raise PanHttpError(str(e))
 
         self.code = response.getcode()
