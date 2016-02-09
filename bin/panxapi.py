@@ -44,8 +44,8 @@ def main():
         # Windows
         pass
 
+    set_encoding()
     options = parse_opts()
-    set_encoding()  # XXX impacts raw_input()
 
     if options['debug']:
         logger = logging.getLogger()
@@ -331,12 +331,10 @@ def main():
 
 
 def passwd_prompt():
-    prompt = 'Password: '
+    import getpass
+
     try:
-        try:
-            x = raw_input(prompt)
-        except NameError:
-            x = input(prompt)
+        x = getpass.getpass('Password: ')
     except EOFError:
         return None
     except KeyboardInterrupt:
