@@ -1,6 +1,18 @@
 Release History
 ===============
 
+0.9.1 (2016-03-09)
+------------------
+
+- panrc.rst: AutoFocus API uses .panrc also.
+
+- pan.rc: Sanitize secrets in debug output.
+
+- pan.http: Handle ssl.CertificateError exception.
+
+- panxapi.py: api_password now optional for -l; when not specified the
+  user is prompted for the password (using getpass.getpass()).
+
 0.9.0 (2016-01-27)
 ------------------
 
