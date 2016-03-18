@@ -97,7 +97,8 @@ class pan.xapi.PanXapi()
                          use_http=False,
                          use_get=False,
                          timeout=None,
-                         ssl_context=None)
+                         ssl_context=None,
+                         legacy_api=False)
 
  **tag**
   .panrc tagname.
@@ -163,6 +164,9 @@ class pan.xapi.PanXapi()
   Because many PAN-OS systems use a self-signed certificate, pan.xapi
   will disable the default starting with these versions.
   **ssl_context** can be used to enable verification.
+
+  **legacy_api**
+  Use legacy URI structure for API requests on PanOS versions prior to 4.1.0.
 
 exception pan.xapi.PanXapiError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
