@@ -74,8 +74,7 @@ class PanXapi:
                  use_http=False,
                  use_get=False,
                  timeout=None,
-                 ssl_context=None,
-                 legacy_api=False):
+                 ssl_context=None):
         self._log = logging.getLogger(__name__).log
         self.tag = tag
         self.api_username = None
@@ -180,8 +179,7 @@ class PanXapi:
         self.uri = '%s://%s' % (scheme, self.hostname)
         if self.port is not None:
             self.uri += ':%s' % self.port
-        # legacy_api is used by panos < 4.1.0
-        self.uri += '/api/' if not legacy_api else '/esp/restapi.esp'
+        self.uri += '/api/'
 
         if _legacy_urllib:
             self._log(DEBUG2, 'using legacy urllib')
