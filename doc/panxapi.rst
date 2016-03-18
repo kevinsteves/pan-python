@@ -93,6 +93,7 @@ SYNOPSIS
     -T seconds            urlopen() timeout
     --cafile path         file containing CA certificates
     --capath path         directory of hashed certificate files
+    --proxy               proxy to use for http(s) requests
     --version             display version
     --help                display usage
 
@@ -488,6 +489,9 @@ DESCRIPTION
   certificate verification. By default the SSL server certificate is
   not verified.  ``--cafile`` is supported starting in Python versions
   2.7.9 and 3.2.
+
+ ``--proxy`` *http://user:pass@proxy-hostname:port*
+  ``proxy`` is the proxy to use for HTTP(S) requests
 
  ``--version``
   Display version.

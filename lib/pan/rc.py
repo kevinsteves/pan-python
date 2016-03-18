@@ -32,6 +32,7 @@ _valid_varnames = set([
     'api_username',
     'api_password',
     'api_key',
+    'proxy',
     ])
 _sanitize_varnames = set([
     'api_password',

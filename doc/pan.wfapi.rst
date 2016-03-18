@@ -106,7 +106,8 @@ class pan.wfapi.PanWFapi()
                            api_key=None,
                            timeout=None,
                            http=False,
-                           ssl_context=None)
+                           ssl_context=None,
+                           proxy=None)
 
  **tag**
   .panrc tagname.
@@ -140,6 +141,9 @@ class pan.wfapi.PanWFapi()
 
   SSL contexts are supported starting in Python versions 2.7.9
   and 3.2.
+
+ **proxy**
+  A proxy to use for HTTP(S) requests.
 
 exception pan.wfapi.PanWFapiError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -74,7 +74,8 @@ class PanXapi:
                  use_http=False,
                  use_get=False,
                  timeout=None,
-                 ssl_context=None):
+                 ssl_context=None,
+                 proxy=None):
         self._log = logging.getLogger(__name__).log
         self.tag = tag
         self.api_username = None
@@ -86,6 +87,7 @@ class PanXapi:
         self.use_get = use_get
         self.timeout = timeout
         self.ssl_context = ssl_context
+        self.proxy = proxy
 
         self._log(DEBUG3, 'Python version: %s', sys.version)
         self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
@@ -183,6 +185,16 @@ class PanXapi:
 
         if _legacy_urllib:
             self._log(DEBUG2, 'using legacy urllib')
+
+        if proxy is not None:
+            self.proxy = proxy
+        elif 'proxy' in panrc.panrc:
+            self.proxy = panrc.panrc['proxy']
+
+        if self.proxy is not None:
+            # Set both http and https proxies
+            os.environ['http_proxy'] = self.proxy
+            os.environ['https_proxy'] = self.proxy
 
     def __str__(self):
         return '\n'.join((': '.join((k, str(self.__dict__[k]))))

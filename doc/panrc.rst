@@ -75,6 +75,12 @@ DESCRIPTION
   hostname%eng-fw=172.29.9.124
   api_key%eng-fw=C2M1P2h1tDEz8zF3SwhF2dWC1gzzhnE1qU39EmHtGZM=
 
+  # proxy
+  api_username=api
+  api_password=admin
+  hostname=192.168.1.1
+  proxy=http://user:pass@proxy.local:3128
+
  *tagname* must match the regular expression **/^[\w-]+$/** (1 or more
  alphanumeric characters plus "-" and "_").
 
@@ -92,6 +98,7 @@ Recognized varname Values
  **api_username**   X
  **api_password**   X
  **api_key**        X       X
+ **proxy**          X       X
  ================   ======  ========
 
 .panrc File Permissions

@@ -78,7 +78,8 @@ def main():
                                    hostname=options['hostname'],
                                    timeout=options['timeout'],
                                    http=options['http'],
-                                   ssl_context=ssl_context)
+                                   ssl_context=ssl_context,
+                                   proxy=options['proxy'])
 
     except pan.wfapi.PanWFapiError as msg:
         print('pan.wfapi.PanWFapi:', msg, file=sys.stderr)
@@ -359,6 +360,7 @@ def parse_opts():
         'debug': 0,
         'tag': None,
         'timeout': None,
+        'proxy': None,
         }
 
     short_options = 'K:h:xpjHDt:T:'
@@ -369,7 +371,7 @@ def parse_opts():
                     'hash=', 'platform=', 'testfile',
                     'new-verdict=', 'email=', 'comment=',
                     'format=', 'date=', 'dst=',
-                    'http', 'ssl=', 'cafile=', 'capath=',
+                    'http', 'ssl=', 'cafile=', 'capath=', 'proxy=',
                     ]
 
     try:
@@ -453,6 +455,8 @@ def parse_opts():
                 options['tag'] = arg
         elif opt == '-T':
             options['timeout'] = arg
+        elif opt == '--proxy':
+            options['proxy'] = arg
         elif opt == '--version':
             print('pan-python', pan.wfapi.__version__)
             sys.exit(0)
@@ -648,6 +652,7 @@ def usage():
     --ssl opt             SSL verify option: default|noverify|cacloud
     --cafile path         file containing CA certificates
     --capath path         directory of hashed certificate files
+    --proxy               proxy to use for http(s) requests
     --version             display version
     --help                display usage
 '''

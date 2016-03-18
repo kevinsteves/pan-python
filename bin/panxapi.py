@@ -80,7 +80,8 @@ def main():
                                 hostname=options['hostname'],
                                 port=options['port'],
                                 serial=options['serial'],
-                                ssl_context=ssl_context)
+                                ssl_context=ssl_context,
+                                proxy=options['proxy'])
 
     except pan.xapi.PanXapiError as msg:
         print('pan.xapi.PanXapi:', msg, file=sys.stderr)
@@ -403,6 +404,7 @@ def parse_opts():
         'element': None,
         'cmd': None,
         'timeout': None,
+        'proxy': None,
         }
 
     valid_where = ['after', 'before', 'top', 'bottom']
@@ -415,7 +417,7 @@ def parse_opts():
                     'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
                     'interval=', 'timeout=',
-                    'stime=', 'pcapid=', 'text',
+                    'stime=', 'pcapid=', 'text', 'proxy=',
                     ]
 
     try:
@@ -559,6 +561,8 @@ def parse_opts():
                 options['tag'] = arg
         elif opt == '-T':
             options['timeout'] = arg
+        elif opt == '--proxy':
+            options['proxy'] = arg
         elif opt == '--version':
             print('pan-python', pan.xapi.__version__)
             sys.exit(0)
@@ -884,6 +888,7 @@ def usage():
     -T seconds            urlopen() timeout
     --cafile path         file containing CA certificates
     --capath path         directory of hashed certificate files
+    --proxy               proxy to use for http(s) requests
     --version             display version
     --help                display usage
 '''
