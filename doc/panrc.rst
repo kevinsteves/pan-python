@@ -83,16 +83,16 @@ Recognized varname Values
 
  The following *varname* values are recognized:
 
- ================   ======  ========
- *varname*          PAN-OS  WildFire
- ================   ======  ========
- **hostname**       X       X
+ ================   ======  ========  =========
+ *varname*          PAN-OS  WildFire  AutoFocus
+ ================   ======  ========  =========
+ **hostname**       X       X         X
  **port**           X
  **serial**         X
  **api_username**   X
  **api_password**   X
- **api_key**        X       X
- ================   ======  ========
+ **api_key**        X       X         X
+ ================   ======  ========  =========
 
 .panrc File Permissions
 ~~~~~~~~~~~~~~~~~~~~~~~
