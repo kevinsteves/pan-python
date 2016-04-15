@@ -87,6 +87,7 @@ class PanXapi:
         self.use_get = use_get
         self.timeout = timeout
         self.ssl_context = ssl_context
+        self.legacy_api = legacy_api
 
         self._log(DEBUG3, 'Python version: %s', sys.version)
         self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
@@ -181,7 +182,7 @@ class PanXapi:
         if self.port is not None:
             self.uri += ':%s' % self.port
         # legacy_api is used by panos < 4.1.0
-        self.uri += '/api/' if not legacy_api else '/esp/restapi.esp'
+        self.uri += '/api/' if not self.legacy_api else '/esp/restapi.esp'
 
         if _legacy_urllib:
             self._log(DEBUG2, 'using legacy urllib')
@@ -775,6 +776,33 @@ class PanXapi:
         if not self.__set_response(response):
             raise PanXapiError(self.status_detail)
 
+    def __legacy_commit_poll(self, query, interval=None, timeout=None):
+        """On panos < 4.1.0, keep polling until the commit is finished.
+
+        'op' is not available in the api for panos < 4.1.0, so instead of checking
+        on the job id, keep trying to commit until there is nothing to commit.
+        """
+        start_time = time.time()
+        while True:
+            # sleep at the top of the loop so we don't poll
+            # immediately after commit
+            self._log(DEBUG2, 'sleep %.2f seconds', interval)
+            time.sleep(interval)
+
+            response = self.__api_request(query)
+            if not response:
+                raise PanXapiError(self.status_detail)
+            self.__set_response(response)
+            if self.status_detail == "There are no changes to commit.":
+                self._log(DEBUG2, 'commit finished')
+                return
+            else:
+                self._log(DEBUG2, 'commit pending...')
+
+            if (timeout is not None and timeout != 0 and
+                    time.time() > start_time + timeout):
+                raise PanXapiError('timeout waiting for legacy commit completion')
+
     def commit(self, cmd=None, action=None, sync=False,
                interval=None, timeout=None, extra_qs=None):
         self.__set_api_key()
@@ -809,7 +837,9 @@ class PanXapi:
             query['action'] = action
         if extra_qs is not None:
             query = self.__merge_extra_qs(query, extra_qs)
-
+        if self.legacy_api:
+            query['type'] = 'config'
+            query['action'] = 'commit'
         response = self.__api_request(query)
         if not response:
             raise PanXapiError(self.status_detail)
@@ -819,6 +849,9 @@ class PanXapi:
 
         if sync is not True:
             return
+
+        if self.legacy_api:
+            return self.__legacy_commit_poll(query, interval=interval, timeout=timeout)
 
         job = self.element_root.find('./result/job')
         if job is None:
