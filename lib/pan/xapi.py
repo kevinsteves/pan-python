@@ -26,6 +26,10 @@ import sys
 import re
 import time
 import logging
+import os
+import requests_toolbelt
+import requests
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
 try:
     import ssl
 except ImportError:
@@ -942,6 +946,33 @@ class PanXapi:
 
         if self.export_result:
             self.export_result['category'] = category
+
+    def import_file(self, category=None, filename=None):
+        self.__set_api_key()
+        self.__clear_response()
+
+        query = {}
+        query['type'] = 'import'
+        query['key'] = self.api_key
+        if category is not None:
+            query['category'] = category
+        if filename is not None:
+            path = os.path.basename(filename)
+            mef = requests_toolbelt.MultipartEncoder(
+                fields={
+                        'file': (path, open(filename, 'rb'), 'application/octet-stream')
+                }
+            )
+
+        requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+        url = 'https://{0}/api/'.format(self.hostname)
+        requests.post(
+            url,
+            verify=False,
+            params=query,
+            headers={'Content-Type': mef.content_type},
+            data=mef
+        )
 
     def log(self, log_type=None, nlogs=None, skip=None, filter=None,
             interval=None, timeout=None, extra_qs=None):
