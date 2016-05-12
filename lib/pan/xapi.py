@@ -966,13 +966,19 @@ class PanXapi:
 
         requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
         url = 'https://{0}/api/'.format(self.hostname)
-        requests.post(
+        request = requests.post(
             url,
             verify=False,
             params=query,
             headers={'Content-Type': mef.content_type},
             data=mef
         )
+
+        request.raise_for_status()
+        response = etree.fromstring(request.content)
+
+        if response.attrib['status'] == 'error':
+            raise PanXapiError(requests.content)
 
     def log(self, log_type=None, nlogs=None, skip=None, filter=None,
             interval=None, timeout=None, extra_qs=None):
