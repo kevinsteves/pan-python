@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Palo Alto Networks, Inc. <techbizdev@paloaltonetworks.com>
+# Copyright (c) 2015-2016 Palo Alto Networks, Inc. <techbizdev@paloaltonetworks.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -14,7 +14,8 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import re
+import email
+import email.errors
 import socket
 import ssl
 import sys
@@ -83,6 +84,7 @@ class PanHttp:
         self.reason = None
         self.headers = None
         self.encoding = None
+        self.content_type = None
         self.text = None
         self.content = None
 
@@ -148,22 +150,13 @@ class PanHttp:
             # 2.7
             self.reason = response.msg
 
-        h = dict(response.info().items())
-        self.headers = dict((k.lower(), v) for (k, v) in h.items())
+        try:
+            self.headers = email.message_from_string(str(response.info()))
+        except (TypeError, email.errors.MessageError) as e:
+            raise PanHttpError('email.message_from_string() %s' % e)
 
-        s = self.headers.get('content-type')
-        # XXX
-        self.encoding = 'utf8'
-        if s is not None:
-            types = [x.lower() for x in s.split(';')]
-            types = [x.lstrip() for x in types]
-            types = [x.rstrip() for x in types]
-            types = set(types)
-            for x in types:
-                result = re.search(r'^charset=(.+)$', x)
-                if result:
-                    self.encoding = result.group(1)
-
+        self.encoding = self.headers.get_content_charset('utf8')
+        self.content_type = self.headers.get_content_type()
         self.content = response.read()
         self.text = self.content.decode(self.encoding)
 
@@ -192,8 +185,13 @@ class PanHttp:
 
         self.code = r.status_code
         self.reason = r.reason
-        self.headers = r.headers
-        self.encoding = r.encoding
+        x = ['%s: %s' % (k, v) for k, v in r.headers.items()]
+        try:
+            self.headers = email.message_from_string('\n'.join(x))
+        except (TypeError, email.errors.MessageError) as e:
+            raise PanHttpError('email.message_from_string() %s' % e)
+        self.encoding = self.headers.get_content_charset('utf8')
+        self.content_type = self.headers.get_content_type()
         self.content = r.content
         self.text = r.text
 

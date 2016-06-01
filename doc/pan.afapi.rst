@@ -189,7 +189,7 @@ pan.afapi.PanAFapiRequest Class Attributes and Methods
  name                   Method name for the request
  http_code              HTTP response status code
  http_reason            HTTP response status reason
- http_headers           HTTP headers.  This is a dictionary with keys in lowercase.
+ http_headers           HTTP headers.  This is an **email.message.Message** object.
  http_encoding          Charset from the content-type header if set
  http_content           HTTP response body (bytes)
  http_text              HTTP response body (Unicode)
