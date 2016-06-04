@@ -64,7 +64,7 @@ DESCRIPTION
  PanAFapi provides an interface to all AutoFocus API requests:
 
  =========================   ==============================   ================
- Request                     PanAFApi Method                  API Resource URI
+ Request                     PanAFapi Method                  API Resource URI
  =========================   ==============================   ================
  Search samples              samples_search()                 /samples/search/
  Get samples results         samples_search_results()         /samples/results/
@@ -88,7 +88,7 @@ DESCRIPTION
  search is completed:
 
  ====================================   =================
- PanAFApi Method                        API Resource URIs
+ PanAFapi Method                        API Resource URIs
  ====================================   =================
  samples_search_results()               | /samples/search/
                                         | /samples/results/
