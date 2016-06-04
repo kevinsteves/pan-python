@@ -105,10 +105,6 @@ class PanHttp:
         return None
 
     def _http_request_urllib(self, url, headers, data, params):
-        # data must by type 'bytes' for 3.x
-        if _isunicode(data):
-            data = data.encode()
-
         if params is not None:
             url += '?' + urlencode(params)
 
@@ -119,6 +115,14 @@ class PanHttp:
             kwargs['headers'] = headers
         if data is not None:
             kwargs['data'] = data
+            if headers is not None:
+                x = set(k.lower() for k in headers)
+                if not 'content-type' in x:
+                    kwargs['data'] = urlencode(data)
+            # data must by type 'bytes' for 3.x
+            if _isunicode(kwargs['data']):
+                kwargs['data'] = kwargs['data'].encode()
+
         request = Request(**kwargs)
 
         kwargs = {
