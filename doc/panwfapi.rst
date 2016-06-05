@@ -1,5 +1,5 @@
 ..
- Copyright (c) 2013, 2014 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -348,10 +348,10 @@ SEE ALSO
  pan.wfapi
 
  WildFire Administrator's Guide
-  https://www.paloaltonetworks.com/documentation/70/wildfire/wf_admin.html
+  https://www.paloaltonetworks.com/documentation/71/wildfire/wf_admin
 
  WildFire API
-  https://www.paloaltonetworks.com/documentation/70/wildfire/wf_admin/use-the-wildfire-api.html
+  https://www.paloaltonetworks.com/documentation/71/wildfire/wf_api
 
 AUTHORS
 =======
