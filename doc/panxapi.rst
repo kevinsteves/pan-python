@@ -699,6 +699,9 @@ SEE ALSO
  PAN-OS 7.0 XML API Reference
   https://www.paloaltonetworks.com/documentation/70/pan-os.html
 
+ PAN-OS XML API Labs with pan-python
+  http://api-lab.paloaltonetworks.com/
+
 AUTHORS
 =======
 
