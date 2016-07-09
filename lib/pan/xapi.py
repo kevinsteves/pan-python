@@ -1025,7 +1025,7 @@ class PanXapi:
             self._log(DEBUG2, 'sleep %.2f seconds', interval)
             time.sleep(interval)
 
-    def report(self, reporttype=None, reportname=None, period=None, cmd=None, vsys=None,
+    def report(self, reporttype=None, reportname=None, period=None, topn=None, cmd=None, vsys=None,
             interval=None, timeout=None, extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
@@ -1057,6 +1057,8 @@ class PanXapi:
             query['reportname'] = reportname
         if period is not None:
             query['period'] = period
+        if topn is not None:
+            query['topn'] = topn
         if cmd is not None:
             query['cmd'] = cmd
         if vsys is not None:

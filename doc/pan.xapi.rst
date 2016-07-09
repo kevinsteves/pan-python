@@ -468,7 +468,7 @@ log(self, log_type=None, nlogs=None, skip=None, filter=None, interval=None, time
 
   The default is to try forever (**timeout** is set to *None* or 0).
 
-report(self, reporttype=None, reportname=None, period=None, cmd=None, vsys=None, interval=None, timeout=None, extra_qs=None)
+report(self, reporttype=None, reportname=None, period=None, topn=None, cmd=None, vsys=None, interval=None, timeout=None, extra_qs=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The report() method performs the ``type=report`` retrieve report API request
@@ -500,7 +500,13 @@ report(self, reporttype=None, reportname=None, period=None, cmd=None, vsys=None,
  - last-7-calendar-days
  - last-calendar-week
  - last-30-days
+ 
+  Specific start and end times are not supported.
+ 
+ - **topn**
 
+  Specify the maximum number of rows for dynamic type reports.
+ 
  - **cmd**
 
   Specify the report XML configuration for on-the-fly report generation of custom type reports.
