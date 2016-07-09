@@ -69,6 +69,7 @@ DESCRIPTION
  - export file: ``type=export``
  - dynamic object update: ``type=user-id``
  - log retrieval: ``type=log``
+ - report retrieval: ``type=log``
 
 pan.xapi Constants
 ------------------
@@ -452,6 +453,65 @@ log(self, log_type=None, nlogs=None, skip=None, filter=None, interval=None, time
  The XML API schedules a job to create the log data; the log() method
  will then periodically perform an API request to determine if the
  job ID returned in the initial request is complete and receive the log
+ data.  Additional arguments to control the polling include:
+
+ - **interval**
+
+  A floating point number specifying the query interval in seconds
+  between each non-finished job status response.
+
+  The default is 0.5 seconds.
+
+ - **timeout**
+
+  The maximum number of seconds to wait for the job to finish.
+
+  The default is to try forever (**timeout** is set to *None* or 0).
+
+report(self, reporttype=None, reportname=None, period=None, cmd=None, vsys=None, interval=None, timeout=None, extra_qs=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The report() method performs the ``type=report`` retrieve report API request
+ with the **reporttype** argument.
+
+ **reporttype** specifies the type of report to retrieve and can be:
+
+ - dynamic
+ - predefined
+ - custom
+
+ Additional API request arguments include:
+
+ - **reportname**
+
+  Specify the name of the report to retrieve.
+
+ - **period**
+
+  Specify the predefined periods for dynamic type reports.
+
+ - last-60-seconds
+ - last-15-minutes
+ - last-hour
+ - last-12-hrs
+ - last-24-hrs
+ - last-calendar-day
+ - last-7-days
+ - last-7-calendar-days
+ - last-calendar-week
+ - last-30-days
+
+ - **cmd**
+
+  Specify the report XML configuration for on-the-fly report generation of custom type reports.
+  
+ - **vsys**
+
+  Specify a Virtual System to target for the report generation.
+
+ The XML API schedules a job to generate the report data; the report() method
+ will then periodically perform an API request to determine if the
+ job ID returned in the initial request is complete and receive the report
  data.  Additional arguments to control the polling include:
 
  - **interval**

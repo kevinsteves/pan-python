@@ -1025,6 +1025,90 @@ class PanXapi:
             self._log(DEBUG2, 'sleep %.2f seconds', interval)
             time.sleep(interval)
 
+    def report(self, reporttype=None, reportname=None, period=None, cmd=None, vsys=None,
+            interval=None, timeout=None, extra_qs=None):
+        self.__set_api_key()
+        self.__clear_response()
+
+        if interval is None:
+            interval = _job_query_interval
+
+        try:
+            interval = float(interval)
+            if interval < 0:
+                raise ValueError
+        except ValueError:
+            raise PanXapiError('Invalid interval: %s' % interval)
+
+        if timeout is not None:
+            try:
+                timeout = int(timeout)
+                if timeout < 0:
+                    raise ValueError
+            except ValueError:
+                raise PanXapiError('Invalid timeout: %s' % timeout)
+
+        query = {}
+        query['type'] = 'report'
+        query['key'] = self.api_key
+        if reporttype is not None:
+            query['reporttype'] = reporttype
+        if reportname is not None:
+            query['reportname'] = reportname
+        if period is not None:
+            query['period'] = period
+        if cmd is not None:
+            query['cmd'] = cmd
+        if vsys is not None:
+            query['vsys'] = vsys
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
+
+        response = self.__api_request(query)
+        if not response:
+            raise PanXapiError(self.status_detail)
+
+        if not self.__set_response(response):
+            raise PanXapiError(self.status_detail)
+
+        job = self.element_root.find('./result/job')
+        if job is None:
+            raise PanXapiError('no job element in type=report response')
+
+        query = {}
+        query['type'] = 'report'
+        query['action'] = 'get'
+        query['key'] = self.api_key
+        query['job-id'] = job.text
+        self._log(DEBUG2, 'report job: %s', job.text)
+
+        start_time = time.time()
+
+        while True:
+            response = self.__api_request(query)
+            if not response:
+                raise PanXapiError(self.status_detail)
+
+            if not self.__set_response(response):
+                raise PanXapiError(self.status_detail)
+
+            status = self.element_root.find('./result/job/status')
+            if status is None:
+                raise PanXapiError('no status element in ' +
+                                   'type=report&action=get response')
+            if status.text == 'FIN':
+                return
+
+            self._log(DEBUG2, 'job %s status %s', job.text, status.text)
+
+            if (timeout is not None and timeout != 0 and
+                    time.time() > start_time + timeout):
+                raise PanXapiError('timeout waiting for ' +
+                                   'job %s completion' % job.text)
+
+            self._log(DEBUG2, 'sleep %.2f seconds', interval)
+            time.sleep(interval)
+
 if __name__ == '__main__':
     # python -m pan.xapi [tag] [xpath]
     import pan.xapi
