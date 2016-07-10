@@ -1025,7 +1025,7 @@ class PanXapi:
             self._log(DEBUG2, 'sleep %.2f seconds', interval)
             time.sleep(interval)
 
-    def report(self, reporttype=None, reportname=None, period=None, topn=None, cmd=None, vsys=None,
+    def report(self, reporttype=None, reportname=None, vsys=None,
             interval=None, timeout=None, extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
@@ -1055,12 +1055,6 @@ class PanXapi:
             query['reporttype'] = reporttype
         if reportname is not None:
             query['reportname'] = reportname
-        if period is not None:
-            query['period'] = period
-        if topn is not None:
-            query['topn'] = topn
-        if cmd is not None:
-            query['cmd'] = cmd
         if vsys is not None:
             query['vsys'] = vsys
         if extra_qs is not None:
@@ -1075,7 +1069,10 @@ class PanXapi:
 
         job = self.element_root.find('./result/job')
         if job is None:
-            raise PanXapiError('no job element in type=report response')
+          if self.element_root.tag == 'report':
+            return
+          else:
+            raise PanXapiError('no job or report element in type=report response')
 
         query = {}
         query['type'] = 'report'

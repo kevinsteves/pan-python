@@ -69,7 +69,7 @@ DESCRIPTION
  - export file: ``type=export``
  - dynamic object update: ``type=user-id``
  - log retrieval: ``type=log``
- - report retrieval: ``type=log``
+ - report retrieval: ``type=report``
 
 pan.xapi Constants
 ------------------
@@ -341,8 +341,8 @@ op(cmd=None, vsys=None, cmd_xml=False)
  request with the **cmd** argument and optional **vsys** argument.
  **cmd** is an XML document which represents the command to be executed.
  Commands and command options are XML elements, and command arguments
- are XML data.  **vsys** can be to to target the command to a specific
- Virtual System.
+ are XML data.  **vsys** can be used to target the command to a specific
+ Virtual System. 
 
  When **cmd_xml** is *True* a CLI-style **cmd** argument is converted to
  XML.  This works by converting all unquoted arguments in **cmd** to
@@ -468,11 +468,12 @@ log(self, log_type=None, nlogs=None, skip=None, filter=None, interval=None, time
 
   The default is to try forever (**timeout** is set to *None* or 0).
 
-report(self, reporttype=None, reportname=None, period=None, topn=None, cmd=None, vsys=None, interval=None, timeout=None, extra_qs=None)
+report(self, reporttype=None, reportname=None, vsys=None, interval=None, timeout=None, extra_qs=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The report() method performs the ``type=report`` retrieve report API request
- with the **reporttype** argument.
+ with the **reporttype** argument.  **vsys** can be used to target the
+ report to a specific Virtual System.
 
  **reporttype** specifies the type of report to retrieve and can be:
 
@@ -486,39 +487,7 @@ report(self, reporttype=None, reportname=None, period=None, topn=None, cmd=None,
 
   Specify the name of the report to retrieve.
 
- - **period**
-
-  Specify the predefined periods for dynamic type reports.
-
- - last-60-seconds
- - last-15-minutes
- - last-hour
- - last-12-hrs
- - last-24-hrs
- - last-calendar-day
- - last-7-days
- - last-7-calendar-days
- - last-calendar-week
- - last-30-days
- 
-  Specific start and end times are not supported.
- 
- - **topn**
-
-  Specify the maximum number of rows for dynamic type reports.
- 
- - **cmd**
-
-  Specify the report XML configuration for on-the-fly report generation of custom type reports.
-  
- - **vsys**
-
-  Specify a Virtual System to target for the report generation.
-
- The XML API schedules a job to generate the report data; the report() method
- will then periodically perform an API request to determine if the
- job ID returned in the initial request is complete and receive the report
- data.  Additional arguments to control the polling include:
+ to control the polling include:
 
  - **interval**
 
