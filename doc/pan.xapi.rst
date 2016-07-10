@@ -472,7 +472,7 @@ report(self, reporttype=None, reportname=None, vsys=None, interval=None, timeout
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The report() method performs the ``type=report`` retrieve report API request
- with the **reporttype** and **reportname** argument.  **vsys** can be used to target the
+ with the **reporttype** and **reportname** arguments.  **vsys** can be used to target the
  report to a specific Virtual System.
 
  **reporttype** specifies the type of report to retrieve and can be:
@@ -480,10 +480,6 @@ report(self, reporttype=None, reportname=None, vsys=None, interval=None, timeout
  - dynamic
  - predefined
  - custom
-
- - **reportname**
-
-  Specify the name of the report to retrieve.
 
  In some report requests, the XML API schedules a job to
  generate the report data; the report() method will then periodically
