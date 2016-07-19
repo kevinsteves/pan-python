@@ -185,8 +185,12 @@ class PanXapi:
             self._log(DEBUG2, 'using legacy urllib')
 
     def __str__(self):
-        return '\n'.join((': '.join((k, str(self.__dict__[k]))))
-                         for k in sorted(self.__dict__))
+        x = self.__dict__.copy()
+        for k in x:
+            if k in ['api_key', 'api_password'] and x[k] is not None:
+                x[k] = '*' * 6
+        return '\n'.join((': '.join((k, str(x[k]))))
+                         for k in sorted(x))
 
     def __clear_response(self):
         # XXX naming
@@ -308,7 +312,11 @@ class PanXapi:
             # type=report
             self.element_result = self.element_root.find('report/result')
 
-        self._log(DEBUG3, 'xml_document: %s', self.xml_document)
+        if self.element_root.find('./result/key') is None:
+            self._log(DEBUG3, 'xml_document: %s', self.xml_document)
+        else:
+            self._log(DEBUG3, 'xml_document: %s',
+                      '<type=keygen response not shown>')
         self._log(DEBUG3, 'message_body: %s', type(message_body))
         self._log(DEBUG3, 'message_body.decode(): %s', type(self.xml_document))
 
@@ -456,7 +464,24 @@ class PanXapi:
 
         return s.decode(_encoding)
 
+    def __debug_request(self, query):
+        x = query.copy()
+        qstring = ''
+
+        for k in x:
+            if not qstring == '':
+                qstring += '&'
+            if k in ['key', 'password']:
+                x[k] = '*' * 6
+            data = '%s=%s' % (k, x[k])
+            qstring += data
+
+        uri = self.uri + '?' + qstring
+        self._log(DEBUG1, 'query: %s', x)
+        self._log(DEBUG1, 'URI: %s', uri)
+
     def __api_request(self, query):
+        self.__debug_request(query)
         # type=keygen request will urlencode key if needed so don't
         # double encode
         if 'key' in query:
@@ -468,7 +493,6 @@ class PanXapi:
         else:
             data = urlencode(query)
 
-        self._log(DEBUG3, 'query: %s', query)
         self._log(DEBUG3, 'data: %s', type(data))
         self._log(DEBUG3, 'data.encode(): %s', type(data.encode()))
 
@@ -480,9 +504,7 @@ class PanXapi:
             # data must by type 'bytes' for 3.x
             request = Request(url, data.encode())
 
-        self._log(DEBUG1, 'URL: %s', url)
         self._log(DEBUG1, 'method: %s', request.get_method())
-        self._log(DEBUG1, 'data: %s', data)
 
         kwargs = {
             'url': request,
@@ -527,7 +549,7 @@ class PanXapi:
     def __set_api_key(self):
         if self.api_key is None:
             self.keygen()
-            self._log(DEBUG1, 'autoset api_key: "%s"', self.api_key)
+            self._log(DEBUG1, 'autoset api_key')
 
     def cmd_xml(self, cmd):
         def _cmd_xml(args, obj):

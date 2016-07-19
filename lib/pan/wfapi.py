@@ -177,8 +177,12 @@ class PanWFapi:
             self._log(DEBUG2, 'using legacy urllib')
 
     def __str__(self):
-        return '\n'.join((': '.join((k, str(self.__dict__[k]))))
-                         for k in sorted(self.__dict__))
+        x = self.__dict__.copy()
+        for k in x:
+            if k in ['api_key'] and x[k] is not None:
+                x[k] = '*' * 6
+        return '\n'.join((': '.join((k, str(x[k]))))
+                         for k in sorted(x))
 
     def __clear_response(self):
         # XXX naming
@@ -299,19 +303,18 @@ class PanWFapi:
         url = self.uri
         url += request_uri
 
-        self._log(DEBUG1, 'URL: %s', url)
-        self._log(DEBUG1, 'headers: %s', headers)
-
         # body must by type 'bytes' for 3.x
         if _isunicode(body):
             body = body.encode()
 
-        self._log(DEBUG3, 'body: %s', repr(body))
-
         request = Request(url, body, headers)
 
+        self._log(DEBUG1, 'URL: %s', url)
         self._log(DEBUG1, 'method: %s', request.get_method())
         self._log(DEBUG1, 'headers: %s', request.header_items())
+
+        # XXX leaks apikey
+#        self._log(DEBUG3, 'body: %s', repr(body))
 
         kwargs = {
             'url': request,
