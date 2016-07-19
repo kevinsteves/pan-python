@@ -1,5 +1,5 @@
 ..
- Copyright (c) 2014-2015 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2014-2016 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -137,6 +137,13 @@ class pan.wfapi.PanWFapi()
 
   This can be used to specify the ``cafile``, ``capath`` and other SSL
   configuration options.
+
+  When ``ssl_context`` is *None*, if the **certifi** package is
+  installed its Certificate Authority (CA) bundle is used for SSL
+  server certificate verification, otherwise no changes are made to
+  the default **ssl** module settings.
+
+  The default is *None*.
 
   SSL contexts are supported starting in Python versions 2.7.9
   and 3.2.
@@ -323,18 +330,6 @@ response_type
 
  The ``response_type`` data attribute is set to ``xml`` when the message
  body is an XML document.
-
-WildFire Cloud SSL Context
---------------------------
-
-cloud_ssl_context()
-~~~~~~~~~~~~~~~~~~~
-
- The cloud_ssl_context() function can be used to create an SSL context
- which specifies SSL server certificate verification is to be performed
- using the Go Daddy Class 2 Certification Authority Root Certificate
- which is used by the WildFire cloud and is stored in the pan.wfapi
- module.
 
 Debugging and Logging
 ---------------------

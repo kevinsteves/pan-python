@@ -1,5 +1,5 @@
 ..
- Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2013-2016 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -58,7 +58,7 @@ SYNOPSIS
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
     --http                use http URL scheme (default https)
-    --ssl opt             SSL verify option: default|noverify|cacloud
+    --ssl opt             SSL verify option: default|noverify
     --cafile path         file containing CA certificates
     --capath path         directory of hashed certificate files
     --version             display version
@@ -230,15 +230,16 @@ DESCRIPTION
   Specify the type of SSL server certificate verification to be
   performed.
 
-  ``noverify`` is used to disable SSL server certificate verification.
+  ``noverify``
+   Disable SSL server certificate verification.
 
-  ``default`` is used to specify that no changes are made to the
-  default **ssl** module settings.
+  ``default``
+   If the **certifi** package is installed its Certificate Authority
+   (CA) bundle is used for SSL server certificate verification,
+   otherwise no changes are made to the default **ssl** module
+   settings.
 
-  ``cacloud``, which is the default, specifies SSL server certificate
-  verification is performed using the Go Daddy Class 2 Certification
-  Authority Root Certificate which is used by the WildFire cloud and
-  is stored in the pan.wfapi module.
+   This is the default.
 
   SSL server certificate verification is only performed in Python
   version 2.7.9 and 3.4.3 and greater.
@@ -246,12 +247,12 @@ DESCRIPTION
   ``--ssl`` is ignored if ``--cafile`` or ``--capath`` are specified.
 
  ``--cafile`` *path*
-  ``cafile`` is a file containing CA certificates to be used for SSL
-   server certificate verification.
+  A file containing CA certificates to be used for SSL
+  server certificate verification.
 
  ``--capath`` *path*
-  ``capath`` is a directory of hashed certificate files to be used for
-   SSL server certificate verification.
+  A directory of hashed certificate files to be used for
+  SSL server certificate verification.
 
  ``--version``
   Display version.

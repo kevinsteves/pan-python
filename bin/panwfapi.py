@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2016 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -69,8 +69,8 @@ def main():
         ssl_context = create_ssl_context(options['cafile'],
                                          options['capath'],
                                          options['ssl'])
-    elif options['ssl'] is None:
-        ssl_context = pan.wfapi.cloud_ssl_context()
+    else:
+        ssl_context = None
 
     try:
         wfapi = pan.wfapi.PanWFapi(tag=options['tag'],
@@ -645,7 +645,7 @@ def usage():
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
     --http                use http URL scheme (default https)
-    --ssl opt             SSL verify option: default|noverify|cacloud
+    --ssl opt             SSL verify option: default|noverify
     --cafile path         file containing CA certificates
     --capath path         directory of hashed certificate files
     --version             display version
