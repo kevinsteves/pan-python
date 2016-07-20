@@ -510,7 +510,11 @@ class PanXapi:
             'url': request,
             }
 
-        if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
+        if (sys.hexversion & 0xffff0000 == 0x02060000):
+            # XXX allow 2.6 as a one-off while still using .major
+            # named attribute
+            pass
+        elif (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
                 sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
             # see PEP 476; urlopen() has context
             if self.ssl_context is None:
