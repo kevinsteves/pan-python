@@ -249,6 +249,20 @@ def main():
             print_status(xapi, action)
             print_response(xapi, options)
 
+        if options['report'] is not None:
+            action = 'report'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+            vsys = options['vsys'][0] if len(options['vsys']) else None
+            xapi.report(reporttype=options['report'],
+                        reportname=options['name'],
+                        vsys=vsys,
+                        interval=options['interval'],
+                        timeout=options['job_timeout'],
+                        extra_qs=options['ad_hoc'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
         if options['op'] is not None:
             action = 'op'
             kwargs = {
@@ -364,6 +378,8 @@ def parse_opts():
         'op': None,
         'export': None,
         'log': None,
+        'report': None,
+        'name': None,
         'src': None,
         'dst': None,
         'move': None,
@@ -416,6 +432,7 @@ def parse_opts():
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
                     'interval=', 'timeout=',
                     'stime=', 'pcapid=', 'text',
+                    'report=', 'name=',
                     ]
 
     try:
@@ -474,6 +491,10 @@ def parse_opts():
             options['export'] = arg
         elif opt == '--log':
             options['log'] = arg
+        elif opt == '--report':
+            options['report'] = arg
+        elif opt == '--name':
+            options['name'] = arg
         elif opt == '--src':
             options['src'] = arg
         elif opt == '--dst':
@@ -843,6 +864,8 @@ def usage():
     -o cmd                execute operational command
     --export category     export files
     --log log-type        retrieve log files
+    --report report-type  retrieve reports (dynamic|predefined|custom)
+    --name report-name    report name
     --src src             clone source node xpath
                           export source file/path/directory
     --dst dst             move/clone destination node name
@@ -853,7 +876,7 @@ def usage():
     --clone               clone object at xpath, src xpath
     --override element    override template object at xpath
     --vsys vsys           VSYS for dynamic update/partial commit/
-                          operational command
+                          operational command/report
     -l api_username[:api_password]
     -h hostname
     -P port               URL port number
@@ -864,8 +887,8 @@ def usage():
     --nlogs num           retrieve num logs
     --skip num            skip num logs
     --filter filter       log selection filter
-    --interval seconds    log/commit job query interval
-    --timeout seconds     log/commit job query timeout
+    --interval seconds    log/commit/report job query interval
+    --timeout seconds     log/commit/report job query timeout
     --stime time          search time for threat-pcap
     --pcapid id           threat-pcap ID
     -K api_key
