@@ -1,6 +1,49 @@
 Release History
 ===============
 
+0.10.0 (2016-07-23)
+-------------------
+
+- pan.http: Use email.message_from_string() for the headers attribute,
+  which is now an email.message.Message object:
+
+    https://docs.python.org/2/library/email.message.html
+
+  encoding attribute now set with Message get_content_charset()
+  method.
+
+  Add content_type attribute using Message get_content_type() method.
+
+  NOTE: this *may* introduce an incompatibility depending on how you
+  were using pan.afapi.PanAFapiRequest http_headers.
+
+- pan.http: If using urllib and no content-type header urlencode data
+  so application/x-www-form-urlencoded request works.
+
+- panxapi.rst: Add link to "PAN-OS XML API Labs with pan-python".
+
+- Updated documentation links to PAN-OS 7.1.
+
+- pan.xapi, pan.wfapi: Sanitize secrets in debug output.
+
+- pan.wfapi, bin/panwfapi.py: Deprecate the use of
+  pan.wfapi.cloud_ssl_context() for SSL server certificate
+  verification.
+
+  NOTE: Changes are backwards compatible however use of
+  cloud_ssl_context() is not recommended.
+
+  If your operating system certificate store is insufficient you can
+  install certifi (https://pypi.python.org/pypi/certifi) and its CA
+  bundle will now be used for SSL server certificate verification when
+  ssl_context is None.
+
+- pan.xapi: Allow Python 2.6 as a one-off while still using
+  sys.version_info.major named attribute.
+
+- pan.xapi, panxapi.py: Support for type=report API request.  Joint
+  effort with Andrew Stanton.
+
 0.9.1 (2016-03-09)
 ------------------
 
