@@ -150,7 +150,7 @@ class PanWFapi:
             try:
                 ssl.SSLContext(ssl.PROTOCOL_SSLv23)
             except AttributeError:
-                raise PanXapiError('SSL module has no SSLContext()')
+                raise PanWFapiError('SSL module has no SSLContext()')
         elif _have_certifi:
             self.ssl_context = self._certifi_ssl_context()
 
