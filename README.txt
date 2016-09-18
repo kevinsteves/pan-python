@@ -6,7 +6,7 @@ Firewalls, WildFire and AutoFocus.  It provides:
   - a Python and command line interface to the WildFire API
   - a Python and command line interface to the AutoFocus API
 
-Python versions 2.7, 3.2, 3.3 and 3.4 are supported with a single code
+Python versions 2.7, 3.4 and 3.5 are supported with a single code
 base.  There are no external modules required to use pan-python.
 
 The pan package contains the following modules:
