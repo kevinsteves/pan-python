@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2016 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -114,6 +114,12 @@ class PanXapi:
                 ssl.SSLContext(ssl.PROTOCOL_SSLv23)
             except AttributeError:
                 raise PanXapiError('SSL module has no SSLContext()')
+
+        # handle Python versions with no ssl.CertificateError
+        if hasattr(ssl, 'CertificateError'):
+            self._certificateerror = ssl.CertificateError
+        else:
+            self._certificateerror = NotImplementedError  # XXX Can't happen
 
         init_panrc = {}  # .panrc args from constructor
         if api_username is not None:
@@ -537,6 +543,9 @@ class PanXapi:
             response = urlopen(**kwargs)
 
         # XXX handle httplib.BadStatusLine when http to port 443
+        except self._certificateerror as e:
+            self.status_detail = 'ssl.CertificateError: %s' % e
+            return False
         except URLError as error:
             msg = 'URLError:'
             if hasattr(error, 'code'):
