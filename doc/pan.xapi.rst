@@ -521,7 +521,7 @@ xml_root()
 xml_result()
 ~~~~~~~~~~~~
 
- The xml_root() method returns the XML document from the previous
+ The xml_result() method returns the XML document from the previous
  request as a string starting at the child of the result element.
 
 status
