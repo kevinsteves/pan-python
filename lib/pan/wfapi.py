@@ -136,6 +136,7 @@ class PanWFapi:
 
         self._log(DEBUG3, 'Python version: %s', sys.version)
         self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
+        self._log(DEBUG3, 'ssl: %s', ssl.OPENSSL_VERSION)
         self._log(DEBUG3, 'pan-python version: %s', __version__)
 
         if self.timeout is not None:
