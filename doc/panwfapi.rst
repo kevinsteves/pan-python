@@ -1,5 +1,5 @@
 ..
- Copyright (c) 2013-2016 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2013-2017 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -41,7 +41,7 @@ SYNOPSIS
     --changed             get changed verdicts
     --hash hash           query MD5 or SHA256 hash
     --platform id         platform ID for sandbox environment
-    --new-verdict verdict benign|malware|grayware
+    --new-verdict verdict benign|malware|grayware|phishing
     --email address       notification e-mail address
     --comment comment     change request explanation
     --testfile            get sample malware test file
@@ -180,7 +180,7 @@ DESCRIPTION
 
  ``--new-verdict`` *verdict*
   The suggested verdict.  Can be specified as a string (*benign*,
-  *malware* or *grayware*) or an integer.
+  *malware*, *grayware*, *phishing*) or an integer.
 
  ``--email`` *address*
   Notification e-mail address.

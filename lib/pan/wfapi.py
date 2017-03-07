@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2016 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2013-2017 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -77,6 +77,7 @@ _wildfire_responses = {
 BENIGN = 0
 MALWARE = 1
 GRAYWARE = 2
+PHISHING = 4
 PENDING = -100
 ERROR = -101
 UNKNOWN = -102
@@ -86,6 +87,7 @@ VERDICTS = {
     BENIGN: ('benign', None),
     MALWARE: ('malware', None),
     GRAYWARE: ('grayware', None),
+    PHISHING: ('phishing', None),
     PENDING: ('pending', 'sample exists and verdict not known'),
     ERROR: ('error', 'sample is in error state'),
     UNKNOWN: ('unknown', 'sample does not exist'),

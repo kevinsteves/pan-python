@@ -1,5 +1,5 @@
 ..
- Copyright (c) 2014-2016 Kevin Steves <kevin.steves@pobox.com>
+ Copyright (c) 2014-2017 Kevin Steves <kevin.steves@pobox.com>
 
  Permission to use, copy, modify, and distribute this software for any
  purpose with or without fee is hereby granted, provided that the above
@@ -86,7 +86,7 @@ pan.wfapi Constants
   Python ``logging`` module debug levels (see **Debugging and
   Logging** below).
 
- **BENIGN**, **MALWARE**, **GRAYWARE**, **PENDING**, **ERROR**, **UNKNOWN**, **INVALID**
+ **BENIGN**, **MALWARE**, **GRAYWARE**, **PHISHING**, **PENDING**, **ERROR**, **UNKNOWN**, **INVALID**
   Constants for the integer verdict values.
 
  **VERDICTS**
@@ -227,6 +227,7 @@ verdicts(hashes=None)
  0      benign
  1      malware
  2      grayware
+ 4      phishing
  -100   pending   sample exists and verdict not known
  -101   error     sample is in error state
  -102   unknown   sample does not exist
