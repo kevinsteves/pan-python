@@ -464,7 +464,6 @@ class PanConfig:
 ./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/dns-proxy
 ./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/display-name
 ./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/captive-portal
-./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application-tag
 ./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application-group
 ./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application-filter
 ./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application
@@ -475,7 +474,7 @@ class PanConfig:
 
         s = '''./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application-tag'''
         x = xpaths_panos_7_0.split('\n')
-        x.insert(32, s)
+        x.insert(34, s)
         xpaths_panos_7_1 = '\n'.join(x)
 
         xpaths_panos_multi_vsys_4_1 = '''
@@ -575,7 +574,10 @@ class PanConfig:
             xpaths = xpaths_panorama
         else:
             xpaths = xpaths_panos
+
+        self._log(DEBUG2, '%s', xpaths)
         xpaths = xpaths.split('\n')
         xpaths = [s for s in xpaths if s]
+        self._log(DEBUG1, 'xpaths: %d', len(xpaths))
 
         return xpaths
