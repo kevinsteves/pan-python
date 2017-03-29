@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2012-2016 Kevin Steves <kevin.steves@pobox.com>
+# Copyright (c) 2012-2017 Kevin Steves <kevin.steves@pobox.com>
 #
 # Permission to use, copy, modify, and distribute this software for any
 # purpose with or without fee is hereby granted, provided that the above
@@ -477,6 +477,13 @@ class PanConfig:
         x.insert(34, s)
         xpaths_panos_7_1 = '\n'.join(x)
 
+        s = '''./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/user-id-ssl-auth'''
+        x = xpaths_panos_7_1.split('\n')
+        x.insert(6, s)
+        s = '''./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/authentication-object'''
+        x.insert(35, s)
+        xpaths_panos_8_0 = '\n'.join(x)
+
         xpaths_panos_multi_vsys_4_1 = '''
 ./devices/entry[@name='localhost.localdomain']/deviceconfig
 ./devices/entry[@name='localhost.localdomain']/network
@@ -547,6 +554,24 @@ class PanConfig:
 ./shared
 '''
 
+        # remove vmware-service-manager
+        # add plugins, wildfire-appliance, wildfire-appliance-cluster
+        xpaths_panorama_8_0 = '''
+./devices/entry[@name='localhost.localdomain']/device-group
+./devices/entry[@name='localhost.localdomain']/deviceconfig
+./devices/entry[@name='localhost.localdomain']/log-collector
+./devices/entry[@name='localhost.localdomain']/log-collector-group
+./devices/entry[@name='localhost.localdomain']/plugins
+./devices/entry[@name='localhost.localdomain']/template
+./devices/entry[@name='localhost.localdomain']/template-stack
+./devices/entry[@name='localhost.localdomain']/wildfire-appliance
+./devices/entry[@name='localhost.localdomain']/wildfire-appliance-cluster
+./mgt-config
+./panorama
+./readonly
+./shared
+'''
+
         xpaths_panos = xpaths_panos_4_1
         xpaths_panos_multi_vsys = xpaths_panos_multi_vsys_4_1
         xpaths_panorama = xpaths_panorama_4_1
@@ -567,6 +592,9 @@ class PanConfig:
             elif self.config_version() in ['7.1.0']:
                 xpaths_panos = xpaths_panos_7_1
                 xpaths_panorama = xpaths_panorama_7_0
+            elif self.config_version() in ['8.0.0']:
+                xpaths_panos = xpaths_panos_8_0
+                xpaths_panorama = xpaths_panorama_8_0
 
         if self.config_multi_vsys():
             xpaths = xpaths_panos_multi_vsys
