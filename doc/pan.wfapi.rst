@@ -251,18 +251,9 @@ pcap(hash=None, platform=None)
  platform is specified a PCAP from an environment that resulted in a
  *Malware* verdict is returned.
 
- Valid platform IDs are:
-
- ===========  ===================
- Platform ID  Sandbox Environment
- ===========  ===================
- 1            Windows XP, Adobe Reader 9.3.3, Office 2003
- 2            Windows XP, Adobe Reader 9.4.0, Flash 10, Office 2007
- 3            Windows XP, Adobe Reader 11, Flash 11, Office 2010
- 4            Windows 7, Adobe Reader 11, Flash 11, Office 2010
- 5            Windows 7 x64 SP1, Adobe Reader 11, Flash 11, Office 2010
- 201          Android 2.3, API 10, avd2.3.1
- ===========  ===================
+ Platform IDs are documented in the
+ `Get a Packet Capture <https://www.paloaltonetworks.com/documentation/80/wildfire/wf_api/get-wildfire-information-through-the-wildfire-api/get-a-packet-capture-wildfire-api>`_
+ section of the *WildFire API Reference*.
 
 testfile()
 ~~~~~~~~~~
