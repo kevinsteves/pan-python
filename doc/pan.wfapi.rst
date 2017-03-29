@@ -379,10 +379,10 @@ SEE ALSO
  panwfapi.py
 
  WildFire Administrator's Guide
-  https://www.paloaltonetworks.com/documentation/71/wildfire/wf_admin
+  https://www.paloaltonetworks.com/documentation/80/wildfire/wf_admin
 
  WildFire API
-  https://www.paloaltonetworks.com/documentation/71/wildfire/wf_api
+  https://www.paloaltonetworks.com/documentation/80/wildfire/wf_api
 
 AUTHORS
 =======

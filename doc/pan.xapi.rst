@@ -656,7 +656,7 @@ SEE ALSO
  panxapi.py
 
  PAN-OS XML API Reference
-  https://www.paloaltonetworks.com/documentation/71/pan-os/xml-api
+  https://www.paloaltonetworks.com/documentation/80/pan-os/xml-api
 
 AUTHORS
 =======
