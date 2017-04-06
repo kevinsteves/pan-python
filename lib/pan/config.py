@@ -254,8 +254,10 @@ class PanConfig:
         for e in elem:
             self.__serialize_flat(e, path + '/' + e.tag, obj)
 
-    def __quote_space(self, s):
+    def __quote_arg(self, s):
         # XXX string with " etc.
+        if '"' in s:
+            return "'%s'" % s
         if ' ' in s:
             return '"%s"' % s
         return s
@@ -291,7 +293,7 @@ class PanConfig:
 
         for k, v in attrs:
             if k == 'name':
-                path += ' ' + self.__quote_space(v)
+                path += ' ' + self.__quote_arg(v)
 
         if member_list:
             nodes = elem.findall('./member')
@@ -299,14 +301,14 @@ class PanConfig:
             if len(nodes) > 1:
                 members = []
                 for e in nodes:
-                    members.append(self.__quote_space(e.text))
+                    members.append(self.__quote_arg(e.text))
                 path += ' [ ' + ' '.join(members) + ' ]'
                 obj.append(path)
                 return
 
         if not len(elem):
             if text_strip:
-                path += ' ' + self.__quote_space(text)
+                path += ' ' + self.__quote_arg(text)
             obj.append(path)
 
         for e in elem:
