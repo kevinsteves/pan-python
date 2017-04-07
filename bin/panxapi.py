@@ -71,7 +71,7 @@ def main():
 
     try:
         xapi = pan.xapi.PanXapi(timeout=options['timeout'],
-                                tag=options['tag'],
+                                tag=None if not options['tag'] else options['tag'],
                                 use_http=options['use_http'],
                                 use_get=options['use_get'],
                                 api_username=options['api_username'],
@@ -101,14 +101,16 @@ def main():
             print_status(xapi, action)
             print_response(xapi, options)
             if (options['api_username'] and options['api_password'] and
-                    options['hostname'] and options['tag']):
+                    options['hostname'] and options['tag'] is not None):
                 # .panrc
                 d = datetime.now()
+                x = ''
+                if options['tag']:
+                    x = '%%%s' % options['tag']
                 print('# %s generated: %s' % (os.path.basename(sys.argv[0]),
                                               d.strftime('%Y/%m/%d %H:%M:%S')))
-                print('hostname%%%s=%s' % (options['tag'],
-                                           options['hostname']))
-                print('api_key%%%s=%s' % (options['tag'], xapi.api_key))
+                print('hostname%s=%s' % (x, options['hostname']))
+                print('api_key%s=%s' % (x, xapi.api_key))
             else:
                 print('API key:  "%s"' % xapi.api_key)
 
@@ -576,8 +578,8 @@ def parse_opts():
             debug += 1
             options['debug'] = debug
         elif opt == '-t':
-            if arg:
-                options['tag'] = arg
+            # allow '' to create tagname-less .panrc
+            options['tag'] = arg
         elif opt == '-T':
             options['timeout'] = arg
         elif opt == '--version':
