@@ -735,7 +735,8 @@ def print_response(xapi, options):
             if options['print_python']:
                 print('var1 =', pprint.pformat(d))
             if options['print_json']:
-                print(json.dumps(d, sort_keys=True, indent=2))
+                print(json.dumps(d, sort_keys=True,
+                                 separators=(',', ': '), indent=2))
 
     if options['print_text'] and xapi.text_document is not None:
         print(xapi.text_document, end='')
