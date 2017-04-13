@@ -67,9 +67,9 @@ DESCRIPTION
  Request                     PanAFapi Method                  API Resource URI
  =========================   ==============================   ================
  Search samples              samples_search()                 /samples/search/
- Get samples results         samples_search_results()         /samples/results/
+ Get samples results         samples_results()                /samples/results/
  Search sessions             sessions_search()                /sessions/search/
- Get sessions results        sessions_search_results()        /sessions/results/
+ Get sessions results        sessions_results()               /sessions/results/
  Get histogram of sessions   sessions_histogram_search()      /sessions/histogram/search/
  Get histogram results       sessions_histogram_results()     /sessions/histogram/results/
  Get aggregate of sessions   sessions_aggregate_search()      /sessions/aggregate/search/
