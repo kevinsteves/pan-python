@@ -133,8 +133,8 @@ DESCRIPTION
  ``--hash`` *hash*
   Specify the hash for the request.
 
-  This is a convenience option and sets the ``sampleid`` argument
-  for the ``--sample-analysis`` request.
+  This sets the ``sampleid`` argument for the ``--sample-analysis``
+  (PanAFapi ``sample_analysis()`` method) request.
 
  ``--terminal``
   Set the ``terminal`` argument for the ``*_search_results()`` PanAFapi
