@@ -131,7 +131,7 @@ class pan.afapi.PanAFapi()
                            sleeper=None)
 
  **api_version**
-  API version as a string in the form v\ **major**.\ **minor** or
+  API version is a string in the form v\ **major**.\ **minor** or
   **major**.\ **minor** (e.g., *v1.0*).  The API version is used to determine
   the PanAFapi class implementation to use.
 
