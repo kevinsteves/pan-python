@@ -1,6 +1,23 @@
 Release History
 ===============
 
+0.12.0 (2017-05-28)
+-------------------
+
+- Add documentation for panafapi.py.
+
+- Documentation fixes.
+
+- panxapi.py: For json.dumps() use separators=(',', ': ') so -j output
+  is the same with py2 and py3 (this is the default when indent is not
+  None starting in 3.4).
+
+- panxapi.py: Allow -t '' which is the same as no tag but can also be
+  used to create tag-less entries for a .panrc.
+
+- pan.config: Quote set argument with single quotes if it contains a
+  double quote.
+
 0.11.0 (2017-03-31)
 -------------------
 
