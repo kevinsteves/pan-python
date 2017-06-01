@@ -22,6 +22,7 @@ import os
 import signal
 import getopt
 import json
+import yaml
 import pprint
 import logging
 
@@ -126,7 +127,7 @@ def main():
                 if o:
                     print('\n'.join(o))
 
-    if options['print_python'] or options['print_json']:
+    if options['print_python'] or options['print_json'] or options['print_yaml']:
         try:
             d = conf.python(xpath=options['xpath'])
         except pan.config.PanConfigError as msg:
@@ -141,6 +142,8 @@ def main():
                     print(json.dumps(d, separators=(',', ':')))
                 else:
                     print(json.dumps(d, sort_keys=True, indent=2))
+            if options['print_yaml']:
+                print(yaml.dump(d, canonical=False, default_flow_style=False)
 
     sys.exit(0)
 
@@ -171,6 +174,7 @@ def parse_opts():
         'print_xml': False,
         'print_python': False,
         'print_json': False,
+        'print_yaml': False,
         'print_flat': False,
         'print_set': False,
         'mlist': False,
@@ -181,7 +185,7 @@ def parse_opts():
 
     short_options = ''
     long_options = ['version', 'help', 'debug=',
-                    'config=', 'xml', 'py', 'json', 'flat', 'set',
+                    'config=', 'xml', 'py', 'json', 'yaml', 'flat', 'set',
                     'mlist', 'compact',
                     ]
 
@@ -202,6 +206,8 @@ def parse_opts():
             options['print_python'] = True
         elif opt == '--json':
             options['print_json'] = True
+        elif opt == '--yaml':
+            options['print_yaml'] = True
         elif opt == '--flat':
             options['print_flat'] = True
         elif opt == '--set':
@@ -257,6 +263,7 @@ def usage():
     --xml                 print XML
     --py                  print XML in Python
     --json                print XML in JSON
+    --yaml                print XML in YAML
     --flat                print XML flatly
     --set                 print XML as set CLI
     --mlist               print set CLI members as a list
