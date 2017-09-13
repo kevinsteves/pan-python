@@ -448,7 +448,7 @@ sample_analysis(data=None, sampleid=None)
  sample's WildFire analysis.
 
  **sampleid**
-  The AutoFocus sample ID.
+  The SHA256 hash of the sample.
 
 export(data=None)
 ~~~~~~~~~~~~~~~~~

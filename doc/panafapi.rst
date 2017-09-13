@@ -134,7 +134,8 @@ DESCRIPTION
   Specify the hash for the request.
 
   This sets the ``sampleid`` argument for the ``--sample-analysis``
-  (PanAFapi ``sample_analysis()`` method) request.
+  (PanAFapi ``sample_analysis()`` method) request.  The ``sampleid``
+  is the SHA256 hash of the sample.
 
  ``--terminal``
   Set the ``terminal`` argument for the ``*_search_results()`` PanAFapi
