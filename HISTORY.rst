@@ -1,6 +1,15 @@
 Release History
 ===============
 
+0.13.0 (2018-04-29)
+-------------------
+
+- Documentation fixes.
+
+- pan.config: Support 8.1.0 config for set format.
+
+- Use 8.1 documentation links.
+
 0.12.0 (2017-05-28)
 -------------------
 
