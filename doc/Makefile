@@ -1,4 +1,4 @@
-RST2HTML = rst2html
+RST2HTML = rst2html.py
 OPTIONS =
 SOURCE = panrc.html panxapi.html pan.xapi.html panconf.html \
 	panwfapi.html pan.wfapi.html \
