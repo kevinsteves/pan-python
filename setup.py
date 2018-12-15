@@ -15,7 +15,7 @@ setup(
     version=__version__,
     author='Kevin Steves',
     author_email='kevin.steves@pobox.com',
-    description='Multi-tool set for Palo Alto Networks +
+    description='Multi-tool set for Palo Alto Networks' +
     ' PAN-OS, Panorama, WildFire and AutoFocus',
     long_description=long_description,
     long_description_content_type='text/x-rst',
