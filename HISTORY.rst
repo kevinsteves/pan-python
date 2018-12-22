@@ -1,6 +1,16 @@
 Release History
 ===============
 
+0.14.0 (2018-12-22)
+-------------------
+
+- setup.py: Cleanup and switch to setuptools.  Will now also publish
+  wheels to PyPI.  Classify as Production/Stable.
+
+- Rename README.txt to README.rst and shrink.
+
+- pan.config: Support 9.0.0 config for set format.
+
 0.13.0 (2018-04-29)
 -------------------
 
