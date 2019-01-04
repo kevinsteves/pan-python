@@ -1,6 +1,9 @@
 pan-python
 ==========
 
+.. image:: https://travis-ci.org/kevinsteves/pan-python.svg?branch=master
+    :target: https://travis-ci.org/kevinsteves/pan-python
+
 ``pan-python`` is a Python package for Palo Alto Networks
 Next-Generation Firewalls, WildFire and AutoFocus.  It provides
 several components:
