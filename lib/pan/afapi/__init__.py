@@ -52,7 +52,7 @@ def PanAFapi(api_version=None, *args, **kwargs):
         x = int(r.group(1)), int(r.group(2))
     _api_version = _ApiVersion(*x)
     _log(DEBUG1, 'api_version: %s, 0x%06x',
-         _api_version, _api_version)
+         _api_version, int(_api_version))
 
     _package = 'pan.afapi'
     _module = 'v%d_%d' % (_api_version.major, _api_version.minor)
