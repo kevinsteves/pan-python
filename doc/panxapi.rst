@@ -722,7 +722,7 @@ SEE ALSO
  pan.xapi, panconf.py
 
  PAN-OS and Panorama API Guide
-  https://www.paloaltonetworks.com/documentation/81/pan-os/xml-api
+  https://docs.paloaltonetworks.com/pan-os/9-0/pan-os-panorama-api.html
 
  PAN-OS XML API Labs with pan-python
   http://api-lab.paloaltonetworks.com/

@@ -555,7 +555,7 @@ SEE ALSO
  panafapi.py
 
  AutoFocus API Reference Guide
-  https://www.paloaltonetworks.com/documentation/autofocus/autofocus/autofocus_api
+  https://docs.paloaltonetworks.com/autofocus/autofocus-api.html
 
 AUTHORS
 =======

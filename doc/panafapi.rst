@@ -240,7 +240,7 @@ EXAMPLES
  Add AutoFocus API key with tagname *autofocus* to .panrc file.
 
  First `Get Your API Key
- <https://www.paloaltonetworks.com/documentation/autofocus/autofocus/autofocus_api/get-started-with-the-autofocus-api/get-your-api-key>`_.
+ <https://docs.paloaltonetworks.com/autofocus/autofocus-api/get-started-with-the-autofocus-api/get-your-api-key.html>`_.
  ::
 
   $ KEY=e3222942-2080-11e7-b1c7-03f23b1b6cb4
@@ -393,13 +393,13 @@ SEE ALSO
  pan.afapi
 
  AutoFocus API Reference Guide
-  https://www.paloaltonetworks.com/documentation/autofocus/autofocus/autofocus_api
+  https://docs.paloaltonetworks.com/autofocus/autofocus-api.html
 
  View API Request for a Search as **panafapi.py** command line
-  https://www.paloaltonetworks.com/documentation/autofocus/autofocus/new-feature-guide/new-features-march-2016/api-request-for-a-search
+  https://docs.paloaltonetworks.com/autofocus/autofocus-whats-new/autofocus-release-history/new-features-march-2016/api-request-for-a-search.html
 
  AutoFocus Administrator's Guide
-  https://www.paloaltonetworks.com/documentation/autofocus/autofocus/autofocus_admin_guide
+  https://docs.paloaltonetworks.com/autofocus/autofocus-admin.html
 
 AUTHORS
 =======

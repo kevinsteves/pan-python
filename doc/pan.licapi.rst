@@ -316,8 +316,8 @@ SEE ALSO
 
  panlicapi.py
 
- Licensing API Documentation
-  https://www.paloaltonetworks.com/documentation/81/virtualization/virtualization/license-the-vm-series-firewall/licensing-api
+ Licensing API
+  https://docs.paloaltonetworks.com/vm-series/9-0/vm-series-deployment/license-the-vm-series-firewall/licensing-api.html
 
 AUTHORS
 =======

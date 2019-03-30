@@ -252,7 +252,7 @@ pcap(hash=None, platform=None)
  *Malware* verdict is returned.
 
  Platform IDs are documented in the
- `Get a Packet Capture <https://www.paloaltonetworks.com/documentation/81/wildfire/wf_api/get-wildfire-information-through-the-wildfire-api/get-a-packet-capture-wildfire-api>`_
+ `Get a Packet Capture <https://docs.paloaltonetworks.com/wildfire/9-0/wildfire-api/get-wildfire-information-through-the-wildfire-api/get-a-packet-capture-wildfire-api.html>`_
  section of the *WildFire API Reference*.
 
 testfile()
@@ -370,10 +370,10 @@ SEE ALSO
  panwfapi.py
 
  WildFire Administrator's Guide
-  https://www.paloaltonetworks.com/documentation/81/wildfire/wf_admin
+  https://docs.paloaltonetworks.com/wildfire/9-0/wildfire-admin.html
 
- WildFire API
-  https://www.paloaltonetworks.com/documentation/81/wildfire/wf_api
+ WildFire API Reference
+  https://docs.paloaltonetworks.com/wildfire/9-0/wildfire-api.html
 
 AUTHORS
 =======
