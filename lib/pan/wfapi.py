@@ -231,6 +231,9 @@ class PanWFapi:
         elif content_type == 'text/html':
             return self.__set_html_response(message_body)
 
+        elif content_type == 'text/plain':
+            return self.__set_txt_response(message_body)
+
         else:
             msg = 'no handler for content-type: %s' % content_type
             self._msg = msg
@@ -281,6 +284,18 @@ class PanWFapi:
     def __set_html_response(self, message_body):
         self._log(DEBUG2, '__set_html_response: %s', repr(message_body))
         self.response_type = 'html'
+
+        _message_body = message_body.decode()
+        if len(_message_body) == 0:
+            return True
+
+        self.response_body = _message_body
+
+        return True
+
+    def __set_txt_response(self, message_body):
+        self._log(DEBUG2, '__set_txt_response: %s', repr(message_body))
+        self.response_type = 'txt'
 
         _message_body = message_body.decode()
         if len(_message_body) == 0:
@@ -532,10 +547,11 @@ class PanWFapi:
         if not self.__set_response(response):
             raise PanWFapiError(self._msg)
 
-    def testfile(self):
+    def testfile(self, file_type=None):
         self.__clear_response()
 
-        request_uri = '/publicapi/test/pe'
+        request_uri = '/publicapi/test/%s' % (
+            'pe' if file_type is None else file_type)
 
         query = {}
 
@@ -861,6 +877,7 @@ class _FormDataPart:
             bio.write(self.body)
 
         return bio.getvalue()
+
 
 if __name__ == '__main__':
     # python -m pan.wfapi [tag] [sha256]

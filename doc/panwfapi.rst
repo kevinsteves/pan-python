@@ -45,6 +45,7 @@ SYNOPSIS
     --email address       notification e-mail address
     --comment comment     change request explanation
     --testfile            get sample malware test file
+    --type type           test file type
     --format format       report output format
     --date date           start date for changed verdicts
                           (YYYY-MM-DD or -days)
@@ -131,12 +132,29 @@ DESCRIPTION
   section of the *WildFire API Reference*.
 
  ``--testfile``
-  Get sample malware test file.  Each request returns a similar PE
-  (Portable Executable) file named ``wildfire-test-pe-file.exe`` with
-  a different hash and with verdict *Malware*.
+  Get sample malware test file.    Each
+  request returns a similar file named
+  ``wildfire-test-``\ *file_type*\ ``-file`` with a different hash
+  and with verdict *Malware*.
 
-  This currently requires an ``api_key`` even though it is not
+  This requires an ``api_key`` even though it is not
   needed for the API request.
+
+ ``--type`` *type*
+  Specify the file type for **--testfile**.
+
+  *type* is one of the following file types:
+
+   ==========  ===========  ===========
+   File Type   File Suffix  Description
+   ==========  ===========  ===========
+   pe          .exe         Portable Executable format
+   apk         .apk         Android Package
+   macos       none         MacOSX
+   elf         none         Executable and Linkable Format
+   ==========  ===========  ===========
+
+   The default is **pe**.
 
  ``--format`` *format*
   WildFire report output format string.  This can be **xml** or **pdf**.
@@ -168,7 +186,7 @@ DESCRIPTION
 
   - Malware test file (**--testfile**)
 
-    wildfire-test-pe-file.exe
+    wildfire-test-\ *file_type*\ -file
 
  ``--new-verdict`` *verdict*
   The suggested verdict.  Can be specified as a string (*benign*,

@@ -237,7 +237,7 @@ def main():
         if options['testfile']:
             action = 'testfile'
 
-            wfapi.testfile()
+            wfapi.testfile(options['type'])
             print_status(wfapi, action)
             print_response(wfapi, options)
             save_file(wfapi, options)
@@ -344,6 +344,7 @@ def parse_opts():
         'email': None,
         'comment': None,
         'testfile': False,
+        'type': None,
         'format': None,
         'date': None,
         'dst': None,
@@ -369,7 +370,7 @@ def parse_opts():
                     'pcap', 'changed',
                     'hash=', 'platform=', 'testfile',
                     'new-verdict=', 'email=', 'comment=',
-                    'format=', 'date=', 'dst=',
+                    'type=', 'format=', 'date=', 'dst=',
                     'http', 'ssl=', 'cafile=', 'capath=',
                     ]
 
@@ -412,6 +413,8 @@ def parse_opts():
             options['comment'] = arg
         elif opt == '--testfile':
             options['testfile'] = True
+        elif opt == '--type':
+            options['type'] = arg
         elif opt == '--format':
             options['format'] = arg
         elif opt == '--date':
@@ -633,6 +636,7 @@ def usage():
     --email address       notification e-mail address
     --comment comment     change request explanation
     --testfile            get sample malware test file
+    --type type           test file type
     --format format       report output format
     --date date           start date for changed verdicts
                           (YYYY-MM-DD or -days)
@@ -653,6 +657,7 @@ def usage():
     --help                display usage
 '''
     print(usage % os.path.basename(sys.argv[0]), end='')
+
 
 if __name__ == '__main__':
     main()

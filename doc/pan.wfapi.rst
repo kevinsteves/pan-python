@@ -73,7 +73,7 @@ DESCRIPTION
  get sample verdict               /publicapi/get/verdict
  get sample verdicts              /publicapi/get/verdicts
  get verdicts changed             /publicapi/get/verdicts/changed
- get sample malware test file     /publicapi/test/pe
+ get sample malware test file     /publicapi/test/**file_type**
  ==============================   ========
 
 pan.wfapi Constants
@@ -255,15 +255,28 @@ pcap(hash=None, platform=None)
  `Get a Packet Capture <https://docs.paloaltonetworks.com/wildfire/9-0/wildfire-api/get-wildfire-information-through-the-wildfire-api/get-a-packet-capture-wildfire-api.html>`_
  section of the *WildFire API Reference*.
 
-testfile()
-~~~~~~~~~~
+testfile(file_type=None)
+~~~~~~~~~~~~~~~~~~~~~~~~
 
- The ``testfile()`` method gets a sample malware test file.  Each request
- returns a similar PE (Portable Executable) file named
- ``wildfire-test-pe-file.exe`` with a different hash and with verdict
- *Malware*.
+ The ``testfile()`` method gets a sample malware test file.  Each
+ request returns a similar file named
+ ``wildfire-test-``\ *file_type*\ ``-file`` with a different hash
+ and with verdict *Malware*.
 
- This currently requires an ``api_key`` even though it is not
+ **file_type** is one of the following file types:
+
+ ==========  ===========  ===========
+ File Type   File Suffix  Description
+ ==========  ===========  ===========
+ pe          .exe         Portable Executable format
+ apk         .apk         Android Package
+ macos       none         MacOSX
+ elf         none         Executable and Linkable Format
+ ==========  ===========  ===========
+
+ The default is ``pe``.
+
+ This requires an ``api_key`` even though it is not
  needed for the API request.
 
 attachment
