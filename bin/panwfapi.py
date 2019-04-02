@@ -226,8 +226,8 @@ def main():
                         d = d - timedelta(-x)
                         kwargs['date'] = d.isoformat()
                         if options['debug']:
-                            print('relative date(%d): %s' % (x, kwargs['date']),
-                                  file=sys.stderr)
+                            print('relative date(%d): %s' %
+                                  (x, kwargs['date']), file=sys.stderr)
 
             wfapi.verdicts_changed(**kwargs)
             print_status(wfapi, action)
@@ -304,8 +304,8 @@ def process_arg(s, list=False):
         print('lines:', lines, file=sys.stderr)
 
     if list:
-        l = [x.rstrip('\r\n') for x in lines]
-        return l
+        _lines = [x.rstrip('\r\n') for x in lines]
+        return _lines
 
     lines = ''.join(lines)
     return lines
