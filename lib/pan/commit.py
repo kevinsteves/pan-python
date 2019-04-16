@@ -175,6 +175,7 @@ class PanCommit:
 
         return s
 
+
 if __name__ == '__main__':
     import pan.commit
 

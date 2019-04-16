@@ -141,6 +141,7 @@ class PanRc:
 
         return o
 
+
 if __name__ == '__main__':
     # python rc.py [tag]
     import pan.rc

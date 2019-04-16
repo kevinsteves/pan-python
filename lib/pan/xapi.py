@@ -1210,6 +1210,7 @@ class PanXapi:
             self._log(DEBUG2, 'sleep %.2f seconds', interval)
             time.sleep(interval)
 
+
 if __name__ == '__main__':
     # python -m pan.xapi [tag] [xpath]
     import pan.xapi
