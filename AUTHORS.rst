@@ -8,3 +8,4 @@ Patches and Suggestions
 - Jonathan Kaplan
 - Andrew Stanton
 - Darlene Wong
+- Michael Richardson

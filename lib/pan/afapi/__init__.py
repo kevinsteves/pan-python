@@ -26,8 +26,7 @@ DEFAULT_API_VERSION = 'v%d.%d' % _default_api_version
 
 
 class _ApiVersion(namedtuple('api_version',
-                             ['major', 'minor'],
-                             verbose=False)):
+                             ['major', 'minor'])):
     def __str__(self):
         return 'v%d.%d' % (self.major, self.minor)
 
