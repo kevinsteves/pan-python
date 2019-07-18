@@ -1,6 +1,22 @@
 Release History
 ===============
 
+0.15.0 (2019-07-18)
+-------------------
+
+- pan.afapi: Automatic int conversions have been deprecated in
+  Python3.  See: https://bugs.python.org/issue27672
+
+- Use 9.0 documentation links.
+
+- pan.wfapi, panwfapi.py, pan.wfapi.rst, panwfapi.rst: Add support for
+  retrieving additional malware test file types.
+
+- pycodestyle fixes.
+
+- pan.licapi, pan.afapi: Remove verbose argument from namedtuple() for
+  Python 3.7.  From Michael Richardson.
+
 0.14.0 (2018-12-22)
 -------------------
 
