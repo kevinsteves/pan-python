@@ -286,9 +286,9 @@ def main():
 
         if (options['commit'] or options['commit_all']):
             if options['cmd']:
-                cmd = options['cmd']         
+                cmd = options['cmd']
                 if options['cmd_xml']:
-                    cmd = xapi.cmd_xml(cmd)            
+                    cmd = xapi.cmd_xml(cmd)
             else:
                 c = pan.commit.PanCommit(validate=options['validate'],
                                          force=options['force'],
@@ -318,7 +318,7 @@ def main():
                     c.vsys(options['vsys'][0])
 
                 cmd = c.cmd()
-                
+
             kwargs = {
                 'cmd': cmd,
                 'sync': options['sync'],
