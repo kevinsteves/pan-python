@@ -486,6 +486,13 @@ class PanConfig:
         x.insert(35, s)
         xpaths_panos_8_0 = '\n'.join(x)
 
+        s = '''./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/sdwan-interface-profile'''
+        x = xpaths_panos_8_0.split('\n')
+        x.insert(18, s)
+        s = '''./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/dynamic-user-group'''
+        x.insert(33, s)
+        xpaths_panos_9_1 = '\n'.join(x)
+
         xpaths_panos_multi_vsys_4_1 = '''
 ./devices/entry[@name='localhost.localdomain']/deviceconfig
 ./devices/entry[@name='localhost.localdomain']/network
@@ -596,6 +603,9 @@ class PanConfig:
                 xpaths_panorama = xpaths_panorama_7_0
             elif self.config_version() in ['8.0.0', '8.1.0', '9.0.0']:
                 xpaths_panos = xpaths_panos_8_0
+                xpaths_panorama = xpaths_panorama_8_0
+            elif self.config_version() in ['9.1.0']:
+                xpaths_panos = xpaths_panos_9_1
                 xpaths_panorama = xpaths_panorama_8_0
 
         if self.config_multi_vsys():
