@@ -31,8 +31,7 @@ class _ApiVersion(namedtuple('api_version',
         return 'v%d' % (self.version)
 
     def __int__(self):
-        # reserve lower 8 bits for 'future' use
-        return self.version << 8
+        return self.version
 
 
 class PanLicapiError(Exception):
