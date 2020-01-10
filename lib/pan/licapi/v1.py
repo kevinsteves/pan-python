@@ -130,7 +130,7 @@ class PanLicapi:
             'apikey': self.api_key,
             # requests header value must be str:
             #   https://github.com/kennethreitz/requests/issues/3477
-            'version': str(int(api_version)),
+            'version': str(api_version.version),
         }
 
         try:
