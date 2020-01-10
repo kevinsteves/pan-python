@@ -249,9 +249,9 @@ __int__()
  ==================  ===========
  Bits (MSB 0 order)  Description
  ==================  ===========
- 0-15                unused
- 16-23               version
- 24-31               reserved for future use
+ 0-7                 unused
+ 8-15                version
+ 16-31               reserved for future use
  ==================  ===========
 
 Sample Usage
