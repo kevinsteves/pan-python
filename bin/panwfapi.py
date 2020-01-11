@@ -533,11 +533,11 @@ def print_status(wfapi, action, exception_msg=None):
 
 
 def print_response(wfapi, options):
-    if wfapi.response_type is 'html' and wfapi.response_body is not None:
+    if wfapi.response_type == 'html' and wfapi.response_body is not None:
         if options['print_html']:
             print(wfapi.response_body.rstrip())
 
-    elif wfapi.response_type is 'xml' and wfapi.response_body is not None:
+    elif wfapi.response_type == 'xml' and wfapi.response_body is not None:
         if options['print_xml']:
             print(wfapi.response_body.rstrip())
 
