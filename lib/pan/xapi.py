@@ -436,6 +436,24 @@ class PanXapi:
                         lines.append(elem2.text)
             return '\n'.join(lines) if lines else None
 
+        # multi-config responses have nested response tags under the
+        # main response tag
+        path = './response'
+        elem = self.element_root.findall(path)
+        if len(elem) > 0:
+            self._log(DEBUG2, 'path: %s', path)
+            for resp in elem:
+                msg = resp.find('./msg')
+                if msg is None:
+                    continue
+                line = msg.find('./line')
+                if line is not None:
+                    if line.text:
+                        lines.append(line.text.strip())
+                elif msg.text:
+                    lines.append(line.text.strip())
+            return '\n'.join(lines) if lines else None
+
         return None
 
     # XXX store tostring() results?
@@ -784,6 +802,14 @@ class PanXapi:
         if element is not None:
             query['element'] = element
         self.__type_config('override', query, extra_qs)
+
+    def multi_config(self, strict=None, element=None, extra_qs=None):
+        query = {}
+        if strict is not None:
+            query['strict-transactional'] = 'yes' if strict else 'no'
+        if element is not None:
+            query['element'] = element
+        self.__type_config('multi-config', query, extra_qs)
 
     def __type_config(self, action, query, extra_qs=None):
         self.__set_api_key()
