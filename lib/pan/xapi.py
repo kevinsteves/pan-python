@@ -242,7 +242,7 @@ class PanXapi:
         return types
 
     def __set_response(self, response):
-        message_body = response.read()
+        message_body = response.body
 
         content_type = self.__get_header(response, 'content-type')
         if not content_type:
@@ -542,7 +542,11 @@ class PanXapi:
             kwargs['timeout'] = self.timeout
 
         try:
-            response = urlopen(**kwargs)
+            response = None 
+            with urlopen(**kwargs) as r:
+               response = r
+               response.body = r.read()
+                 
 
         # XXX handle httplib.BadStatusLine when http to port 443
         except self._certificateerror as e:
