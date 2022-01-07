@@ -493,6 +493,61 @@ class PanConfig:
         x.insert(33, s)
         xpaths_panos_9_1 = '\n'.join(x)
 
+        xpaths_panos_10_0 = '''
+./devices/entry[@name='localhost.localdomain']/deviceconfig
+./devices/entry[@name='localhost.localdomain']/network
+./shared
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/zone
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/vm-info-source
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/user-id-ssl-auth
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/user-id-collector
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/url-content-types
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/url-admin-override
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/ts-agent
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/threats
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/tag
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/setting
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/service-group
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/service
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/sdwan-interface-profile
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/schedule
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/rulebase
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/route
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/reports
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/report-group
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/region
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/redistribution-collector
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/redistribution-agent
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/profiles
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/profile-group
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/pdf-summary-report
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/ipuser-include-exclude-list
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/iptag-include-exclude-list
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/import
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/group-mapping
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/global-protect
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/external-list
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/email-scheduler
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/dynamic-user-group
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/dns-proxy
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/display-name
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/device-object
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/captive-portal
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/authentication-object
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application-tag
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application-group
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application-filter
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/application
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address-group
+./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/address
+./mgt-config
+'''
+
+        s = '''./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/cloud-identity-engine'''
+        x = xpaths_panos_10_0.split('\n')
+        x.insert(39, s)
+        xpaths_panos_10_1 = '\n'.join(x)
+
         xpaths_panos_multi_vsys_4_1 = '''
 ./devices/entry[@name='localhost.localdomain']/deviceconfig
 ./devices/entry[@name='localhost.localdomain']/network
@@ -581,9 +636,9 @@ class PanConfig:
 ./shared
 '''
 
-        xpaths_panos = xpaths_panos_4_1
+        xpaths_panos = xpaths_panos_9_1
         xpaths_panos_multi_vsys = xpaths_panos_multi_vsys_4_1
-        xpaths_panorama = xpaths_panorama_4_1
+        xpaths_panorama = xpaths_panorama_8_0
 
         if self.config_version() is not None:
             if self.config_version() in ['5.0.0', '5.1.0']:
@@ -606,6 +661,12 @@ class PanConfig:
                 xpaths_panorama = xpaths_panorama_8_0
             elif self.config_version() in ['9.1.0']:
                 xpaths_panos = xpaths_panos_9_1
+                xpaths_panorama = xpaths_panorama_8_0
+            elif self.config_version() in ['10.0.0']:
+                xpaths_panos = xpaths_panos_10_0
+                xpaths_panorama = xpaths_panorama_8_0
+            elif self.config_version() in ['10.1.0']:
+                xpaths_panos = xpaths_panos_10_1
                 xpaths_panorama = xpaths_panorama_8_0
 
         if self.config_multi_vsys():
