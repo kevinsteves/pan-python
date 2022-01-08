@@ -317,7 +317,7 @@ SEE ALSO
  panlicapi.py
 
  Licensing API
-  https://docs.paloaltonetworks.com/vm-series/9-1/vm-series-deployment/license-the-vm-series-firewall/licensing-api.html
+  https://docs.paloaltonetworks.com/vm-series/10-1/vm-series-deployment/license-the-vm-series-firewall/licensing-api.html
 
 AUTHORS
 =======

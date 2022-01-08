@@ -382,10 +382,10 @@ SEE ALSO
  pan.licapi, panxapi.py
 
  VM-Series Deployment Guide
-  https://docs.paloaltonetworks.com/vm-series/9-1/vm-series-deployment.html
+  https://docs.paloaltonetworks.com/vm-series/10-1/vm-series-deployment.html
 
  Licensing API
-  https://docs.paloaltonetworks.com/vm-series/9-1/vm-series-deployment/license-the-vm-series-firewall/licensing-api.html
+  https://docs.paloaltonetworks.com/vm-series/10-1/vm-series-deployment/license-the-vm-series-firewall/licensing-api.html
 
 AUTHORS
 =======

@@ -128,7 +128,7 @@ DESCRIPTION
  ``--platform`` *id*
   Platform ID for sandbox environment.
   Platform IDs are documented in the
-  `Get a Packet Capture <https://docs.paloaltonetworks.com/wildfire/9-0/wildfire-api/get-wildfire-information-through-the-wildfire-api/get-a-packet-capture-wildfire-api.html>`_
+  `Get a Packet Capture <https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api/get-wildfire-information-through-the-wildfire-api/get-a-packet-capture-wildfire-api.html>`_
   section of the *WildFire API Reference*.
 
  ``--testfile``
@@ -359,10 +359,10 @@ SEE ALSO
  pan.wfapi
 
  WildFire Administrator's Guide
-  https://docs.paloaltonetworks.com/wildfire/9-1/wildfire-admin.html
+  https://docs.paloaltonetworks.com/wildfire/10-1/wildfire-admin.html
 
  WildFire API Reference
-  https://docs.paloaltonetworks.com/wildfire/9-0/wildfire-api.html
+  https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api.html
 
 AUTHORS
 =======
