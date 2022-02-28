@@ -14,8 +14,9 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import sys
+import json
 import logging
+import sys
 import xml.etree.ElementTree as etree
 
 from . import __version__, DEBUG1, DEBUG2, DEBUG3
@@ -254,15 +255,40 @@ class PanConfig:
         for e in elem:
             self.__serialize_flat(e, path + '/' + e.tag, obj)
 
-    def __quote_arg(self, s):
-        # XXX string with " etc.
-        if '"' in s:
-            return "'%s'" % s
-        if ' ' in s:
-            return '"%s"' % s
+    def __quote_arg(self, s, jsons=False):
+        # Test cases:
+        #
+        # admin@VM-50# show address
+        # set address addr1 ip-netmask 10.1.1.1
+        # set address addr1 description "foo ' bar"
+        # set address addr2 ip-netmask 10.1.1.1
+        # set address addr2 description 'foo " bar'
+        # set address addr3 ip-netmask 10.1.1.1
+        # set address addr3 description "foo bar"
+        # set address addr4 ip-netmask 10.1.1.1
+        # set address addr4 description 'foo '" bar'
+        if not jsons:
+            # Duplicate configuration mode show output, which may not
+            # be valid for input (e.g., addr4).
+            if '"' in s:
+                return "'%s'" % s
+            if ' ' in s:
+                return '"%s"' % s
+            if "'" in s:
+                return '"%s"' % s
+        else:
+            # Convert to JSON string if quoting needed.
+            quote = ['"', "'", ' ', '\n']
+            if any(x in s for x in quote):
+                try:
+                    x = json.dumps(s)
+                except ValueError as e:
+                    raise PanConfigError('%s: %s' % (s, e))
+                return x
+
         return s
 
-    def set_cli(self, path, xpath=None, member_list=False):
+    def set_cli(self, path, xpath=None, member_list=False, jsons=False):
         nodes = self.__find_xpath(xpath)
         if not nodes:
             return None
@@ -270,11 +296,12 @@ class PanConfig:
         obj = []
         for elem in nodes:
             self.__serialize_set_cli(elem, path + elem.tag, obj,
-                                     member_list)
+                                     member_list, jsons)
 
         return obj
 
-    def __serialize_set_cli(self, elem, path, obj, member_list=False):
+    def __serialize_set_cli(self, elem, path, obj, member_list=False,
+                            jsons=False):
         tag = elem.tag
         text = elem.text
         tail = elem.tail  # unused
@@ -293,7 +320,7 @@ class PanConfig:
 
         for k, v in attrs:
             if k == 'name':
-                path += ' ' + self.__quote_arg(v)
+                path += ' ' + self.__quote_arg(v, jsons)
 
         if member_list:
             nodes = elem.findall('./member')
@@ -301,21 +328,21 @@ class PanConfig:
             if len(nodes) > 1:
                 members = []
                 for e in nodes:
-                    members.append(self.__quote_arg(e.text))
+                    members.append(self.__quote_arg(e.text, jsons))
                 path += ' [ ' + ' '.join(members) + ' ]'
                 obj.append(path)
                 return
 
         if not len(elem):
             if text_strip:
-                path += ' ' + self.__quote_arg(text)
+                path += ' ' + self.__quote_arg(text, jsons)
             obj.append(path)
 
         for e in elem:
             tpath = path
             if e.tag not in ['entry', 'member']:
                 tpath += ' ' + e.tag
-            self.__serialize_set_cli(e, tpath, obj, member_list)
+            self.__serialize_set_cli(e, tpath, obj, member_list, jsons)
 
     def config_xpaths(self):
         xpaths_panos_4_1 = '''

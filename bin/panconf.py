@@ -112,17 +112,20 @@ def main():
                 member_list = True
         if options['xpath']:
             o = conf_set(conf, path, xpath=options['xpath'],
-                         member_list=member_list)
+                         member_list=member_list,
+                         jsons=options['set_jsons'])
             if o:
                 print('\n'.join(o))
         elif conf.config_version() is None:
-            o = conf_set(conf, path)
+            o = conf_set(conf, path,
+                         jsons=options['set_jsons'])
             if o:
                 print('\n'.join(o))
         else:
             for xpath in xpaths:
                 o = conf_set(conf, path, xpath=xpath,
-                             member_list=member_list)
+                             member_list=member_list,
+                             jsons=options['set_jsons'])
                 if o:
                     print('\n'.join(o))
 
@@ -155,9 +158,9 @@ def conf_flat(conf, path, xpath=None):
     return o
 
 
-def conf_set(conf, path, xpath=None, member_list=None):
+def conf_set(conf, path, xpath=None, member_list=None, jsons=False):
     try:
-        o = conf.set_cli(path, xpath, member_list)
+        o = conf.set_cli(path, xpath, member_list, jsons)
     except pan.config.PanConfigError as msg:
         print('pan.config.PanConfigError:', msg, file=sys.stderr)
         sys.exit(1)
@@ -173,6 +176,7 @@ def parse_opts():
         'print_json': False,
         'print_flat': False,
         'print_set': False,
+        'set_jsons': False,
         'mlist': False,
         'compact': False,
         'xpath': None,
@@ -182,7 +186,7 @@ def parse_opts():
     short_options = ''
     long_options = ['version', 'help', 'debug=',
                     'config=', 'xml', 'py', 'json', 'flat', 'set',
-                    'mlist', 'compact',
+                    'set-jsons', 'mlist', 'compact',
                     ]
 
     try:
@@ -206,6 +210,8 @@ def parse_opts():
             options['print_flat'] = True
         elif opt == '--set':
             options['print_set'] = True
+        elif opt == '--set-jsons':
+            options['set_jsons'] = True
         elif opt == '--mlist':
             options['mlist'] = True
         elif opt == '--compact':
@@ -259,6 +265,7 @@ def usage():
     --json                print XML in JSON
     --flat                print XML flatly
     --set                 print XML as set CLI
+    --set-jsons           use JSON strings when quoting in set output
     --mlist               print set CLI members as a list
     --compact             print compactly
     --debug level         enable debug level up to 3
