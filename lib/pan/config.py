@@ -16,6 +16,7 @@
 
 import json
 import logging
+import re
 import sys
 import xml.etree.ElementTree as etree
 
@@ -278,8 +279,7 @@ class PanConfig:
                 return '"%s"' % s
         else:
             # Convert to JSON string if quoting needed.
-            quote = ['"', "'", ' ', '\n']
-            if any(x in s for x in quote):
+            if re.search('[\s"\']', s):
                 try:
                     x = json.dumps(s)
                 except ValueError as e:
