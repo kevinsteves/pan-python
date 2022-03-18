@@ -383,7 +383,7 @@ SEE ALSO
  panwfapi.py
 
  WildFire Administrator's Guide
-  https://docs.paloaltonetworks.com/wildfire/10-1/wildfire-admin.html
+  https://docs.paloaltonetworks.com/wildfire/10-2/wildfire-admin.html
 
  WildFire API Reference
   https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api.html
