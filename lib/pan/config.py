@@ -548,6 +548,13 @@ class PanConfig:
         x.insert(39, s)
         xpaths_panos_10_1 = '\n'.join(x)
 
+        s = '''./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/x-authenticated-user'''
+        x = xpaths_panos_10_1.split('\n')
+        x.insert(5, s)
+        s = '''./devices/entry[@name='localhost.localdomain']/vsys/entry[@name='vsys1']/disable-inspect'''
+        x.insert(39, s)
+        xpaths_panos_10_2 = '\n'.join(x)
+
         xpaths_panos_multi_vsys_4_1 = '''
 ./devices/entry[@name='localhost.localdomain']/deviceconfig
 ./devices/entry[@name='localhost.localdomain']/network
@@ -667,6 +674,9 @@ class PanConfig:
                 xpaths_panorama = xpaths_panorama_8_0
             elif self.config_version() in ['10.1.0']:
                 xpaths_panos = xpaths_panos_10_1
+                xpaths_panorama = xpaths_panorama_8_0
+            elif self.config_version() in ['10.2.0']:
+                xpaths_panos = xpaths_panos_10_2
                 xpaths_panorama = xpaths_panorama_8_0
 
         if self.config_multi_vsys():
