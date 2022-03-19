@@ -1,6 +1,17 @@
 Release History
 ===============
 
+0.17.0 (2022-03-19)
+-------------------
+
+- pan.config: Support 10.0.0 and 10.1.0 config for set format.
+
+- Use 10.1 documentation links.
+
+- pan.config: Support 10.2.0 config for set format.
+
+- Use 10.2 documentation links.
+
 0.16.0 (2020-01-11)
 -------------------
 
