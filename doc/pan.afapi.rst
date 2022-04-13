@@ -232,7 +232,8 @@ samples_search_results(self, data=None, terminal=True)
 
  The ``samples_search_results()`` method calls the
  ``samples_search()`` method, and then calls the ``samples_results()``
- method until the response body contains a *complete* ``af_message``.
+ method until the response body ``af_in_progress`` name is
+ *false*.
 
  This method is implemented as a generator function.
 
@@ -270,8 +271,8 @@ sessions_search_results(self, data=None, terminal=True)
 
  The ``sessions_search_results()`` method calls the
  ``sessions_search()`` method, and then calls the
- ``sessions_results()`` method until the response body contains a
- *complete* ``af_message``.
+ ``sessions_results()`` method until the response body
+ ``af_in_progress`` name is *false*.
 
  This method is implemented as a generator function.
 
@@ -314,7 +315,7 @@ sessions_histogram_search_results(self, data=None, terminal=True)
  The ``sessions_histogram_search_results()`` method calls the
  ``sessions_histogram_search()`` method, and then calls the
  ``sessions_histogram_results()`` method until the response body
- contains a *complete* ``af_message``.
+ ``af_in_progress`` name is *false*.
 
  This method is implemented as a generator function.
 
@@ -356,8 +357,8 @@ sessions_aggregate_search_results(self, data=None, terminal=True)
 
  The ``sessions_aggregate_search_results()`` method calls the
  ``sessions_aggregate_search()`` method, and then calls the
- ``sessions_aggregate_results()`` method until the response body contains
- a *complete* ``af_message``.
+ ``sessions_aggregate_results()`` method until the response body
+ ``af_in_progress`` name is *false*.
 
  This method is implemented as a generator function.
 
@@ -397,8 +398,8 @@ top_tags_search_results(self, data=None, terminal=True)
 
  The ``top_tags_search_results()`` method calls the
  ``top_tags_search()`` method, and then calls the
- ``top_tags_results()`` method until the response body contains
- a *complete* ``af_message``.
+ ``top_tags_results()`` method until the response body
+ ``af_in_progress`` name is *false*.
 
  This method is implemented as a generator function.
 

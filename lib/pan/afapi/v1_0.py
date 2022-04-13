@@ -212,8 +212,10 @@ class PanAFapi:
             if obj is None:
                 raise PanAFapiError('Response not JSON')
 
-            msg = obj.get('af_message')
-            if msg is not None and msg == 'complete':
+            in_progress = obj.get('af_in_progress')
+            if in_progress is None:
+                raise PanAFapiError('No af_in_progress in response')
+            if not in_progress:
                 if terminal:
                     yield r
                 try:
