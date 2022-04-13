@@ -1,6 +1,14 @@
 Release History
 ===============
 
+0.18.0 (2022-04-13)
+-------------------
+
+- pan.afapi, pan.afapi.rst: Workaround for autofocus API bug. Use
+  af_in_progress to determine search completion. At some point,
+  af_message was changed from "complete" to "success" to indicate
+  search completion.
+
 0.17.0 (2022-03-19)
 -------------------
 
