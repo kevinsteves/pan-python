@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #
 # Copyright (c) 2015 Palo Alto Networks, Inc. <techbizdev@paloaltonetworks.com>
@@ -16,7 +16,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from __future__ import print_function
 import datetime
 import getopt
 import json

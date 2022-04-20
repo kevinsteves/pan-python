@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #
 # Copyright (c) 2012-2014 Kevin Steves <kevin.steves@pobox.com>
@@ -16,7 +16,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from __future__ import print_function
 import sys
 import os
 import signal

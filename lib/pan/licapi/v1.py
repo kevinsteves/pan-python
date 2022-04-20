@@ -173,7 +173,7 @@ class PanLicapi:
 
         try:
             self.http.http_request(url=url,
-                                   headers=self.headers,
+                                   headers=headers,
                                    data=data,
                                    params=params)
         except pan.http.PanHttpError as e:

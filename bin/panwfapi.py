@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #
 # Copyright (c) 2013-2017 Kevin Steves <kevin.steves@pobox.com>
@@ -16,7 +16,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from __future__ import print_function
 from datetime import date, timedelta
 import sys
 import os
@@ -26,10 +25,7 @@ import json
 import pprint
 import logging
 import ssl
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from urllib.parse import urlparse
 
 libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
@@ -474,33 +470,26 @@ def parse_opts():
 
 
 def create_ssl_context(cafile, capath, ssl_option):
-    # PEP 0476
-    if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
-            sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
-        if cafile or capath:
-            try:
-                ssl_context = ssl.create_default_context(
-                    purpose=ssl.Purpose.SERVER_AUTH,
-                    cafile=cafile,
-                    capath=capath)
-            except Exception as e:
-                print('cafile or capath invalid: %s' % e, file=sys.stderr)
-                sys.exit(1)
-        elif ssl_option:
-            if ssl_option == 'cacloud':
-                ssl_context = pan.wfapi.cloud_ssl_context()
-            elif ssl_option == 'noverify':
-                ssl_context = ssl._create_unverified_context()
-            elif ssl_option == 'default':
-                ssl_context = None
+    if cafile or capath:
+        try:
+            ssl_context = ssl.create_default_context(
+                purpose=ssl.Purpose.SERVER_AUTH,
+                cafile=cafile,
+                capath=capath)
+        except Exception as e:
+            print('cafile or capath invalid: %s' % e, file=sys.stderr)
+            sys.exit(1)
+    elif ssl_option:
+        if ssl_option == 'cacloud':
+            ssl_context = pan.wfapi.cloud_ssl_context()
+        elif ssl_option == 'noverify':
+            ssl_context = ssl._create_unverified_context()
+        elif ssl_option == 'default':
+            ssl_context = None
+    else:
+        assert False, 'cafile or capath or ssl_option'
 
-        return ssl_context
-
-    print('Warning: Python %d.%d.%d: cafile, capath and ssl ignored' %
-          (sys.version_info.major, sys.version_info.minor,
-           sys.version_info.micro), file=sys.stderr)
-
-    return None
+    return ssl_context
 
 
 def print_status(wfapi, action, exception_msg=None):

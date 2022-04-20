@@ -27,7 +27,6 @@ and WildFire appliance.
 # decided to not require non-default modules.  That decision may need
 # to be revisited as some parts of this are not clean.
 
-from __future__ import print_function
 import socket
 import sys
 import os
@@ -36,21 +35,12 @@ import email
 import email.errors
 import email.utils
 import logging
-try:
-    # 3.2
-    from urllib.request import Request, \
-        build_opener, HTTPErrorProcessor, HTTPSHandler
-    from urllib.error import URLError
-    from urllib.parse import urlencode
-    from http.client import responses
-    _legacy_urllib = False
-except ImportError:
-    # 2.7
-    from urllib2 import Request, URLError, \
-        build_opener, HTTPErrorProcessor, HTTPSHandler
-    from urllib import urlencode
-    from httplib import responses
-    _legacy_urllib = True
+
+from urllib.request import Request, \
+    build_opener, HTTPErrorProcessor, HTTPSHandler
+from urllib.error import URLError
+from urllib.parse import urlencode
+from http.client import responses
 
 import xml.etree.ElementTree as etree
 from . import __version__, DEBUG1, DEBUG2, DEBUG3
@@ -93,28 +83,6 @@ VERDICTS = {
     UNKNOWN: ('unknown', 'sample does not exist'),
     INVALID: ('invalid', 'hash is invalid'),
 }
-
-
-def _isunicode(s):
-    try:
-        if isinstance(s, unicode):
-            return True
-        return False
-    except NameError:
-        if isinstance(s, str):
-            return True
-        return False
-
-
-def _isbytes(s):
-    try:
-        if isinstance(s, basestring) and isinstance(s, bytes):
-            return True
-        return False
-    except NameError:
-        if isinstance(s, bytes):
-            return True
-        return False
 
 
 class PanWFapiError(Exception):
@@ -189,9 +157,6 @@ class PanWFapi:
             self.uri = 'http://%s' % self.hostname
         else:
             self.uri = 'https://%s' % self.hostname
-
-        if _legacy_urllib:
-            self._log(DEBUG2, 'using legacy urllib')
 
     def __str__(self):
         x = self.__dict__.copy()
@@ -320,23 +285,12 @@ class PanWFapi:
         self._log(DEBUG3, 'xml_root.decode(): %s', type(s.decode(_encoding)))
         return s.decode(_encoding)
 
-# XXX Unicode notes
-# 2.7
-# decode() str (bytes) -> unicode
-# encode() unicode -> str (bytes)
-# encode() of str will call decode()
-# 3.x
-# decode() bytes -> str (unicode)
-# encode() str (unicode) -> bytes
-# cannot encode() bytes
-# cannot decode() str
-
     def __api_request(self, request_uri, body, headers={}):
         url = self.uri
         url += request_uri
 
-        # body must by type 'bytes' for 3.x
-        if _isunicode(body):
+        # body must be type 'bytes'
+        if isinstance(body, str):
             body = body.encode()
 
         request = Request(url, body, headers)
@@ -845,10 +799,9 @@ class _FormDataPart:
             s = '%s="%s"' % (name, value)
             self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
                       type(s), s)
-            if _isunicode(s):
-                s = s.encode('utf-8')
-                self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
-                          type(s), s)
+            s = s.encode('utf-8')
+            self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+                      type(s), s)
             return s
 
         if not [ch for ch in '\r\n\\' if ch in value]:
@@ -863,7 +816,7 @@ class _FormDataPart:
         return ('%s*=%s' % (name, value)).encode('ascii')
 
     def add_body(self, body):
-        if _isunicode(body):
+        if isinstance(body, str):
             body = body.encode('latin-1')
         self.body = body
         self._log(DEBUG1, '_FormDataPart.add_body: %s %d',

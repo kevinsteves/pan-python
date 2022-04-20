@@ -156,13 +156,8 @@ class pan.xapi.PanXapi()
   This can be used to specify the ``cafile``, ``capath`` and other SSL
   configuration options.
 
-  SSL contexts are supported starting in Python versions 2.7.9
-  and 3.2.
-
-  Starting with Python versions 2.7.9 and 3.4.3 SSL server certificate
-  verification is performed by default as described in PEP 476.
   Because many PAN-OS systems use a self-signed certificate, pan.xapi
-  will disable the default starting with these versions.
+  will disable the default server certificate verification.
   **ssl_context** can be used to enable verification.
 
 exception pan.xapi.PanXapiError

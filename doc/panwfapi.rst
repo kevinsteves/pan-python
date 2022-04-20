@@ -251,9 +251,6 @@ DESCRIPTION
 
    This is the default.
 
-  SSL server certificate verification is only performed in Python
-  version 2.7.9 and 3.4.3 and greater.
-
   ``--ssl`` is ignored if ``--cafile`` or ``--capath`` are specified.
 
  ``--cafile`` *path*

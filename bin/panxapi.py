@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #
 # Copyright (c) 2013-2015 Kevin Steves <kevin.steves@pobox.com>
@@ -16,7 +16,6 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-from __future__ import print_function
 from datetime import datetime
 import sys
 import os
@@ -610,28 +609,18 @@ def parse_opts():
 
 
 def create_ssl_context(cafile, capath):
-    if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
-            sys.version_info.major == 3 and sys.hexversion >= 0x03020000):
-        context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-        context.options |= ssl.OP_NO_SSLv2
-        context.options |= ssl.OP_NO_SSLv3
-        context.verify_mode = ssl.CERT_REQUIRED
-        # added 3.4
-        if hasattr(context, 'check_hostname'):
-            context.check_hostname = True
-        try:
-            context.load_verify_locations(cafile=cafile, capath=capath)
-        except Exception as e:
-            print('cafile or capath invalid: %s' % e, file=sys.stderr)
-            sys.exit(1)
+    context = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+    context.options |= ssl.OP_NO_SSLv2
+    context.options |= ssl.OP_NO_SSLv3
+    context.verify_mode = ssl.CERT_REQUIRED
+    context.check_hostname = True
+    try:
+        context.load_verify_locations(cafile=cafile, capath=capath)
+    except Exception as e:
+        print('cafile or capath invalid: %s' % e, file=sys.stderr)
+        sys.exit(1)
 
-        return context
-
-    print('Warning: Python %d.%d: cafile and capath ignored' %
-          (sys.version_info.major, sys.version_info.minor),
-          file=sys.stderr)
-
-    return None
+    return context
 
 
 def get_vsys(s):
@@ -828,23 +817,14 @@ def set_encoding():
     #
     encoding = 'utf-8'
 
-    if hasattr(sys.stdin, 'detach'):
-        # >= 3.1
-        import io
+    import io
 
-        for s in ('stdin', 'stdout', 'stderr'):
-            line_buffering = getattr(sys, s).line_buffering
-#            print(s, line_buffering, file=sys.stderr)
-            setattr(sys, s, io.TextIOWrapper(getattr(sys, s).detach(),
-                                             encoding=encoding,
-                                             line_buffering=line_buffering))
-
-    else:
-        import codecs
-
-        sys.stdin = codecs.getreader(encoding)(sys.stdin)
-        sys.stdout = codecs.getwriter(encoding)(sys.stdout)
-        sys.stderr = codecs.getwriter(encoding)(sys.stderr)
+    for s in ('stdin', 'stdout', 'stderr'):
+        line_buffering = getattr(sys, s).line_buffering
+        # print(s, line_buffering, file=sys.stderr)
+        setattr(sys, s, io.TextIOWrapper(getattr(sys, s).detach(),
+                                         encoding=encoding,
+                                         line_buffering=line_buffering))
 
 
 def usage():

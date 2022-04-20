@@ -21,7 +21,6 @@ interface to the XML API on Palo Alto Networks' Next-Generation
 Firewalls.
 """
 
-from __future__ import print_function
 import sys
 import re
 import time
@@ -31,23 +30,9 @@ try:
 except ImportError:
     raise ValueError('SSL support not available')
 
-try:
-    # 3.2
-    from urllib.request import Request, urlopen, \
-        build_opener, install_opener, HTTPSHandler
-    from urllib.error import URLError
-    from urllib.parse import urlencode
-    _legacy_urllib = False
-except ImportError:
-    # 2.7
-    from urllib2 import Request, urlopen, URLError, \
-        build_opener, install_opener
-    try:
-        from urllib2 import HTTPSHandler
-    except:
-        pass
-    from urllib import urlencode
-    _legacy_urllib = True
+from urllib.request import Request, urlopen
+from urllib.error import URLError
+from urllib.parse import urlencode
 
 import xml.etree.ElementTree as etree
 
@@ -91,8 +76,7 @@ class PanXapi:
 
         self._log(DEBUG3, 'Python version: %s', sys.version)
         self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
-        if hasattr(ssl, 'OPENSSL_VERSION'):  # added 2.7
-            self._log(DEBUG3, 'ssl: %s', ssl.OPENSSL_VERSION)
+        self._log(DEBUG3, 'ssl: %s', ssl.OPENSSL_VERSION)
         self._log(DEBUG3, 'pan-python version: %s', __version__)
 
         if self.port is not None:
@@ -110,18 +94,6 @@ class PanXapi:
                     raise ValueError
             except ValueError:
                 raise PanXapiError('Invalid timeout: %s' % self.timeout)
-
-        if self.ssl_context is not None:
-            try:
-                ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-            except AttributeError:
-                raise PanXapiError('SSL module has no SSLContext()')
-
-        # handle Python versions with no ssl.CertificateError
-        if hasattr(ssl, 'CertificateError'):
-            self._certificateerror = ssl.CertificateError
-        else:
-            self._certificateerror = NotImplementedError  # XXX Can't happen
 
         init_panrc = {}  # .panrc args from constructor
         if api_username is not None:
@@ -192,9 +164,6 @@ class PanXapi:
         # _legacy_api is used for PAN-OS < 4.1.0
         self.uri += '/api/' if not self._legacy_api else '/esp/restapi.esp'
 
-        if _legacy_urllib:
-            self._log(DEBUG2, 'using legacy urllib')
-
     def __str__(self):
         x = self.__dict__.copy()
         for k in x:
@@ -215,20 +184,10 @@ class PanXapi:
         self.export_result = None
 
     def __get_header(self, response, name):
-        """use getheader() method depending or urllib in use"""
-
         s = None
         types = set()
 
-        if hasattr(response, 'getheader'):
-            # 3.2, http.client.HTTPResponse
-            s = response.getheader(name)
-        elif hasattr(response.info(), 'getheader'):
-            # 2.7, httplib.HTTPResponse
-            s = response.info().getheader(name)
-        else:
-            raise PanXapiError('no getheader() method found in ' +
-                               'urllib response')
+        s = response.getheader(name)
 
         if s is not None:
             types = [type.lower() for type in s.split(';')]
@@ -512,7 +471,7 @@ class PanXapi:
             url += '?' + data
             request = Request(url)
         else:
-            # data must by type 'bytes' for 3.x
+            # data must be type 'bytes'
             request = Request(url, data.encode())
 
         self._log(DEBUG1, 'method: %s', request.get_method())
@@ -521,22 +480,12 @@ class PanXapi:
             'url': request,
             }
 
-        if (sys.hexversion & 0xffff0000 == 0x02060000):
-            # XXX allow 2.6 as a one-off while still using .major
-            # named attribute
-            pass
-        elif (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
-                sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
-            # see PEP 476; urlopen() has context
-            if self.ssl_context is None:
-                # don't perform certificate verification
-                kwargs['context'] = ssl._create_unverified_context()
-            else:
-                kwargs['context'] = self.ssl_context
-        elif self.ssl_context is not None:
-            https_handler = HTTPSHandler(context=self.ssl_context)
-            opener = build_opener(https_handler)
-            install_opener(opener)
+        # see PEP 476; urlopen() has context
+        if self.ssl_context is None:
+            # don't perform certificate verification
+            kwargs['context'] = ssl._create_unverified_context()
+        else:
+            kwargs['context'] = self.ssl_context
 
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout
@@ -545,7 +494,7 @@ class PanXapi:
             response = urlopen(**kwargs)
 
         # XXX handle httplib.BadStatusLine when http to port 443
-        except self._certificateerror as e:
+        except ssl.CertificateError as e:
             self.status_detail = 'ssl.CertificateError: %s' % e
             return False
         except URLError as error:

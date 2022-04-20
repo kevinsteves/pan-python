@@ -145,9 +145,6 @@ class pan.wfapi.PanWFapi()
 
   The default is *None*.
 
-  SSL contexts are supported starting in Python versions 2.7.9
-  and 3.2.
-
 exception pan.wfapi.PanWFapiError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -26,28 +26,10 @@ try:
     import requests
     _using_requests = True
 except ImportError:
-    try:
-        # 3.2
-        from urllib.request import Request, \
-            build_opener, HTTPErrorProcessor, HTTPSHandler
-        from urllib.error import URLError
-        from urllib.parse import urlencode
-    except ImportError:
-        # 2.7
-        from urllib2 import Request, URLError, \
-            build_opener, HTTPErrorProcessor, HTTPSHandler
-        from urllib import urlencode
-
-
-def _isunicode(s):
-    try:
-        if isinstance(s, unicode):
-            return True
-        return False
-    except NameError:
-        if isinstance(s, str):
-            return True
-        return False
+    from urllib.request import Request, \
+        build_opener, HTTPErrorProcessor, HTTPSHandler
+    from urllib.error import URLError
+    from urllib.parse import urlencode
 
 
 class PanHttpError(Exception):
@@ -119,8 +101,8 @@ class PanHttp:
                 x = set(k.lower() for k in headers)
                 if not 'content-type' in x:
                     kwargs['data'] = urlencode(data)
-            # data must by type 'bytes' for 3.x
-            if _isunicode(kwargs['data']):
+            # data must be type 'bytes'
+            if isinstance(kwargs['data'], str):
                 kwargs['data'] = kwargs['data'].encode()
 
         request = Request(**kwargs)
@@ -131,11 +113,7 @@ class PanHttp:
         if self.timeout is not None:
             kwargs['timeout'] = self.timeout
 
-        if not self.verify_cert and \
-            (sys.version_info.major == 2 and
-             sys.hexversion >= 0x02070900 or
-             sys.version_info.major == 3 and
-             sys.hexversion >= 0x03040300):
+        if not self.verify_cert:
             context = ssl._create_unverified_context()
             kwargs['context'] = context
 
@@ -147,12 +125,7 @@ class PanHttp:
             raise PanHttpError(str(e))
 
         self.code = response.getcode()
-        if hasattr(response, 'reason'):
-            # 3.2
-            self.reason = response.reason
-        elif hasattr(response, 'msg'):
-            # 2.7
-            self.reason = response.msg
+        self.reason = response.reason
 
         try:
             self.headers = email.message_from_string(str(response.info()))

@@ -504,15 +504,13 @@ DESCRIPTION
   Specify the ``cafile`` value for HTTPS requests.  ``cafile`` is a
   file containing CA certificates to be used for SSL server
   certificate verification. By default the SSL server certificate is
-  not verified.  ``--cafile`` is supported starting in Python versions
-  2.7.9 and 3.2.
+  not verified.
 
  ``--capath`` *path*
   Specify the ``capath`` value for HTTPS requests.  ``capath`` is a
   directory of hashed certificate files to be used for SSL server
   certificate verification. By default the SSL server certificate is
-  not verified.  ``--cafile`` is supported starting in Python versions
-  2.7.9 and 3.2.
+  not verified.
 
  ``--version``
   Display version.

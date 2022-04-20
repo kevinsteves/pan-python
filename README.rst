@@ -31,5 +31,4 @@ on GitHub and as a
 `package <https://pypi.org/project/pan-python/>`_
 on PyPi.
 
-Python versions 2.7 and 3.x are supported with a single code base.
 There are no external modules required to use ``pan-python``.
