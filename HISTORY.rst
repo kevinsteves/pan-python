@@ -1,6 +1,15 @@
 Release History
 ===============
 
+0.19.0 (2022-04-21)
+-------------------
+
+- NOTE: Python 3 only release; Python 2 support is removed.  In
+  general will plan to support the supported Python releases (with bug
+  and security updates); currently >= 3.7.
+
+- Switch to pyproject.toml based build system.
+
 0.18.0 (2022-04-13)
 -------------------
 
