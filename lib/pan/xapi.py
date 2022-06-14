@@ -1097,6 +1097,8 @@ class PanXapi:
             query['reportname'] = reportname
         if vsys is not None:
             query['vsys'] = vsys
+        if self.serial is not None:
+            query['target'] = self.serial
         if extra_qs is not None:
             query = self.__merge_extra_qs(query, extra_qs)
 
@@ -1130,6 +1132,8 @@ class PanXapi:
         query['action'] = 'get'
         query['key'] = self.api_key
         query['job-id'] = job.text
+        if self.serial is not None:
+            query['target'] = self.serial
         self._log(DEBUG2, 'report job: %s', job.text)
 
         start_time = time.time()
