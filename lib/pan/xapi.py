@@ -526,7 +526,6 @@ class PanXapi:
             if hasattr(error, 'code'):
                 msg += ' code: %s' % error.code
             if hasattr(error, 'reason'):
-                self._rome_warning(str(error.reason))
                 msg += ' reason: %s' % error.reason
             if not (hasattr(error, 'code') or hasattr(error, 'reason')):
                 msg += ' unknown error (Kevin heart Python)'
@@ -537,19 +536,6 @@ class PanXapi:
         self._log(DEBUG2, '%s', response.info())
 
         return response
-
-    def _rome_warning(self, reason):
-        # "Connection reset by peer" or
-        # "EOF occurred in violation of protocol"
-        # may indicate no TLS 1.[12]
-        if (('Errno 54' in reason or
-                'EOF occurred in violation of protocol' in reason) and
-                hasattr(ssl, 'OPENSSL_VERSION_NUMBER') and
-                ssl.OPENSSL_VERSION_NUMBER < 0x1000100):
-            x = 'WARNING: Your SSL (%s) may not support TLS 1.1.' % \
-                ssl.OPENSSL_VERSION
-            x += ' PAN-OS 8.0 does not allow TLS 1.0 connections by default.'
-            self._log(DEBUG1, x)
 
     def __set_api_key(self):
         if self.api_key is None:
