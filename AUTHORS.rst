@@ -9,3 +9,4 @@ Patches and Suggestions
 - Andrew Stanton
 - Darlene Wong
 - Michael Richardson
+- Garfield Freeman

@@ -216,6 +216,16 @@ def main():
             print_status(xapi, action)
             print_response(xapi, options)
 
+        if options['multi-config']:
+            action = 'multi-config'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+            xapi.multi_config(element=options['element'],
+                              strict=options['strict'],
+                              extra_qs=options['ad_hoc'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
         if options['export'] is not None:
             action = 'export'
             if options['ad_hoc'] is not None:
@@ -387,6 +397,8 @@ def parse_opts():
         'rename': False,
         'clone': False,
         'override': False,
+        'multi-config': False,
+        'strict': None,
         'api_username': None,
         'api_password': None,
         'hostname': None,
@@ -424,12 +436,12 @@ def parse_opts():
 
     valid_where = ['after', 'before', 'top', 'bottom']
 
-    short_options = 'de:gksS:U:C:A:o:l:h:P:K:xpjrXHGDt:T:'
+    short_options = 'de:gksS:U:C:A:o:M:l:h:P:K:xpjrXHGDt:T:'
     long_options = ['version', 'help',
                     'ad-hoc=', 'modify', 'validate', 'force', 'partial=',
                     'sync', 'vsys=', 'src=', 'dst=', 'move=', 'rename',
                     'clone', 'override=', 'export=', 'log=', 'recursive',
-                    'cafile=', 'capath=', 'ls', 'serial=',
+                    'strict=', 'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
                     'interval=', 'timeout=',
                     'stime=', 'pcapid=', 'text',
@@ -512,6 +524,15 @@ def parse_opts():
         elif opt == '--override':
             options['override'] = True
             options['element'] = get_element(arg)
+        elif opt == '-M':
+            options['multi-config'] = True
+            options['element'] = get_element(arg)
+        elif opt == '--strict':
+            if arg in ['yes', 'no']:
+                options['strict'] = True if arg == 'yes' else False
+            else:
+                print('--strict must be yes|no', file=sys.stderr)
+                sys.exit(1)
         elif opt == '-l':
             try:
                 (options['api_username'],
@@ -858,6 +879,8 @@ def usage():
     --rename              rename object at xpath to dst
     --clone               clone object at xpath, src xpath
     --override element    override template object at xpath
+    -M element            multi-config XML element
+    --strict yes|no       multi-config strict-transactional
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command/report
     -l api_username[:api_password]

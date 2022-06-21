@@ -63,6 +63,8 @@ SYNOPSIS
     --rename              rename object at xpath to dst
     --clone               clone object at xpath, src xpath
     --override element    override template object at xpath
+    -M element            multi-config XML element
+    --strict yes|no       multi-config strict-transactional
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command/report
     -l api_username[:api_password]
@@ -352,6 +354,27 @@ DESCRIPTION
 
   **element** can be an XML string, a path to a file containing XML,
   or the value **-** to specify the XML is on *stdin*.
+
+ ``-M`` *element*
+  Performs the ``action=multi-config`` device configuration API
+  request with the **element** and optional **strict-transactional**
+  argument.  ``multi-config`` is used to perform multiple
+  configuration API requests with transactional support.
+
+  **element** can be an XML string, a path to a file containing XML,
+  or the value **-** to specify the XML is on *stdin*.
+
+ ``--strict`` *yes|no*
+  When **--strict** is *yes* the **strict-transactional**
+  ``multi-config`` API request argument is set to *yes* and additional
+  checks are performed:
+
+  - When a commit operation is active or a commit is pending, the
+    operation will fail.
+
+  - When there are uncommitted changes for the user performing the
+    operation, they will be rolled back before performing the
+    multi-config operation.
 
  ``--vsys`` *vsys*
   Specify optional **vsys** for dynamic update (**-U**), partial vsys
@@ -721,6 +744,9 @@ SEE ALSO
 
  PAN-OS and Panorama API Guide
   https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-panorama-api.html
+
+ PAN-OS XML API multi-config Request
+  https://gist.github.com/kevinsteves/c175854d44324f5c0a006798929e1a76
 
  PAN-OS XML API Labs with pan-python
   http://api-lab.paloaltonetworks.com/

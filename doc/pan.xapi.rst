@@ -282,6 +282,27 @@ override(xpath=None, element=None)
  Only certain nodes in the Network and Device categories can
  be overridden.
 
+multi_config(element=None, strict=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The multi_config() method performs the ``action=multi-config`` device
+ configuration API request with the **element** and optional
+ **strict-transactional** argument.  multi_config() is used to perform
+ multiple configuration API requests with transactional support.
+
+ When a request in the multi-config operation fails, no configuration
+ changes are performed.
+
+ When **strict** is set to *True* the **strict-transactional** API
+ request argument is set to *yes* and additional checks are performed:
+
+ - When a commit operation is active or a commit is pending, the
+   operation will fail.
+
+ - When there are uncommitted changes for the user performing the
+   operation, they will be rolled back before performing the
+   multi-config operation.
+
 user_id(cmd=None, vsys=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -652,6 +673,9 @@ SEE ALSO
 
  PAN-OS and Panorama API Guide
   https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-panorama-api.html
+
+ PAN-OS XML API multi-config Request
+  https://gist.github.com/kevinsteves/c175854d44324f5c0a006798929e1a76
 
 AUTHORS
 =======
