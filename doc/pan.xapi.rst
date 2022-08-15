@@ -675,7 +675,7 @@ SEE ALSO
   https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-panorama-api.html
 
  PAN-OS XML API multi-config Request
-  https://gist.github.com/kevinsteves/c175854d44324f5c0a006798929e1a76
+  https://docs.paloaltonetworks.com/pan-os/10-2/pan-os-panorama-api/pan-os-xml-api-request-types/configuration-api/multi-config-request-api
 
 AUTHORS
 =======
