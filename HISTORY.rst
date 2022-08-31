@@ -1,6 +1,20 @@
 Release History
 ===============
 
+0.20.0 (2022-08-31)
+-------------------
+
+- pan.xapi: Panorama to device redirection (target=) is allowed for
+  type=report.
+
+- Add support for type=config&action=multi-config XML API request
+  which provides a mechanism to perform multiple configuration API
+  requests with transactional support.
+
+- pan.xapi: Remove PAN-OS 8.0 TLS warning from 2017.
+
+- Add tests for PAN-OS XML API.
+
 0.19.0 (2022-04-21)
 -------------------
 
