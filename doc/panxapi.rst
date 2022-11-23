@@ -190,6 +190,7 @@ DESCRIPTION
   - shared-object-excluded
   - no-vsys
   - vsys
+  - admin
 
   **device-and-network-excluded** applies when the device is in
   single-vsys mode and **shared-object-excluded** applies when the device
@@ -198,6 +199,14 @@ DESCRIPTION
   Multiple parts can be specified by using multiple **--partial**
   options or separating each part with comma (,).  Virtual systems for
   the **vsys** part can be specified with **--vsys**.
+
+ ``--admin`` *admin*
+  Specify optional **admin** for partial commit (**--partial** admin). Commits 
+  only the changes made only by specified administrator accounts.  Requires
+  PanOS 8.0+.
+
+  Multiple admin users can be specified by using multiple
+  **--admin** options or separating each *admin* with comma (,).
 
  ``--sync``
   Perform a synchronous commit.

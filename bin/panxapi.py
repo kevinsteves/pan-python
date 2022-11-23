@@ -170,6 +170,8 @@ def main():
                 kwargs['extra_qs'] = options['ad_hoc']
             if len(options['vsys']):
                 kwargs['vsys'] = options['vsys'][0]
+            if len(options['admin']):
+                kwargs['admin'] = options['admin'][0]
             xapi.user_id(**kwargs)
             print_status(xapi, action)
             print_response(xapi, options)
@@ -285,6 +287,8 @@ def main():
                 kwargs['extra_qs'] = options['ad_hoc']
             if len(options['vsys']):
                 kwargs['vsys'] = options['vsys'][0]
+            if len(options['admin']):
+                kwargs['admin'] = options['admin'][0]
             xapi.op(**kwargs)
             print_status(xapi, action)
             print_response(xapi, options)
@@ -312,6 +316,8 @@ def main():
                         c.no_vsys()
                     elif part == 'vsys':
                         c.vsys(options['vsys'])
+                    elif part == 'admin':
+                        c.admin(options['admin'])
 
                 if options['serial'] is not None:
                     c.device(options['serial'])
@@ -383,6 +389,7 @@ def parse_opts():
         'partial': [],
         'sync': False,
         'vsys': [],
+        'admin':[],
         'commit_all': False,
         'ad_hoc': None,
         'modify': False,
@@ -439,7 +446,7 @@ def parse_opts():
     short_options = 'de:gksS:U:C:A:o:M:l:h:P:K:xpjrXHGDt:T:'
     long_options = ['version', 'help',
                     'ad-hoc=', 'modify', 'validate', 'force', 'partial=',
-                    'sync', 'vsys=', 'src=', 'dst=', 'move=', 'rename',
+                    'sync', 'vsys=', 'admin=', 'src=', 'dst=', 'move=', 'rename',
                     'clone', 'override=', 'export=', 'log=', 'recursive',
                     'strict=', 'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
@@ -491,6 +498,10 @@ def parse_opts():
             if arg:
                 l = get_vsys(arg)
                 [options['vsys'].append(s) for s in l]
+        elif opt == '--admin':
+            if arg:
+                l = get_admin(arg)
+                [options['admin'].append(s) for s in l]
         elif opt == '-A':
             options['commit_all'] = True
             options['cmd'] = get_element(arg)
@@ -653,6 +664,17 @@ def get_vsys(s):
                 list.append('vsys' + v)
             else:
                 list.append(v)
+    return list
+    
+
+def get_admin(s):
+    list = []
+    admin = s.split(',')
+    for admin in admin:
+        if admin:
+            
+            list.append(admin)
+    
     return list
 
 
@@ -883,6 +905,7 @@ def usage():
     --strict yes|no       multi-config strict-transactional
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command/report
+    --admin admin         admin for specific update/partial commit                        
     -l api_username[:api_password]
     -h hostname
     -P port               URL port number

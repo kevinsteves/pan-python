@@ -25,6 +25,7 @@ _valid_part = set([
     'shared-object-excluded',
     'no-vsys',
     'vsys',
+    'admin',
     ])
 
 _part_xml = {
@@ -37,6 +38,8 @@ _part_xml = {
     'no-vsys':
         '<no-vsys></no-vsys>',
     'vsys':
+        '<member>%s</member>',
+    'admin':
         '<member>%s</member>',
     }
 
@@ -58,6 +61,7 @@ class PanCommit:
         self._merge_with_candidate = merge_with_candidate
         self.partial = set()
         self._vsys = set()
+        self._admin = set()
         self._device = None
         self._device_group = None
 
@@ -98,6 +102,16 @@ class PanCommit:
             vsys = [vsys]
         for name in vsys:
             self._vsys.add(name)
+    
+    def admin(self, admin):
+        if not self._commit_all:
+            part = 'admin'
+            self.partial.add(part)
+
+        if type(admin) == type(''):
+            admin = [admin]
+        for name in admin:
+            self._admin.add(name)    
 
     def device(self, serial):
         self._device = serial
@@ -131,6 +145,9 @@ class PanCommit:
 
         if self._vsys:
             s += '<vsys>%s</vsys>' % self._vsys.pop()
+   
+        if self._admin:
+            s += '<admin>%s</admin>' % self._admin.pop()
 
         s += '</shared-policy></commit-all>'
 
@@ -157,6 +174,14 @@ class PanCommit:
                         xml_vsys = _part_xml[part] % name
                         s += xml_vsys
                     s += '</vsys>'
+
+                elif part == 'admin':
+                    s += '<admin>'
+                    for name in self._admin:
+                        xml_admin = _part_xml[part] % name
+                        s += xml_admin
+                    s += '</admin>'
+
                 else:
                     s += _part_xml[part]
         if self.partial:
@@ -180,8 +205,10 @@ if __name__ == '__main__':
 
     c = pan.commit.PanCommit()
     c.force()
+    c.partial
     c.device_and_network_excluded()
     c.policy_and_objects_excluded()
     c.shared_object_excluded()
     c.vsys(['vsys4', 'vsys5'])
+    c.admin(['admin'])
     print('cmd:', c.cmd())
