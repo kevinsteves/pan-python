@@ -1,5 +1,4 @@
 from hashlib import blake2b
-import json
 import logging
 import os
 import sys
