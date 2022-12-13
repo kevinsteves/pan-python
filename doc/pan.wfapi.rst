@@ -86,7 +86,7 @@ pan.wfapi Constants
   Python ``logging`` module debug levels (see **Debugging and
   Logging** below).
 
- **BENIGN**, **MALWARE**, **GRAYWARE**, **PHISHING**, **PENDING**, **ERROR**, **UNKNOWN**, **INVALID**
+ **BENIGN**, **MALWARE**, **GRAYWARE**, **PHISHING**, **C2**, **PENDING**, **ERROR**, **UNKNOWN**, **INVALID**
   Constants for the integer verdict values.
 
  **VERDICTS**
@@ -225,6 +225,7 @@ verdicts(hashes=None)
  1      malware
  2      grayware
  4      phishing
+ 5      C2        command-and-control
  -100   pending   sample exists and verdict not known
  -101   error     sample is in error state
  -102   unknown   sample does not exist

@@ -313,6 +313,7 @@ def process_verdict(verdict):
         'malware': pan.wfapi.MALWARE,
         'grayware': pan.wfapi.GRAYWARE,
         'phishing': pan.wfapi.PHISHING,
+        # XXX C2?
     }
 
     try:

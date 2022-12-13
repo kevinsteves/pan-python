@@ -68,6 +68,7 @@ BENIGN = 0
 MALWARE = 1
 GRAYWARE = 2
 PHISHING = 4
+C2 = 5
 PENDING = -100
 ERROR = -101
 UNKNOWN = -102
@@ -78,6 +79,7 @@ VERDICTS = {
     MALWARE: ('malware', None),
     GRAYWARE: ('grayware', None),
     PHISHING: ('phishing', None),
+    C2: ('C2', 'command-and-control'),
     PENDING: ('pending', 'sample exists and verdict not known'),
     ERROR: ('error', 'sample is in error state'),
     UNKNOWN: ('unknown', 'sample does not exist'),
