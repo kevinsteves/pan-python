@@ -106,7 +106,8 @@ class pan.wfapi.PanWFapi()
                            api_key=None,
                            timeout=None,
                            http=False,
-                           ssl_context=None)
+                           ssl_context=None,
+                           agent=None)
 
  **tag**
   .panrc tagname.
@@ -144,6 +145,13 @@ class pan.wfapi.PanWFapi()
   the default **ssl** module settings.
 
   The default is *None*.
+
+ **agent**
+  Specify the API key type for Prisma API keys:
+
+   **pcc** - Prisma Cloud Compute-based WildFire public API key
+
+   **prismaaccessapi** - Prisma Access-based WildFire public API key
 
 exception pan.wfapi.PanWFapiError
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

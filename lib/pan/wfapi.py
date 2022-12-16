@@ -98,13 +98,15 @@ class PanWFapi:
                  api_key=None,
                  timeout=None,
                  http=False,
-                 ssl_context=None):
+                 ssl_context=None,
+                 agent=None):
         self._log = logging.getLogger(__name__).log
         self.tag = tag
         self.hostname = hostname
         self.api_key = None
         self.timeout = timeout
         self.ssl_context = ssl_context
+        self.agent = agent
 
         self._log(DEBUG3, 'Python version: %s', sys.version)
         self._log(DEBUG3, 'xml.etree.ElementTree version: %s', etree.VERSION)
@@ -138,6 +140,8 @@ class PanWFapi:
             init_panrc['hostname'] = hostname
         if api_key is not None:
             init_panrc['api_key'] = api_key
+        if agent is not None:
+            init_panrc['agent'] = agent
 
         try:
             panrc = pan.rc.PanRc(tag=self.tag,
@@ -147,6 +151,8 @@ class PanWFapi:
 
         if 'api_key' in panrc.panrc:
             self.api_key = panrc.panrc['api_key']
+        if 'agent' in panrc.panrc:
+            self.agent = panrc.panrc['agent']
         if 'hostname' in panrc.panrc:
             self.hostname = panrc.panrc['hostname']
         else:
@@ -389,6 +395,8 @@ class PanWFapi:
 
         query = {}
         query['apikey'] = self.api_key
+        if self.agent is not None:
+            query['agent'] = self.agent
         if hash is not None:
             query['hash'] = hash
         if format is not None:
@@ -410,6 +418,8 @@ class PanWFapi:
 
         query = {}
         query['apikey'] = self.api_key
+        if self.agent is not None:
+            query['agent'] = self.agent
         if hash is not None:
             query['hash'] = hash
 
@@ -429,6 +439,8 @@ class PanWFapi:
 
         form = _MultiPartFormData()
         form.add_field('apikey', self.api_key)
+        if self.agent is not None:
+            form.add_field('agent', self.agent)
         if hashes is not None:
             form.add_field('file', '\n'.join(hashes))
 
@@ -451,6 +463,8 @@ class PanWFapi:
 
         query = {}
         query['apikey'] = self.api_key
+        if self.agent is not None:
+            query['agent'] = self.agent
         if date is not None:
             query['date'] = date
 
@@ -470,6 +484,8 @@ class PanWFapi:
 
         query = {}
         query['apikey'] = self.api_key
+        if self.agent is not None:
+            query['agent'] = self.agent
         if hash is not None:
             query['hash'] = hash
 
@@ -490,6 +506,8 @@ class PanWFapi:
 
         query = {}
         query['apikey'] = self.api_key
+        if self.agent is not None:
+            query['agent'] = self.agent
         if hash is not None:
             query['hash'] = hash
         if platform is not None:
@@ -539,6 +557,8 @@ class PanWFapi:
 
         form = _MultiPartFormData()
         form.add_field('apikey', self.api_key)
+        if self.agent is not None:
+            form.add_field('agent', self.agent)
 
         if file is not None:
             buf = self._read_file(file)
@@ -585,6 +605,8 @@ class PanWFapi:
 
         form = _MultiPartFormData()
         form.add_field('apikey', self.api_key)
+        if self.agent is not None:
+            form.add_field('agent', self.agent)
         if hash is not None:
             form.add_field('hash', hash)
         if verdict is not None:
