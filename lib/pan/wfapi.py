@@ -640,15 +640,11 @@ class PanWFapi:
         return opener.open(url, data, timeout)
 
     def _certifi_ssl_context(self):
-        if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
-           sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
-            where = certifi.where()
-            self._log(DEBUG1, 'certifi %s: %s', certifi.__version__, where)
-            return ssl.create_default_context(
-                purpose=ssl.Purpose.SERVER_AUTH,
-                cafile=where)
-        else:
-            return None
+        where = certifi.where()
+        self._log(DEBUG1, 'certifi %s: %s', certifi.__version__, where)
+        return ssl.create_default_context(
+            purpose=ssl.Purpose.SERVER_AUTH,
+            cafile=where)
 
 
 #
@@ -667,7 +663,7 @@ def cloud_ssl_context():
     #   $ openssl x509 -in wfapi.py -text
     # to view text form.
 
-    gd_class2_root_crt = b'''
+    gd_class2_root_crt = '''
 -----BEGIN CERTIFICATE-----
 MIIEADCCAuigAwIBAgIBADANBgkqhkiG9w0BAQUFADBjMQswCQYDVQQGEwJVUzEh
 MB8GA1UEChMYVGhlIEdvIERhZGR5IEdyb3VwLCBJbmMuMTEwLwYDVQQLEyhHbyBE
@@ -694,15 +690,9 @@ ReYNnyicsbkqWletNw+vHX/bvZ8=
 -----END CERTIFICATE-----
 '''
 
-    if (sys.version_info.major == 2 and sys.hexversion >= 0x02070900 or
-            sys.version_info.major == 3 and sys.hexversion >= 0x03040300):
-        # XXX python >= 2.7.9 needs catada as Unicode, or we get:
-        # 'ssl.SSLError: nested asn1 error'
-        return ssl.create_default_context(
-            purpose=ssl.Purpose.SERVER_AUTH,
-            cadata=gd_class2_root_crt.decode())
-    else:
-        return None
+    return ssl.create_default_context(
+        purpose=ssl.Purpose.SERVER_AUTH,
+        cadata=gd_class2_root_crt)
 
 
 # Minimal RFC 2388 implementation
