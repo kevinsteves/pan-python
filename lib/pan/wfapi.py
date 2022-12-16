@@ -325,12 +325,7 @@ class PanWFapi:
             return False
 
         self.http_code = response.getcode()
-        if hasattr(response, 'reason'):
-            # 3.2
-            self.http_reason = response.reason
-        elif hasattr(response, 'msg'):
-            # 2.7
-            self.http_reason = response.msg
+        self.http_reason = response.reason
 
         if self.http_reason == '':
             if self.http_code in _wildfire_responses:
