@@ -121,12 +121,7 @@ class PanWFapi:
             except ValueError:
                 raise PanWFapiError('Invalid timeout: %s' % self.timeout)
 
-        if self.ssl_context is not None:
-            try:
-                ssl.SSLContext(ssl.PROTOCOL_SSLv23)
-            except AttributeError:
-                raise PanWFapiError('SSL module has no SSLContext()')
-        elif _have_certifi:
+        if self.ssl_context is None and _have_certifi:
             self.ssl_context = self._certifi_ssl_context()
 
         init_panrc = {}  # .panrc args from constructor
