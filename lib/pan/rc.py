@@ -32,11 +32,11 @@ _valid_varnames = set([
     'api_password',
     'api_key',
     'agent',
-    ])
+])
 _sanitize_varnames = set([
     'api_password',
     'api_key',
-    ])
+])
 
 _indent = 2
 

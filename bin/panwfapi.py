@@ -363,7 +363,7 @@ def parse_opts():
         'debug': 0,
         'tag': None,
         'timeout': None,
-        }
+    }
 
     short_options = 'K:h:xpjHDt:T:'
     long_options = ['version', 'help',

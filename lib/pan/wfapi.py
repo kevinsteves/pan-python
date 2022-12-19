@@ -316,7 +316,7 @@ class PanWFapi:
 
         kwargs = {
             'url': request,
-            }
+        }
 
         if self.ssl_context is not None:
             kwargs['context'] = self.ssl_context
@@ -774,7 +774,7 @@ class _MultiPartFormData:
         headers = {
             'Content-Type':
                 'multipart/form-data; boundary=' + boundary,
-            }
+        }
 
         return headers
 
