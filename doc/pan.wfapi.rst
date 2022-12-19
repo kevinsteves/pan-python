@@ -205,24 +205,52 @@ sample(hash=None)
  The ``sample()`` method gets a previously uploaded sample file.  The
  sample can be specified by its MD5 or SHA256 hash.
 
-report(hash=None, format=None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+report(hash=None, format=None, url=url)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The ``report()`` method gets an analysis report for a previously uploaded
- sample.  The sample can be specified by its MD5 or SHA256 hash.
- The report format can be ``xml`` or ``pdf``.  The default is ``xml``.
+ sample.
 
-verdict(hash=None)
-~~~~~~~~~~~~~~~~~~
+ **hash**
+  An MD5 or SHA256 hash of the sample.  This cannot be a link hash.
 
-verdicts(hashes=None)
-~~~~~~~~~~~~~~~~~~~~~
+ **format**
+  WildFire report output format string:
 
- The ``verdict()`` and ``verdicts()`` methods get the verdict(s) for
- previously uploaded samples.  The sample can be specified by its MD5
- or SHA256 hash.  The ``verdict()`` **hash** argument is a single hash
- and the ``verdicts()`` **hashes** argument is a list of up to 500
- hashes.
+   **xml** - XML document (default when the **hash** parameter is used)
+
+   **pdf** - PDF document
+
+   **maec** - `Malware Attribute Enumeration and Characterization <https://maecproject.github.io/about-maec/>`_ JSON document
+
+   **json** - JSON document.  This can only be specified for URL
+   analysis verdicts, and is the default when the **url** parameter
+   is used.
+
+ **url**
+  A web page URL.  The **url** parameter is used to retrieve verdicts that
+  have been processed using
+  `URL analysis <https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-whats-new/latest-wildfire-cloud-features/url-analysis>`_.
+
+verdict(hash=None, url=url)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The ``verdict()`` method gets a single verdict for a previously
+ analyzed sample or link (URL).
+
+ **hash**
+  An MD5 or SHA256 hash.  For links, this is a hash of the URL, and is
+  used to retrieve verdicts that have been processed using the legacy URL
+  analyzer.
+
+ **url**
+  A web page URL.  The **url** parameter is used to retrieve verdicts that
+  have been processed using
+  `URL analysis <https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-whats-new/latest-wildfire-cloud-features/url-analysis>`_.
+
+ Palo Alto Networks recommends using the **url** parameter when
+ retrieving web page verdicts for the most accurate and up to date
+ information.
 
  The result is an XML document with verdict represented as an integer:
 
@@ -237,8 +265,20 @@ verdicts(hashes=None)
  -100   pending   sample exists and verdict not known
  -101   error     sample is in error state
  -102   unknown   sample does not exist
- -103   invalid   hash is invalid (verdicts() method only)
+ -103   invalid   hash is invalid
  =====  ========  ===========
+
+verdicts(hashes=None)
+~~~~~~~~~~~~~~~~~~~~~
+
+ The ``verdicts()`` method gets verdicts for previously analyzed
+ samples and links (URLs).
+
+ **hashes**
+  A list of up to 500 MD5 or SHA256 hashes.  For links, this is a hash
+  of the URL.
+
+ The result is an XML document with verdict represented as an integer.
 
 verdicts_changed(date=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -339,8 +379,16 @@ response_body
 response_type
 ~~~~~~~~~~~~~
 
- The ``response_type`` data attribute is set to ``xml`` when the message
- body is an XML document.
+ The ``response_type`` data attribute is set to the type of the
+ response:
+
+  **xml** - the message body is an XML document (*application/xml*)
+
+  **txt** - the message body is text (*text/plain*)
+
+  **html** - the message body is an HTML document (*text/html*)
+
+  **json** - the message body is a JSON document (*application/json*)
 
 Debugging and Logging
 ---------------------

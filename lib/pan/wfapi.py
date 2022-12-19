@@ -195,6 +195,9 @@ class PanWFapi:
               content_type == 'text/xml'):
             return self.__set_xml_response(message_body)
 
+        elif content_type == 'application/json':
+            return self.__set_json_response(message_body)
+
         elif content_type == 'text/html':
             return self.__set_html_response(message_body)
 
@@ -245,6 +248,18 @@ class PanWFapi:
             return False
 
         self.xml_element_root = element
+
+        return True
+
+    def __set_json_response(self, message_body):
+        self._log(DEBUG2, '__set_json_response: %s', repr(message_body))
+        self.response_type = 'json'
+
+        _message_body = message_body.decode()
+        if len(_message_body) == 0:
+            return True
+
+        self.response_body = _message_body
 
         return True
 
@@ -377,7 +392,8 @@ class PanWFapi:
 
     def report(self,
                hash=None,
-               format=None):
+               format=None,
+               url=None):
         self.__clear_response()
 
         request_uri = '/publicapi/get/report'
@@ -390,6 +406,8 @@ class PanWFapi:
             query['hash'] = hash
         if format is not None:
             query['format'] = format
+        if url is not None:
+            query['url'] = url
 
         response = self.__api_request(request_uri=request_uri,
                                       body=urlencode(query))
@@ -400,7 +418,8 @@ class PanWFapi:
             raise PanWFapiError(self._msg)
 
     def verdict(self,
-                hash=None):
+                hash=None,
+                url=None):
         self.__clear_response()
 
         request_uri = '/publicapi/get/verdict'
@@ -411,6 +430,8 @@ class PanWFapi:
             query['agent'] = self.agent
         if hash is not None:
             query['hash'] = hash
+        if url is not None:
+            query['url'] = url
 
         response = self.__api_request(request_uri=request_uri,
                                       body=urlencode(query))

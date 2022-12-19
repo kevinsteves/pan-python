@@ -153,6 +153,8 @@ def main():
                 kwargs['hash'] = hashes[0]
             if options['format'] is not None:
                 kwargs['format'] = options['format']
+            if options['url'] is not None:
+                kwargs['url'] = options['url']
 
             wfapi.report(**kwargs)
             print_status(wfapi, action)
@@ -164,6 +166,7 @@ def main():
             if len(hashes) == 1:
                 action = 'verdict'
                 kwargs['hash'] = hashes[0]
+                kwargs['url'] = options['url']
                 wfapi.verdict(**kwargs)
             elif len(hashes) > 1:
                 action = 'verdicts'
@@ -171,6 +174,7 @@ def main():
                 wfapi.verdicts(**kwargs)
             else:
                 action = 'verdict'
+                kwargs['url'] = options['url']
                 wfapi.verdict(**kwargs)
 
             print_status(wfapi, action)
@@ -336,6 +340,7 @@ def parse_opts():
         'pcap': False,
         'changed': False,
         'hash': [],
+        'url': None,
         'platform': None,
         'new-verdict': None,
         'email': None,
@@ -365,7 +370,7 @@ def parse_opts():
                     'submit=', 'submit-link=',
                     'change-request', 'report', 'verdict', 'sample',
                     'pcap', 'changed',
-                    'hash=', 'platform=', 'testfile',
+                    'hash=', 'url=', 'platform=', 'testfile',
                     'new-verdict=', 'email=', 'comment=',
                     'type=', 'format=', 'date=', 'dst=',
                     'http', 'ssl=', 'cafile=', 'capath=',
@@ -400,6 +405,8 @@ def parse_opts():
             options['changed'] = True
         elif opt == '--hash':
             options['hash'].append(arg)
+        elif opt == '--url':
+            options['url'] = arg
         elif opt == '--platform':
             options['platform'] = arg
         elif opt == '--new-verdict':
@@ -527,6 +534,32 @@ def print_response(wfapi, options):
         if options['print_html']:
             print(wfapi.response_body.rstrip())
 
+    elif wfapi.response_type == 'json' and wfapi.response_body is not None:
+        if options['print_json'] or options['print_python']:
+            try:
+                d = json.loads(wfapi.response_body)
+            except ValueError as e:
+                print('Invalid JSON: %s' % e, file=sys.stderr)
+                print(wfapi.response_body.rstrip())
+                return
+
+            try:
+                report_str = d['result']['report']
+            except KeyError:
+                pass
+            else:
+                if report_str:
+                    try:
+                        report_json = json.loads(report_str)
+                    except ValueError as e:
+                        print('Invalid JSON (report): %s' % e, file=sys.stderr)
+                    else:
+                        d['result']['report'] = report_json
+            if options['print_python']:
+                print('var1 =', pprint.pformat(d))
+            if options['print_json']:
+                print(json.dumps(d, sort_keys=True, indent=2))
+
     elif wfapi.response_type == 'xml' and wfapi.response_body is not None:
         if options['print_xml']:
             print(wfapi.response_body.rstrip())
@@ -621,6 +654,7 @@ def usage():
     --pcap                get WildFire PCAP files
     --changed             get changed verdicts
     --hash hash           query MD5 or SHA256 hash
+    --url url             query URL
     --platform id         platform ID for sandbox environment
     --new-verdict verdict benign|malware|grayware|phishing
     --email address       notification e-mail address
@@ -634,8 +668,8 @@ def usage():
     -K api_key            WildFire API key
     -h hostname           WildFire hostname
     -x                    print XML response to stdout
-    -p                    print XML response in Python to stdout
-    -j                    print XML response in JSON to stdout
+    -p                    print XML and JSON response in Python to stdout
+    -j                    print XML and JSON response in JSON to stdout
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout

@@ -40,6 +40,7 @@ SYNOPSIS
     --pcap                get WildFire PCAP files
     --changed             get changed verdicts
     --hash hash           query MD5 or SHA256 hash
+    --url url             query URL
     --platform id         platform ID for sandbox environment
     --new-verdict verdict benign|malware|grayware|phishing
     --email address       notification e-mail address
@@ -53,8 +54,8 @@ SYNOPSIS
     -K api_key            WildFire API key
     -h hostname           WildFire hostname
     -x                    print XML response to stdout
-    -p                    print XML response in Python to stdout
-    -j                    print XML response in JSON to stdout
+    -p                    print XML and JSON response in Python to stdout
+    -j                    print XML and JSON response in JSON to stdout
     -D                    enable debug (multiple up to -DDD)
     -t tag                .panrc tagname
     -T seconds            urlopen() timeout
@@ -125,6 +126,11 @@ DESCRIPTION
   It can also be a path to a file containing the hashes or **'-'** to
   specify that hashes be read from *stdin*.
 
+ ``--url`` *url*
+  A web page URL.  The **url** parameter is used to retrieve verdicts that
+  have been processed using
+  `URL analysis <https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-whats-new/latest-wildfire-cloud-features/url-analysis>`_.
+
  ``--platform`` *id*
   Platform ID for sandbox environment.
   Platform IDs are documented in the
@@ -157,9 +163,17 @@ DESCRIPTION
    The default is **pe**.
 
  ``--format`` *format*
-  WildFire report output format string.  This can be **xml** or **pdf**.
+  WildFire report output format string.
 
-  The default is **xml**.
+   **xml** - XML document (default when the **hash** parameter is used)
+
+   **pdf** - PDF document
+
+   **maec** - `Malware Attribute Enumeration and Characterization <https://maecproject.github.io/about-maec/>`_ JSON document
+
+   **json** - JSON document.  This can only be specified for URL
+   analysis verdicts, and is the default when the **url** parameter
+   is used.
 
  ``--date`` *date*
   Start date for **--changed** query.  The format for the
@@ -217,10 +231,10 @@ DESCRIPTION
   Print XML response to *stdout*.
 
  ``-p``
-  Print XML response in Python to *stdout*.
+  Print XML and JSON response in Python to *stdout*.
 
  ``-j``
-  Print XML response in JSON to *stdout*.
+  Print XML and JSON response in JSON to *stdout*.
 
  ``-D``
   Enable debugging.  May be specified multiple times up to 3
