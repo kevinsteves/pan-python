@@ -39,6 +39,7 @@ SYNOPSIS
     --sample              get WildFire sample file
     --pcap                get WildFire PCAP files
     --changed             get changed verdicts
+    --web-artifacts       get WildFire URL web artifacts
     --hash hash           query MD5 or SHA256 hash
     --url url             query URL
     --platform id         platform ID for sandbox environment
@@ -46,7 +47,7 @@ SYNOPSIS
     --email address       notification e-mail address
     --comment comment     change request explanation
     --testfile            get sample malware test file
-    --type type           test file type
+    --type type           test file or web artifact type
     --format format       report output format
     --date date           start date for changed verdicts
                           (YYYY-MM-DD or -days)
@@ -120,6 +121,12 @@ DESCRIPTION
   Get the hashes of samples whose verdicts have changed within the
   last 30 days starting at the date specified with **--date**.
 
+ ``--web-artifacts``
+  Get web artifacts discovered during analysis of the specified web
+  page URL.  Artifacts can include a JPEG screen shot of the page and
+  files downloaded during analysis.  Artifacts are provided in a
+  compressed tar archive (.tgz) file
+
  ``--hash`` *hash*
   MD5 or SHA256 hash for a WildFire sample.  **--hash** can be
   specified multiple times for queries which allow multiple hashes.
@@ -127,9 +134,10 @@ DESCRIPTION
   specify that hashes be read from *stdin*.
 
  ``--url`` *url*
-  A web page URL.  The **url** parameter is used to retrieve verdicts that
-  have been processed using
-  `URL analysis <https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-whats-new/latest-wildfire-cloud-features/url-analysis>`_.
+  A web page URL.  The **url** parameter is used to retrieve verdicts,
+  reports and web artifacts that have been processed and discovered
+  using
+  `URL  analysis <https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-whats-new/latest-wildfire-cloud-features/url-analysis>`_.
 
  ``--platform`` *id*
   Platform ID for sandbox environment.
@@ -147,9 +155,11 @@ DESCRIPTION
   needed for the API request.
 
  ``--type`` *type*
-  Specify the file type for **--testfile**.
 
-  *type* is one of the following file types:
+  Specify the file type for **--testfile**, or the artifact types for
+  **--web-artifacts**.
+
+  **--testfile** *type* is one of the following file types:
 
    ==========  ===========  ===========
    File Type   File Suffix  Description
@@ -161,6 +171,19 @@ DESCRIPTION
    ==========  ===========  ===========
 
    The default is **pe**.
+
+  **--web-artifacts** types are one or more of the following artifact
+  types:
+
+   ===============   ===========
+   Artifact Type     Description
+   ===============   ===========
+   screenshot        JPEG screen shot
+   download_files    files downloaded during analysis
+   ===============   ===========
+
+   The default is to include both a screen shot and files downloaded in
+   the tar archive (``screenshot`` and ``download_file``).
 
  ``--format`` *format*
   WildFire report output format string.
@@ -201,6 +224,10 @@ DESCRIPTION
   - Malware test file (**--testfile**)
 
     wildfire-test-\ *file_type*\ -file
+
+  - URL web artifacts (**--web-artifacts**)
+
+    sha256-hash-of-URL*.tgz
 
  ``--new-verdict`` *verdict*
   The suggested verdict.  Can be specified as a string (*benign*,

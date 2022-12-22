@@ -632,6 +632,30 @@ class PanWFapi:
         if not self.__set_response(response):
             raise PanWFapiError(self._msg)
 
+    def web_artifacts(self, *,
+                      url=None,
+                      types=None):
+        self.__clear_response()
+
+        request_uri = '/publicapi/get/webartifacts'
+
+        query = {}
+        query['apikey'] = self.api_key
+        if self.agent is not None:
+            query['agent'] = self.agent
+        if url is not None:
+            query['url'] = url
+        if types is not None:
+            query['types'] = types
+
+        response = self.__api_request(request_uri=request_uri,
+                                      body=urlencode(query))
+        if not response:
+            raise PanWFapiError(self._msg)
+
+        if not self.__set_response(response):
+            raise PanWFapiError(self._msg)
+
     # allow non-2XX error codes
     # see http://bugs.python.org/issue18543 for why we can't just
     # install a new HTTPErrorProcessor()

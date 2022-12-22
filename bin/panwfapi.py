@@ -234,10 +234,30 @@ def main():
             print_response(wfapi, options)
             save_file(wfapi, options)
 
+        if options['web-artifacts']:
+            action = 'web-artifacts'
+            kwargs = {}
+            if options['url'] is not None:
+                kwargs['url'] = options['url']
+            if len(options['types']):
+                kwargs['types'] = ','.join(options['types'])
+
+            wfapi.web_artifacts(**kwargs)
+            print_status(wfapi, action)
+            print_response(wfapi, options)
+            save_file(wfapi, options)
+
         if options['testfile']:
             action = 'testfile'
 
-            wfapi.testfile(options['type'])
+            if len(options['types']) > 1:
+                print('Only 1 type allowed for %s' % action, file=sys.stderr)
+                sys.exit(1)
+
+            kwargs = {}
+            if len(options['types']) == 1:
+                kwargs['file_type'] = options['types'][0]
+            wfapi.testfile(**kwargs)
             print_status(wfapi, action)
             print_response(wfapi, options)
             save_file(wfapi, options)
@@ -339,6 +359,7 @@ def parse_opts():
         'sample': False,
         'pcap': False,
         'changed': False,
+        'web-artifacts': False,
         'hash': [],
         'url': None,
         'platform': None,
@@ -346,7 +367,7 @@ def parse_opts():
         'email': None,
         'comment': None,
         'testfile': False,
-        'type': None,
+        'types': [],
         'format': None,
         'date': None,
         'dst': None,
@@ -369,7 +390,7 @@ def parse_opts():
     long_options = ['version', 'help',
                     'submit=', 'submit-link=',
                     'change-request', 'report', 'verdict', 'sample',
-                    'pcap', 'changed',
+                    'pcap', 'changed', 'web-artifacts',
                     'hash=', 'url=', 'platform=', 'testfile',
                     'new-verdict=', 'email=', 'comment=',
                     'type=', 'format=', 'date=', 'dst=',
@@ -403,6 +424,8 @@ def parse_opts():
             options['pcap'] = True
         elif opt == '--changed':
             options['changed'] = True
+        elif opt == '--web-artifacts':
+            options['web-artifacts'] = True
         elif opt == '--hash':
             options['hash'].append(arg)
         elif opt == '--url':
@@ -418,7 +441,7 @@ def parse_opts():
         elif opt == '--testfile':
             options['testfile'] = True
         elif opt == '--type':
-            options['type'] = arg
+            options['types'].append(arg)
         elif opt == '--format':
             options['format'] = arg
         elif opt == '--date':
@@ -653,6 +676,7 @@ def usage():
     --sample              get WildFire sample file
     --pcap                get WildFire PCAP files
     --changed             get changed verdicts
+    --web-artifacts       get WildFire URL web artifacts
     --hash hash           query MD5 or SHA256 hash
     --url url             query URL
     --platform id         platform ID for sandbox environment
@@ -660,7 +684,7 @@ def usage():
     --email address       notification e-mail address
     --comment comment     change request explanation
     --testfile            get sample malware test file
-    --type type           test file type
+    --type type           test file or web artifact type
     --format format       report output format
     --date date           start date for changed verdicts
                           (YYYY-MM-DD or -days)

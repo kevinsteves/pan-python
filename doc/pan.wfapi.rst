@@ -73,6 +73,7 @@ DESCRIPTION
  get sample verdict               /publicapi/get/verdict
  get sample verdicts              /publicapi/get/verdicts
  get verdicts changed             /publicapi/get/verdicts/changed
+ get URL web artifacts            /publicapi/get/webartifacts
  get sample malware test file     /publicapi/test/**file_type**
  ==============================   ========
 
@@ -300,6 +301,33 @@ pcap(hash=None, platform=None)
  Platform IDs are documented in the
  `Get a Packet Capture <https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api/get-wildfire-information-through-the-wildfire-api/get-a-packet-capture-wildfire-api.html>`_
  section of the *WildFire API Reference*.
+
+web_artifacts(\*, url=None, types=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The ``web_artifacts`` method gets web artifacts discovered during
+ analysis of the specified web page URL.  Artifacts can include a JPEG
+ screen shot of the page and files downloaded during analysis.
+ Artifacts are provided in a compressed tar archive (.tgz) file, and
+ the file is placed in the ``attachment`` data attribute.
+
+ **url**
+  A web page URL.  The **url** parameter is used to retrieve artifacts
+  discovered using
+  `URL analysis <https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-whats-new/latest-wildfire-cloud-features/url-analysis>`_.
+
+ **types**
+  A comma separated string of artifact types:
+
+  ===============   ===========
+  Artifact Type     Description
+  ===============   ===========
+  screenshot        JPEG screen shot
+  download_files    files downloaded during analysis
+  ===============   ===========
+
+  The default is to include both a screen shot and files downloaded in
+  the tar archive (``screenshot,download_files``).
 
 testfile(file_type=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~
