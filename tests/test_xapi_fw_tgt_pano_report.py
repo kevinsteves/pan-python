@@ -24,4 +24,4 @@ class PanXapiTest(xapi_mixin.Mixin, unittest.TestCase):
         self.assertIn('end-epoch', x.attrib)
         start = int(x.attrib['start-epoch'])
         end = int(x.attrib['end-epoch'])
-        self.assertEqual(end-start, 3599)
+        self.assertEqual(end - start, 3599)
