@@ -22,11 +22,25 @@ the following naming convention:
 Tests are currently available for the following components:
 
 - PAN-OS XML API
+- WildFire API
+
+Run Tests
+---------
+
+To run tests from the top-level directory:
+::
+
+  $ python3 -m unittest discover -v -s tests -t . -p TARGET-PATTERN
+
+To run tests from the ``tests/`` directory:
+::
+
+  $ python3 -m unittest discover -v -t .. -p TARGET-PATTERN
 
 PAN-OS XML API Tests
 --------------------
 
-A lab PAN-OS firewall or Panorama are required to run tests.
+A lab PAN-OS firewall or Panorama are required to run the tests.
 
 PAN-OS XML API tests can be performed on the following targets:
 
@@ -81,19 +95,6 @@ the *serial* specifies the connected device:
   api_password%vm-50-3-panorama=password
   serial%vm-50-3-panorama=015351000046877
 
-Run Tests
-~~~~~~~~~
-
-To run tests from the top-level directory:
-::
-
-  $ python3 -m unittest discover -v -s tests -t . -p TARGET-PATTERN
-
-To run tests from the ``tests/`` directory:
-::
-
-  $ python3 -m unittest discover -v -t .. -p TARGET-PATTERN
-
 Examples
 ~~~~~~~~
 
@@ -133,5 +134,92 @@ From the ``tests/`` directory run tests to a firewall target:
 
   ----------------------------------------------------------------------
   Ran 11 tests in 19.983s
+
+  OK
+
+WildFire API Tests
+------------------
+
+A WildFire API key is required to run the tests.
+
+WildFire tests can be performed on the following targets:
+
+  ===================  ===========
+  Test Target          Target Name
+  ===================  ===========
+  WildFire cloud       **cld**
+  WildFire appliance   **appl**
+  ===================  ===========
+
+Test scripts use the following naming convention to define the valid
+test targets:
+
+  ===============  ========================  ============
+  Target Names     Test Script Prefix        Test Targets
+  ===============  ========================  ============
+  **cld**          *test_wfapi_cld_*         WildFire cloud only
+  **appl**         *test_wfapi_appl_*        WildFire appliance only
+  **cld_appl**     *test_wfapi_cld_appl_*    WildFire cloud or appliance
+  ===============  ========================  ============
+
+Specifying Test Target
+~~~~~~~~~~~~~~~~~~~~~~
+
+A `.panrc file
+<https://github.com/kevinsteves/pan-python/blob/master/doc/panrc.rst>`_
+is used to reference the test target by a *tagname*.
+
+Export the ``WFAPI_TAG`` environment variable with the *tagname* to
+use from a .panrc file:
+::
+
+  $ export WFAPI_TAG=wildfire-cloud
+
+Examples
+~~~~~~~~
+
+From the ``tests/`` directory run tests to a cloud target:
+::
+
+  $ WFAPI_TAG=wildfire-cloud python3 -m unittest discover -v -t .. -p 'test_wfapi_cld_*'
+  test_01 (tests.test_wfapi_cld_appl_submit_file.PanWFapiTest) ... ok
+  test_01 (tests.test_wfapi_cld_appl_submit_links.PanWFapiTest) ... ok
+  test_02 (tests.test_wfapi_cld_appl_submit_links.PanWFapiTest) ... ok
+  test_03 (tests.test_wfapi_cld_appl_submit_links.PanWFapiTest) ... ok
+  test_04 (tests.test_wfapi_cld_appl_submit_links.PanWFapiTest) ... ok
+  test_01 (tests.test_wfapi_cld_appl_verdict.PanWFapiTest) ... ok
+  test_02 (tests.test_wfapi_cld_appl_verdict.PanWFapiTest) ... ok
+  test_03 (tests.test_wfapi_cld_appl_verdict.PanWFapiTest) ... ok
+  test_04 (tests.test_wfapi_cld_appl_verdict.PanWFapiTest) ... ok
+  test_01 (tests.test_wfapi_cld_appl_verdicts.PanWFapiTest) ... ok
+  test_02 (tests.test_wfapi_cld_appl_verdicts.PanWFapiTest) ... ok
+  test_03 (tests.test_wfapi_cld_appl_verdicts.PanWFapiTest) ... ok
+  test_04 (tests.test_wfapi_cld_appl_verdicts.PanWFapiTest) ... ok
+  test_05 (tests.test_wfapi_cld_appl_verdicts.PanWFapiTest) ... ok
+  test_06 (tests.test_wfapi_cld_appl_verdicts.PanWFapiTest) ... ok
+  test_07 (tests.test_wfapi_cld_appl_verdicts.PanWFapiTest) ... ok
+  test_08 (tests.test_wfapi_cld_appl_verdicts.PanWFapiTest) ... ok
+  test_01 (tests.test_wfapi_cld_appl_verdicts_changed.PanWFapiTest) ... ok
+  test_02 (tests.test_wfapi_cld_appl_verdicts_changed.PanWFapiTest) ... ok
+  test_03 (tests.test_wfapi_cld_appl_verdicts_changed.PanWFapiTest) ... ok
+  test_04 (tests.test_wfapi_cld_appl_verdicts_changed.PanWFapiTest) ... ok
+  test_01 (tests.test_wfapi_cld_constructor.PanWFapiTest) ... ok
+  test_02 (tests.test_wfapi_cld_constructor.PanWFapiTest) ... ok
+  test_03 (tests.test_wfapi_cld_constructor.PanWFapiTest) ... ok
+  test_04 (tests.test_wfapi_cld_constructor.PanWFapiTest) ... ok
+  test_05 (tests.test_wfapi_cld_constructor.PanWFapiTest) ... ok
+  test_01 (tests.test_wfapi_cld_submit_url.PanWFapiTest) ... testfile SHA256 ca310640d82d2eb50f8e93a3b828100113d9b00bb4f0d266fcf53342b3960399 ok
+  test_01 (tests.test_wfapi_cld_testfile.PanWFapiTest) ... ok
+  test_02 (tests.test_wfapi_cld_testfile.PanWFapiTest) ... ok
+  test_01 (tests.test_wfapi_cld_url_analysis.PanWFapiTest) ... ok
+  test_01 (tests.test_wfapi_cld_web_artifacts.PanWFapiTest) ... ok
+  test_02 (tests.test_wfapi_cld_web_artifacts.PanWFapiTest) ... ok
+  test_03 (tests.test_wfapi_cld_web_artifacts.PanWFapiTest) ... ok
+  test_04 (tests.test_wfapi_cld_web_artifacts.PanWFapiTest) ... ok
+  test_05 (tests.test_wfapi_cld_web_artifacts.PanWFapiTest) ... ok
+  test_06 (tests.test_wfapi_cld_web_artifacts.PanWFapiTest) ... ok
+
+  ----------------------------------------------------------------------
+  Ran 36 tests in 204.025s
 
   OK
