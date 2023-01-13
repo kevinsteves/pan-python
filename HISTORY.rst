@@ -1,6 +1,45 @@
 Release History
 ===============
 
+0.21.0 (2023-01-13)
+-------------------
+
+- pan.wfapi: Add C2 verdict.
+
+- pan.wfapi, pan.rc: Add agent argument to constructor.  Agent is used
+  to specify the API key type for Prisma API keys.  Can be specified
+  in .panrc; no command line argument at this time.
+
+- pan.wfapi: Remove handling for no ssl.CertificateError.
+
+- pan.wfapi: Remove handling of Python 2.7 HTTP reason.
+
+- pan.wfapi: Remove checks for Python version around ssl module.
+
+- pan.wfapi, panwfapi.py: Add support for url parameter to report()
+  and verdict().
+
+- pan.wfapi: Remove old check for ssl.SSLContext().
+
+- Fix some pycodestyle issues.
+
+- pan.wfapi, panwfapi.py: Add support for the get URL web artifacts
+  API request.
+
+- Add unit tests for the WildFire API.
+
+- Use 11.0 documentation links.
+
+- pan.xapi: Modified version of
+  https://github.com/kevinsteves/pan-python/pull/47
+  from Justin Bradfield.
+
+  1. Use urlopen() as a context manager
+  2. Immediately read() response
+  3. Set object 'pan_body' attribute to read() result
+
+- panxapi.py: IOError merged into OSError as of Python 3.3.
+
 0.20.0 (2022-08-31)
 -------------------
 
