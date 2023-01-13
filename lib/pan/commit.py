@@ -25,7 +25,7 @@ _valid_part = set([
     'shared-object-excluded',
     'no-vsys',
     'vsys',
-    ])
+])
 
 _part_xml = {
     'device-and-network-excluded':
@@ -38,7 +38,7 @@ _part_xml = {
         '<no-vsys></no-vsys>',
     'vsys':
         '<member>%s</member>',
-    }
+}
 
 
 def valid_part(part):
@@ -94,7 +94,7 @@ class PanCommit:
             part = 'vsys'
             self.partial.add(part)
 
-        if type(vsys) == type(''):
+        if isinstance(vsys, str):
             vsys = [vsys]
         for name in vsys:
             self._vsys.add(name)

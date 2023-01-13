@@ -70,7 +70,8 @@ def main():
 
     try:
         xapi = pan.xapi.PanXapi(timeout=options['timeout'],
-                                tag=None if not options['tag'] else options['tag'],
+                                tag=None if not options['tag']
+                                else options['tag'],
                                 use_http=options['use_http'],
                                 use_get=options['use_get'],
                                 api_username=options['api_username'],
@@ -164,7 +165,7 @@ def main():
             action = 'dynamic-update'
             kwargs = {
                 'cmd': options['cmd'],
-                }
+            }
             if options['ad_hoc'] is not None:
                 extra_qs_used = True
                 kwargs['extra_qs'] = options['ad_hoc']
@@ -279,7 +280,7 @@ def main():
             kwargs = {
                 'cmd': options['op'],
                 'cmd_xml': options['cmd_xml'],
-                }
+            }
             if options['ad_hoc'] is not None:
                 extra_qs_used = True
                 kwargs['extra_qs'] = options['ad_hoc']
@@ -327,7 +328,7 @@ def main():
                 'sync': options['sync'],
                 'interval': options['interval'],
                 'timeout': options['job_timeout'],
-                }
+            }
             if options['ad_hoc'] is not None:
                 extra_qs_used = True
                 kwargs['extra_qs'] = options['ad_hoc']
@@ -432,7 +433,7 @@ def parse_opts():
         'element': None,
         'cmd': None,
         'timeout': None,
-        }
+    }
 
     valid_where = ['after', 'before', 'top', 'bottom']
 
@@ -483,14 +484,14 @@ def parse_opts():
             options['force'] = True
         elif opt == '--partial':
             if arg:
-                l = get_parts(arg)
-                [options['partial'].append(s) for s in l]
+                x = get_parts(arg)
+                [options['partial'].append(s) for s in x]
         elif opt == '--sync':
             options['sync'] = True
         elif opt == '--vsys':
             if arg:
-                l = get_vsys(arg)
-                [options['vsys'].append(s) for s in l]
+                x = get_vsys(arg)
+                [options['vsys'].append(s) for s in x]
         elif opt == '-A':
             options['commit_all'] = True
             options['cmd'] = get_element(arg)

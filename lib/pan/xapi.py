@@ -502,7 +502,7 @@ class PanXapi:
 
         kwargs = {
             'url': request,
-            }
+        }
 
         # see PEP 476; urlopen() has context
         if self.ssl_context is None:
@@ -587,7 +587,7 @@ class PanXapi:
             'type': 'keygen',
             'user': self.api_username,
             'password': self.api_password,
-            }
+        }
         if self.serial is not None:
             query['target'] = self.serial
         if extra_qs is not None:
