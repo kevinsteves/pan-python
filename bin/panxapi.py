@@ -676,7 +676,7 @@ def get_element(s):
     elif os.path.isfile(s):
         try:
             f = open(s)
-        except IOError as msg:
+        except OSError as msg:
             print('open %s: %s' % (s, msg), file=sys.stderr)
             sys.exit(1)
         element = f.readlines()
@@ -788,13 +788,13 @@ def save_attachment(xapi, options):
 
     try:
         f = open(path, 'wb')
-    except IOError as msg:
+    except OSError as msg:
         print('open %s: %s' % (path, msg), file=sys.stderr)
         return
 
     try:
         f.write(xapi.export_result['content'])
-    except IOError as msg:
+    except OSError as msg:
         print('write %s: %s' % (path, msg), file=sys.stderr)
         f.close()
         return
