@@ -201,7 +201,7 @@ class PanXapi:
         return types
 
     def __set_response(self, response):
-        message_body = response.read()
+        message_body = response.pan_body
 
         content_type = self.__get_header(response, 'content-type')
         if not content_type:
@@ -515,7 +515,8 @@ class PanXapi:
             kwargs['timeout'] = self.timeout
 
         try:
-            response = urlopen(**kwargs)
+            with urlopen(**kwargs) as response:
+                response.pan_body = response.read()
 
         # XXX handle httplib.BadStatusLine when http to port 443
         except ssl.CertificateError as e:
@@ -534,6 +535,7 @@ class PanXapi:
 
         self._log(DEBUG2, 'HTTP response headers:')
         self._log(DEBUG2, '%s', response.info())
+        self._log(DEBUG2, 'stream closed %s', response.closed)
 
         return response
 
