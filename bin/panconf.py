@@ -176,7 +176,7 @@ def parse_opts():
         'compact': False,
         'xpath': None,
         'debug': 0,
-        }
+    }
 
     short_options = ''
     long_options = ['version', 'help', 'debug=',
