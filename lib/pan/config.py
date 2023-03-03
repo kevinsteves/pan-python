@@ -643,9 +643,14 @@ class PanConfig:
 ./shared
 '''
 
-        xpaths_panos = xpaths_panos_9_1
+        s = '''./devices/entry[@name='localhost.localdomain']/cluster'''
+        x = xpaths_panorama_8_0.split('\n')
+        x.insert(1, s)
+        xpaths_panorama_11_0 = '\n'.join(x)
+
+        xpaths_panos = xpaths_panos_10_2
         xpaths_panos_multi_vsys = xpaths_panos_multi_vsys_4_1
-        xpaths_panorama = xpaths_panorama_8_0
+        xpaths_panorama = xpaths_panorama_11_0
 
         if self.config_version() is not None:
             if self.config_version() in ['5.0.0', '5.1.0']:
@@ -678,6 +683,9 @@ class PanConfig:
             elif self.config_version() in ['10.2.0']:
                 xpaths_panos = xpaths_panos_10_2
                 xpaths_panorama = xpaths_panorama_8_0
+            elif self.config_version() in ['11.0.0']:
+                xpaths_panos = xpaths_panos_10_2
+                xpaths_panorama = xpaths_panorama_11_0
 
         if self.config_multi_vsys():
             xpaths = xpaths_panos_multi_vsys
