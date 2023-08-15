@@ -959,7 +959,7 @@ class PanXapi:
         return s
 
     def export(self, category=None, from_name=None, to_name=None,
-               pcapid=None, search_time=None, serialno=None,
+               pcapid=None, search_time=None, serialno=None, target=None,
                extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
@@ -990,6 +990,8 @@ class PanXapi:
                       panos_time)
         if serialno is not None:
             query['serialno'] = serialno
+        if target is not None:
+            query['target'] = target
         if extra_qs is not None:
             query = self.__merge_extra_qs(query, extra_qs)
 
