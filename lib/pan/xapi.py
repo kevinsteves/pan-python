@@ -990,6 +990,8 @@ class PanXapi:
                       panos_time)
         if serialno is not None:
             query['serialno'] = serialno
+        if self.serial is not None:
+            query['target'] = self.serial
         if extra_qs is not None:
             query = self.__merge_extra_qs(query, extra_qs)
 

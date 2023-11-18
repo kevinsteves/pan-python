@@ -403,9 +403,20 @@ DESCRIPTION
 
  ``--serial`` *number*
   Specify the serial number used for Panorama to device redirection.
-  This sets the **target** argument to the serial number specified in
-  device configuration, commit configuration, key generation, dynamic
-  object update, report and operational command API requests.
+  This sets the **target** argument to the serial number specified
+  in the following API requests:
+
+  ======================   ========
+  Request                  Request Type
+  ======================   ========
+  key generation           keygen
+  device configuration     config
+  commit configuration     commit
+  dynamic object update    user-id
+  operational command      op
+  export file              export
+  report retrieval         report
+  ======================   ========
 
   When an API request is made on Panorama and the serial number is
   specified, Panorama will redirect the request to the managed device
