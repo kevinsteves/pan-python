@@ -109,7 +109,6 @@ class PanXapiTest(xapi_mixin.Mixin, unittest.TestCase):
                      'id': 'LEN-ERROR'}, element3),  # error
         ]
         document = multi_config(actions)
-        # XXX tgt bug: PAN-196392
         with self.assertRaises(pan.xapi.PanXapiError) as e:
             self.api.multi_config(element=document, strict=True)
         self.assertEqual(self.api.status, 'error', msg=document)
