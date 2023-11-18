@@ -114,7 +114,7 @@ class PanXapiTest(xapi_mixin.Mixin, unittest.TestCase):
             self.api.multi_config(element=document, strict=True)
         self.assertEqual(self.api.status, 'error', msg=document)
         msg = ('status="error" code="12" id="LEN-ERROR"  %s '
-               'Node can be at most 63 characters, but current length: 64')
+               'can be at most 63 characters, but current length: 64')
         msg = msg % address3
         self.assertIn(msg, self.api.status_detail)
 
