@@ -1,6 +1,26 @@
 Release History
 ===============
 
+0.23.0 (2023-11-19)
+-------------------
+
+- Rename test filename, log() method does not support Panorama to
+  device redirection.
+
+- Use 11.1 documentation links.
+
+- pan.xapi, pan.xapi.rst, panxapi.rst: Modified version of
+  https://github.com/kevinsteves/pan-python/pull/54
+  from Matthew Kazmar.
+
+  type=export request supports target argument.
+
+- tests/test_xapi_fw_tgt_multi_config.py: PAN-196392 is fixed.
+
+- tests/test_xapi_fw_tgt_multi_config.py: Error message changed.
+
+- pan.config: Support 11.1.0 config for set format.
+
 0.22.0 (2023-03-07)
 -------------------
 
