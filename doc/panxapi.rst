@@ -404,7 +404,7 @@ DESCRIPTION
  ``--serial`` *number*
   Specify the serial number used for Panorama to device redirection.
   This sets the **target** argument to the serial number specified
-  in the following API requests:
+  for the following API requests:
 
   ======================   ========
   Request                  Request Type
