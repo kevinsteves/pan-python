@@ -683,10 +683,10 @@ SEE ALSO
  panxapi.py
 
  PAN-OS and Panorama API Guide
-  https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-panorama-api.html
+  https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api.html
 
  PAN-OS XML API multi-config Request
-  https://docs.paloaltonetworks.com/pan-os/11-0/pan-os-panorama-api/pan-os-xml-api-request-types/configuration-api/multi-config-request-api
+  https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api/pan-os-xml-api-request-types/configuration-api/multi-config-request-api
 
 AUTHORS
 =======

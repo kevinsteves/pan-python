@@ -396,8 +396,8 @@ SEE ALSO
 
  pan.wfapi
 
- WildFire Administrator's Guide
-  https://docs.paloaltonetworks.com/wildfire/10-2/wildfire-admin.html
+ Advanced Wildfire Administration
+  https://docs.paloaltonetworks.com/advanced-wildfire
 
  WildFire API Reference
   https://docs.paloaltonetworks.com/wildfire/u-v/wildfire-api.html
