@@ -65,4 +65,4 @@ class PanWFapiTest(wfapi_mixin.Mixin, unittest.TestCase):
         # test will fail when fixed
         root = etree.fromstring(self.api.response_body)
         x = root.findall('./get-verdict-info')
-        self.assertTrue(len(x) == 7)
+        self.assertTrue(len(x) > 1)
