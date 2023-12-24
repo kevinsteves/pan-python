@@ -312,7 +312,7 @@ DESCRIPTION
 
  ``--name`` *name*
   Specify the file name (``filename=`` argument) for **--import**.
- 
+
   Specify the report name (``reportname=`` argument) for **--report**.
   This can also be **custom-dynamic-report** to specify a custom
   dynamic report.
