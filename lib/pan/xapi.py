@@ -21,10 +21,15 @@ interface to the XML API on Palo Alto Networks' Next-Generation
 Firewalls.
 """
 
-import sys
-import re
-import time
+from io import BytesIO
+import email
+import email.errors
+import email.utils
 import logging
+import os
+import re
+import sys
+import time
 try:
     import ssl
 except ImportError:
@@ -40,6 +45,7 @@ from . import __version__, DEBUG1, DEBUG2, DEBUG3
 import pan.rc
 
 _encoding = 'utf-8'
+_rfc2231_encode = False
 _job_query_interval = 0.5
 
 
@@ -474,7 +480,7 @@ class PanXapi:
         self._log(DEBUG1, 'query: %s', x)
         self._log(DEBUG1, 'URI: %s', uri)
 
-    def __api_request(self, query):
+    def __api_request(self, query, body=None, headers={}):
         self.__debug_request(query)
         # type=keygen request will urlencode key if needed so don't
         # double encode
@@ -491,7 +497,11 @@ class PanXapi:
         self._log(DEBUG3, 'data.encode(): %s', type(data.encode()))
 
         url = self.uri
-        if self.use_get:
+        if body is not None:
+            # used by import_file()
+            url += '?' + data
+            request = Request(url, body, headers)
+        elif self.use_get:
             url += '?' + data
             request = Request(url)
         else:
@@ -1005,6 +1015,69 @@ class PanXapi:
         if self.export_result:
             self.export_result['category'] = category
 
+    def _read_file(self, path):
+        try:
+            f = open(path, 'rb')
+        except IOError as e:
+            msg = 'open: %s: %s' % (path, e)
+            self._msg = msg
+            return
+
+        buf = f.read()
+        f.close()
+
+        self._log(DEBUG2, 'path: %s %d', type(path), len(path))
+        self._log(DEBUG2, 'path: %s size: %d', path, len(buf))
+        if logging.getLogger(__name__).getEffectiveLevel() == DEBUG3:
+            import hashlib
+            md5 = hashlib.md5()
+            md5.update(buf)
+            sha256 = hashlib.sha256()
+            sha256.update(buf)
+            self._log(DEBUG3, 'MD5: %s', md5.hexdigest())
+            self._log(DEBUG3, 'SHA256: %s', sha256.hexdigest())
+
+        return buf
+
+    def import_file(self,
+                    category=None,
+                    file=None,
+                    filename=None,
+                    extra_qs=None):
+        self.__set_api_key()
+        self.__clear_response()
+
+        query = {}
+        query['type'] = 'import'
+        query['key'] = self.api_key
+        if category is not None:
+            query['category'] = category
+        if extra_qs is not None:
+            query = self.__merge_extra_qs(query, extra_qs)
+
+        form = _MultiPartFormData()
+
+        if file is not None:
+            if isinstance(file, bytes):
+                buf = file
+            else:
+                buf = self._read_file(file)
+                if buf is None:
+                    raise PanXapiError(self._msg)
+                if filename is None:
+                    filename = os.path.basename(file)
+            form.add_file(filename, buf)
+
+        headers = form.http_headers()
+        body = form.http_body()
+
+        response = self.__api_request(query, body=body, headers=headers)
+        if not response:
+            raise PanXapiError(self.status_detail)
+
+        if not self.__set_response(response):
+            raise PanXapiError(self.status_detail)
+
     def log(self, log_type=None, nlogs=None, skip=None, filter=None,
             interval=None, timeout=None, extra_qs=None):
         self.__set_api_key()
@@ -1184,6 +1257,145 @@ class PanXapi:
 
             self._log(DEBUG2, 'sleep %.2f seconds', interval)
             time.sleep(interval)
+
+
+# Minimal RFC 2388 implementation
+
+# Content-Type: multipart/form-data; boundary=___XXX
+#
+# Content-Disposition: form-data; name="apikey"
+#
+# XXXkey
+# --___XXX
+# Content-Disposition: form-data; name="file"; filename="XXXname"
+# Content-Type: application/octet-stream
+#
+# XXXfilecontents
+# --___XXX--
+
+class _MultiPartFormData:
+    def __init__(self):
+        self._log = logging.getLogger(__name__).log
+        self.parts = []
+        self.boundary = self._boundary()
+
+    def add_field(self, name, value):
+        part = _FormDataPart(name=name,
+                             body=value)
+        self.parts.append(part)
+
+    def add_file(self, filename=None, body=None):
+        part = _FormDataPart(name='file')
+        if filename is not None:
+            part.append_header('filename', filename)
+        if body is not None:
+            part.add_header(b'Content-Type: application/octet-stream')
+            part.add_body(body)
+        self.parts.append(part)
+
+    def _boundary(self):
+        rand_bytes = 48
+        prefix_char = b'_'
+        prefix_len = 16
+
+        import base64
+        try:
+            seq = os.urandom(rand_bytes)
+            self._log(DEBUG1, '_MultiPartFormData._boundary: %s',
+                      'using os.urandom')
+        except NotImplementedError:
+            import random
+            self._log(DEBUG1, '_MultiPartFormData._boundary: %s',
+                      'using random')
+            seq = bytearray()
+            [seq.append(random.randrange(256)) for i in range(rand_bytes)]
+
+        prefix = prefix_char * prefix_len
+        boundary = prefix + base64.b64encode(seq)
+
+        return boundary
+
+    def http_headers(self):
+        # headers cannot be bytes
+        boundary = self.boundary.decode('ascii')
+        headers = {
+            'Content-Type':
+                'multipart/form-data; boundary=' + boundary,
+        }
+
+        return headers
+
+    def http_body(self):
+        bio = BytesIO()
+
+        boundary = b'--' + self.boundary
+        for part in self.parts:
+            bio.write(boundary)
+            bio.write(b'\r\n')
+            bio.write(part.serialize())
+            bio.write(b'\r\n')
+        bio.write(boundary)
+        bio.write(b'--')
+
+        return bio.getvalue()
+
+
+class _FormDataPart:
+    def __init__(self, name=None, body=None):
+        self._log = logging.getLogger(__name__).log
+        self.headers = []
+        self.add_header(b'Content-Disposition: form-data')
+        self.append_header('name', name)
+        self.body = None
+        if body is not None:
+            self.add_body(body)
+
+    def add_header(self, header):
+        self.headers.append(header)
+        self._log(DEBUG1, '_FormDataPart.add_header: %s', self.headers[-1])
+
+    def append_header(self, name, value):
+        self.headers[-1] += b'; ' + self._encode_field(name, value)
+        self._log(DEBUG1, '_FormDataPart.append_header: %s', self.headers[-1])
+
+    def _encode_field(self, name, value):
+        self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+                  type(name), type(value))
+        if not _rfc2231_encode:
+            s = '%s="%s"' % (name, value)
+            self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+                      type(s), s)
+            s = s.encode('utf-8')
+            self._log(DEBUG1, '_FormDataPart._encode_field: %s %s',
+                      type(s), s)
+            return s
+
+        if not [ch for ch in '\r\n\\' if ch in value]:
+            try:
+                return ('%s="%s"' % (name, value)).encode('ascii')
+            except UnicodeEncodeError:
+                self._log(DEBUG1, 'UnicodeEncodeError 3.x')
+            except UnicodeDecodeError:  # 2.x
+                self._log(DEBUG1, 'UnicodeDecodeError 2.x')
+        # RFC 2231
+        value = email.utils.encode_rfc2231(value, 'utf-8')
+        return ('%s*=%s' % (name, value)).encode('ascii')
+
+    def add_body(self, body):
+        if isinstance(body, str):
+            body = body.encode('latin-1')
+        self.body = body
+        self._log(DEBUG1, '_FormDataPart.add_body: %s %d',
+                  type(self.body), len(self.body))
+
+    def serialize(self):
+        bio = BytesIO()
+        bio.write(b'\r\n'.join(self.headers))
+        bio.write(b'\r\n\r\n')
+        if self.body is not None:
+            bio.write(self.body)
+
+        return bio.getvalue()
 
 
 if __name__ == '__main__':

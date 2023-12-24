@@ -67,6 +67,7 @@ DESCRIPTION
  - commit configuration: ``type=commit``
  - operational command: ``type=op``
  - export file: ``type=export``
+ - import file: ``type=import``
  - dynamic object update: ``type=user-id``
  - log retrieval: ``type=log``
  - report retrieval: ``type=report``
@@ -432,6 +433,32 @@ Threat PCAP export
  specify the device of the PCAP.  It is also currently required when
  exporting from firewall devices, however this requirement will be
  removed in a future version of PAN-OS.
+
+import_file(category=None, file=None, filename=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ The import_file() method performs the ``type=import`` import file API
+ request with the **category** argument and **file** argument.
+
+ The **category** argument specifies the type of file to import:
+
+ - certificate
+ - configuration
+ - keypair
+ - license
+ - *others* -
+   `use the API Browser <https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api/get-started-with-the-pan-os-xml-api/explore-the-api/use-the-api-browser>`_
+   to see a full list of import categories
+
+ The **file** argument is used to specify the file to import, it can
+ be:
+
+ - a ``bytes`` object containing data to import
+ - a path to a file to import
+
+ The **filename** argument is used to set the *filename* argument in
+ the ``Content-Disposition`` header.  If **filename** is not specified
+ and **file** specifies a path, the basename of the path is used.
 
 log(self, log_type=None, nlogs=None, skip=None, filter=None, interval=None, timeout=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

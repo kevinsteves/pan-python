@@ -51,9 +51,10 @@ SYNOPSIS
     --modify              insert known fields in ad hoc query
     -o cmd                execute operational command
     --export category     export files
+    --import category     import files
     --log log-type        retrieve log files
     --report report-type  retrieve reports (dynamic|predefined|custom)
-    --name report-name    report name
+    --name name           report name/import file name
     --src src             clone source node xpath
                           export source file/path/directory
     --dst dst             move/clone destination node name
@@ -64,6 +65,7 @@ SYNOPSIS
     --clone               clone object at xpath, src xpath
     --override element    override template object at xpath
     -M element            multi-config XML element
+    --file path           import file path
     --strict yes|no       multi-config strict-transactional
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command/report
@@ -259,6 +261,28 @@ DESCRIPTION
   - certificate
   - *others* (see XML API Reference)
 
+ ``--import`` *category*
+  Perform the ``type=import`` import file API request.
+
+  *category* specifies the type of file to import:
+
+  - certificate
+  - configuration
+  - keypair
+  - license
+  - *others* -
+    `use the API Browser <https://docs.paloaltonetworks.com/pan-os/11-1/pan-os-panorama-api/get-started-with-the-pan-os-xml-api/explore-the-api/use-the-api-browser>`_
+    to see a full list of import categories
+
+  The **--name** option is used to specify the file name.
+
+  The **--ad-hoc** option is used to specify additional import
+  arguments, for example:
+
+  - certificate-name
+  - format
+  - passphrase
+
  ``--log`` *log-type*
   Perform the ``type=log`` retrieve log API request with the **log-type**
   argument.
@@ -286,9 +310,12 @@ DESCRIPTION
   - predefined
   - custom
 
- ``--name`` *report-name*
-  Specify the report name (``reportname=`` argument).  This can also
-  be **custom-dynamic-report** to specify a custom dynamic report.
+ ``--name`` *name*
+  Specify the file name (``filename=`` argument) for **--import**.
+ 
+  Specify the report name (``reportname=`` argument) for **--report**.
+  This can also be **custom-dynamic-report** to specify a custom
+  dynamic report.
 
   The **--ad-hoc** option is used to specify additional report
   arguments, for example:
@@ -363,6 +390,9 @@ DESCRIPTION
 
   **element** can be an XML string, a path to a file containing XML,
   or the value **-** to specify the XML is on *stdin*.
+
+ ``--file`` *path*
+  Specify the path to a file to import.
 
  ``--strict`` *yes|no*
   When **--strict** is *yes* the **strict-transactional**

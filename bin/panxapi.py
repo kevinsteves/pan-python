@@ -247,6 +247,17 @@ def main():
                 pcap_listing(xapi, options['export'])
             save_attachment(xapi, options)
 
+        if options['import'] is not None:
+            action = 'import'
+            if options['ad_hoc'] is not None:
+                extra_qs_used = True
+            xapi.import_file(category=options['import'],
+                             file=options['file'],
+                             filename=options['name'],
+                             extra_qs=options['ad_hoc'])
+            print_status(xapi, action)
+            print_response(xapi, options)
+
         if options['log'] is not None:
             action = 'log'
             if options['ad_hoc'] is not None:
@@ -389,6 +400,7 @@ def parse_opts():
         'modify': False,
         'op': None,
         'export': None,
+        'import': None,
         'log': None,
         'report': None,
         'name': None,
@@ -399,6 +411,7 @@ def parse_opts():
         'clone': False,
         'override': False,
         'multi-config': False,
+        'file': None,
         'strict': None,
         'api_username': None,
         'api_password': None,
@@ -441,7 +454,8 @@ def parse_opts():
     long_options = ['version', 'help',
                     'ad-hoc=', 'modify', 'validate', 'force', 'partial=',
                     'sync', 'vsys=', 'src=', 'dst=', 'move=', 'rename',
-                    'clone', 'override=', 'export=', 'log=', 'recursive',
+                    'clone', 'override=', 'export=', 'import=', 'file=',
+                    'log=', 'recursive',
                     'strict=', 'cafile=', 'capath=', 'ls', 'serial=',
                     'group=', 'merge', 'nlogs=', 'skip=', 'filter=',
                     'interval=', 'timeout=',
@@ -503,6 +517,8 @@ def parse_opts():
             options['op'] = get_element(arg)
         elif opt == '--export':
             options['export'] = arg
+        elif opt == '--import':
+            options['import'] = arg
         elif opt == '--log':
             options['log'] = arg
         elif opt == '--report':
@@ -528,6 +544,8 @@ def parse_opts():
         elif opt == '-M':
             options['multi-config'] = True
             options['element'] = get_element(arg)
+        elif opt == '--file':
+            options['file'] = arg
         elif opt == '--strict':
             if arg in ['yes', 'no']:
                 options['strict'] = True if arg == 'yes' else False
@@ -868,9 +886,10 @@ def usage():
     --modify              insert known fields in ad hoc query
     -o cmd                execute operational command
     --export category     export files
+    --import category     import files
     --log log-type        retrieve log files
     --report report-type  retrieve reports (dynamic|predefined|custom)
-    --name report-name    report name
+    --name name           report name/import file name
     --src src             clone source node xpath
                           export source file/path/directory
     --dst dst             move/clone destination node name
@@ -881,6 +900,7 @@ def usage():
     --clone               clone object at xpath, src xpath
     --override element    override template object at xpath
     -M element            multi-config XML element
+    --file path           import file path
     --strict yes|no       multi-config strict-transactional
     --vsys vsys           VSYS for dynamic update/partial commit/
                           operational command/report
