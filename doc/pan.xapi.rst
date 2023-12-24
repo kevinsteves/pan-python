@@ -438,7 +438,7 @@ import_file(category=None, file=None, filename=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The import_file() method performs the ``type=import`` import file API
- request with the **category** argument and **file** argument.
+ request with the **category** argument.
 
  The **category** argument specifies the type of file to import:
 
