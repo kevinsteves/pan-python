@@ -10,6 +10,8 @@ libpath = os.path.dirname(os.path.abspath(__file__))
 sys.path[:0] = [os.path.join(libpath, os.pardir, 'lib')]
 import pan.wfapi
 
+URL = 'https://www.google.com'
+
 
 class PanWFapiTest(wfapi_mixin.Mixin, unittest.TestCase):
     def test_01(self):
@@ -33,7 +35,7 @@ class PanWFapiTest(wfapi_mixin.Mixin, unittest.TestCase):
                       'download_files,screenshot',
                       'download_files, screenshot',
                       ]:
-            self.api.web_artifacts(url='0.0.0.0', types=types)
+            self.api.web_artifacts(url=URL, types=types)
             self.assertEqual(self.api.http_code, 200)
             self.assertIsNotNone(self.api.attachment)
 
@@ -44,7 +46,7 @@ class PanWFapiTest(wfapi_mixin.Mixin, unittest.TestCase):
             self.assertIn('download_files', files)
 
     def test_05(self):
-        self.api.web_artifacts(url='0.0.0.0', types='screenshot')
+        self.api.web_artifacts(url=URL, types='screenshot')
         self.assertEqual(self.api.http_code, 200)
         self.assertIsNotNone(self.api.attachment)
 
@@ -55,7 +57,7 @@ class PanWFapiTest(wfapi_mixin.Mixin, unittest.TestCase):
         self.assertNotIn('download_files', files)
 
     def test_06(self):
-        self.api.web_artifacts(url='0.0.0.0', types='download_files')
+        self.api.web_artifacts(url=URL, types='download_files')
         self.assertEqual(self.api.http_code, 200)
         self.assertIsNotNone(self.api.attachment)
 
