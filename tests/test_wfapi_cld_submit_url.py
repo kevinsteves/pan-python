@@ -40,12 +40,27 @@ class PanWFapiTest(wfapi_mixin.Mixin, unittest.TestCase):
                 pass
             else:
                 self.fail('%s invalid verdict %d' % (sha256, verdict))
-            if elapsed > maximum:
+            if elapsed >= maximum:
                 self.fail('%s no verdict in analysis window of %d seconds' % (
                     sha256, elapsed))
 
-        time.sleep(wait * 2)
-        self.api.report(hash=sha256)
+        elapsed = 0
+
+        while True:
+            time.sleep(wait)
+            elapsed += wait
+            try:
+                self.api.report(hash=sha256)
+            except pan.wfapi.PanWFapiError:
+                if self.api.http_code == 404:
+                    if elapsed >= maximum:
+                        self.fail('%s no report available after %d seconds' % (
+                            sha256, elapsed))
+                    else:
+                        continue
+            else:
+                break
+
         self.assertEqual(self.api.http_code, 200)
         self.assertEqual(self.api.response_type, 'xml')
 
