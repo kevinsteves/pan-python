@@ -1,6 +1,22 @@
 Release History
 ===============
 
+0.24.0 (2023-12-26)
+-------------------
+
+- tests/test_wfapi_cld_web_artifacts.py: Update URL, 0.0.0.0 now has
+  404 status.
+
+- tests/test_wfapi_cld_submit_url.py: Wait up to 300 seconds for
+  report to be available.
+
+- tests/test_wfapi_cld_appl_verdict.py: Fix test_04 to work until bug
+  fixed.
+
+- tests/wfapi_mixin.py: commit missing test file.
+
+- Add support for type=import API request.
+
 0.23.0 (2023-11-19)
 -------------------
 
