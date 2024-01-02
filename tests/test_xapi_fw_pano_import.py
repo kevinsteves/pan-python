@@ -51,13 +51,19 @@ RA+GsCyRxj3qrg+E
         self.api.import_file(category='certificate',
                              file=cert,
                              extra_qs={
-                                 'certificate-name': 'test00',
+                                 'certificate-name': cert_name,
                                  'format': 'pem',
                              })
         self.assertEqual(self.api.status, 'success')
+        # PAN-OS
         path = ("/config/shared/certificate/entry[@name='%s']" %
                 cert_name)
         x = self.api.get(xpath=path)
+        if self.api.status_code == '7':
+            # Panorama
+            path = ("/config/panorama/certificate/entry[@name='%s']" %
+                    cert_name)
+            x = self.api.get(xpath=path)
         self.assertEqual(self.api.status, 'success')
         self.assertEqual(self.api.status_code, '19')
         x = self.api.delete(xpath=path)
@@ -70,8 +76,6 @@ RA+GsCyRxj3qrg+E
         self.assertIsNotNone(x)
         self.assertEqual(len(x), 0)
 
-
-class PanXapiTest(xapi_mixin.Mixin, unittest.TestCase):
     def test_02(self):
         self.api.show()
         self.assertEqual(self.api.status, 'success')
