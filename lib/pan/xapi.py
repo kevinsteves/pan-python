@@ -1060,6 +1060,8 @@ class PanXapi:
         if file is not None:
             if isinstance(file, bytes):
                 buf = file
+                if filename is None:
+                    filename = 'pan'  # XXX dummy string, required arg
             else:
                 buf = self._read_file(file)
                 if buf is None:
