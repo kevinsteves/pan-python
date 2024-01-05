@@ -1043,6 +1043,7 @@ class PanXapi:
                     category=None,
                     file=None,
                     filename=None,
+                    vsys=None,
                     extra_qs=None):
         self.__set_api_key()
         self.__clear_response()
@@ -1052,6 +1053,8 @@ class PanXapi:
         query['key'] = self.api_key
         if category is not None:
             query['category'] = category
+        if vsys is not None:
+            query['vsys'] = vsys
         if extra_qs is not None:
             query = self.__merge_extra_qs(query, extra_qs)
 

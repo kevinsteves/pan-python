@@ -251,9 +251,11 @@ def main():
             action = 'import'
             if options['ad_hoc'] is not None:
                 extra_qs_used = True
+            vsys = options['vsys'][0] if len(options['vsys']) else None
             xapi.import_file(category=options['import'],
                              file=options['file'],
                              filename=options['name'],
+                             vsys=vsys,
                              extra_qs=options['ad_hoc'])
             print_status(xapi, action)
             print_response(xapi, options)
@@ -903,7 +905,7 @@ def usage():
     --file path           import file path
     --strict yes|no       multi-config strict-transactional
     --vsys vsys           VSYS for dynamic update/partial commit/
-                          operational command/report
+                          operational command/report/import
     -l api_username[:api_password]
     -h hostname
     -P port               URL port number

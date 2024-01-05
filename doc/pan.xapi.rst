@@ -434,8 +434,8 @@ Threat PCAP export
  exporting from firewall devices, however this requirement will be
  removed in a future version of PAN-OS.
 
-import_file(category=None, file=None, filename=None)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+import_file(category=None, file=None, filename=None, vsys=None)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
  The import_file() method performs the ``type=import`` import file API
  request with the **category** argument.
@@ -459,6 +459,9 @@ import_file(category=None, file=None, filename=None)
  The **filename** argument is used to set the *filename* argument in
  the ``Content-Disposition`` header.  If **filename** is not specified
  and **file** specifies a path, the basename of the path is used.
+
+ The **vsys** argument is used to set the location to a specific
+ Virtual System.
 
 log(self, log_type=None, nlogs=None, skip=None, filter=None, interval=None, timeout=None)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

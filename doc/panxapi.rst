@@ -68,7 +68,7 @@ SYNOPSIS
     --file path           import file path
     --strict yes|no       multi-config strict-transactional
     --vsys vsys           VSYS for dynamic update/partial commit/
-                          operational command/report
+                          operational command/report/import
     -l api_username[:api_password]
     -h hostname
     -P port               URL port number
@@ -276,6 +276,9 @@ DESCRIPTION
 
   The **--name** option is used to specify the file name.
 
+  The **--vsys** option is used to set the location to a specific
+  Virtual System.
+
   The **--ad-hoc** option is used to specify additional import
   arguments, for example:
 
@@ -408,8 +411,8 @@ DESCRIPTION
 
  ``--vsys`` *vsys*
   Specify optional **vsys** for dynamic update (**-U**), partial vsys
-  commit (**--partial** vsys), commit-all (**-A**) and operational
-  commands (**-o**).
+  commit (**--partial** vsys), commit-all (**-A**), operational
+  commands (**-o**) and import (**--import**).
 
   *vsys* can be specified using name (**vsys2**) or number (**2**).
 
