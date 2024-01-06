@@ -1,6 +1,17 @@
 Release History
 ===============
 
+0.25.0 (2024-01-06)
+-------------------
+
+- Support vsys for import_file().
+
+- pan.xapi.py: In import_file() use dummy string for filename when not
+  specified and file is bytes; it's a required argument.
+
+- tests/test_xapi_fw_pano_import.py: Fix so test_01 is run and works
+  with Panorama.
+
 0.24.0 (2023-12-26)
 -------------------
 
