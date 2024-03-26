@@ -254,7 +254,7 @@ class PanXapi:
 
         filename = None
         for type in content_disposition:
-            result = re.search(r'^filename=([-\w\d\.]+)$', type)
+            result = re.search(r'^filename=(.+)$', type)
             if result:
                 filename = result.group(1)
                 break
