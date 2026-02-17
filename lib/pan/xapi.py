@@ -603,22 +603,26 @@ class PanXapi:
         if extra_qs is not None:
             query = self.__merge_extra_qs(query, extra_qs)
 
-        response = self.__api_request(query)
-        if not response:
-            raise PanXapiError(self.status_detail)
+        try:
+            response = self.__api_request(query)
+            if not response:
+                raise PanXapiError(self.status_detail)
 
-        if not self.__set_response(response):
-            raise PanXapiError(self.status_detail)
+            if not self.__set_response(response):
+                raise PanXapiError(self.status_detail)
 
-        if self.element_result is None:
-            raise PanXapiError('keygen(): result element not found')
-        element = self.element_result.find('key')
-        if element is None:
-            raise PanXapiError('keygen(): key element not found')
+            if self.element_result is None:
+                raise PanXapiError('keygen(): result element not found')
+            element = self.element_result.find('key')
+            if element is None:
+                raise PanXapiError('keygen(): key element not found')
 
-        self.api_key = element.text
+            self.api_key = element.text
 
-        return self.api_key
+            return self.api_key
+        finally:
+            if isinstance(query, dict) and 'password' in query:
+                del query['password']
 
     @staticmethod
     def __qs_to_dict(qs):
