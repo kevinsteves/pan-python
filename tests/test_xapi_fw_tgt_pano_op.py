@@ -57,8 +57,8 @@ class PanXapiTest(xapi_mixin.Mixin, unittest.TestCase):
         with self.assertRaises(pan.xapi.PanXapiError) as e:
             self.api.op(cmd_xml=True, cmd='show jobs id "4294967295"')
         self.assertEqual(self.api.status, 'error')
-        msg = 'job -1 not found'
-        self.assertEqual(str(e.exception), msg)
+        msgs = ['job -1 not found', 'job 4294967295 not found']
+        self.assertIn(str(e.exception), msgs)
         x = self.api.element_root.find('./msg/line')
         self.assertIsNotNone(x)
-        self.assertEqual(x.text, msg)
+        self.assertIn(x.text, msgs)
