@@ -605,24 +605,23 @@ class PanXapi:
 
         try:
             response = self.__api_request(query)
-            if not response:
-                raise PanXapiError(self.status_detail)
-
-            if not self.__set_response(response):
-                raise PanXapiError(self.status_detail)
-
-            if self.element_result is None:
-                raise PanXapiError('keygen(): result element not found')
-            element = self.element_result.find('key')
-            if element is None:
-                raise PanXapiError('keygen(): key element not found')
-
-            self.api_key = element.text
-
-            return self.api_key
         finally:
-            if isinstance(query, dict) and 'password' in query:
-                del query['password']
+            query.pop('password', None)
+        if not response:
+            raise PanXapiError(self.status_detail)
+
+        if not self.__set_response(response):
+            raise PanXapiError(self.status_detail)
+
+        if self.element_result is None:
+            raise PanXapiError('keygen(): result element not found')
+        element = self.element_result.find('key')
+        if element is None:
+            raise PanXapiError('keygen(): key element not found')
+
+        self.api_key = element.text
+
+        return self.api_key
 
     @staticmethod
     def __qs_to_dict(qs):
