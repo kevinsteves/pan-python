@@ -14,35 +14,10 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-import sys
 import logging
+import xml.etree.ElementTree as etree
 
-from . import DEBUG1, DEBUG2, DEBUG3
-
-_valid_part = set([
-    'device-and-network-excluded',
-    'policy-and-objects-excluded',
-    'shared-object-excluded',
-    'no-vsys',
-    'vsys',
-])
-
-_part_xml = {
-    'device-and-network-excluded':
-        '<device-and-network>excluded</device-and-network>',
-    'policy-and-objects-excluded':
-        '<policy-and-objects>excluded</policy-and-objects>',
-    'shared-object-excluded':
-        '<shared-object>excluded</shared-object>',
-    'no-vsys':
-        '<no-vsys></no-vsys>',
-    'vsys':
-        '<member>%s</member>',
-}
-
-
-def valid_part(part):
-    return part in _valid_part
+from . import DEBUG1
 
 
 class PanCommit:
@@ -112,70 +87,73 @@ class PanCommit:
             return self.__commit()
 
     def __commit_all(self):
-        s = '<commit-all><shared-policy>'
+        root = etree.Element('commit-all')
+        shared_policy = etree.SubElement(root, 'shared-policy')
 
         if self._device:
-            s += '<device>%s</device>' % self._device
+            etree.SubElement(
+                shared_policy, 'device').text = self._device
 
         if self._device_group:
-            s += '<device-group>%s</device-group>' % self._device_group
+            etree.SubElement(
+                shared_policy, 'device-group').text = self._device_group
 
         # default when no <merge-with-candidate-cfg/> is 'yes'
         # we default to 'no' like the Web UI
-        merge_xml = '<merge-with-candidate-cfg>%s</merge-with-candidate-cfg>'
         if self._merge_with_candidate:
             merge = 'yes'
         else:
             merge = 'no'
-        s += merge_xml % merge
+        etree.SubElement(
+            shared_policy, 'merge-with-candidate-cfg').text = merge
 
         if self._vsys:
-            s += '<vsys>%s</vsys>' % self._vsys.pop()
+            etree.SubElement(
+                shared_policy, 'vsys').text = self._vsys.pop()
 
-        s += '</shared-policy></commit-all>'
-
+        s = etree.tostring(root, encoding='unicode')
         self._log(DEBUG1, 'commit-all cmd: %s', s)
 
         return s
 
     def __commit(self):
-        s = '<commit>'
+        root = etree.Element('commit')
+        parent = root
 
         if self._validate:
-            s += '<validate>'
+            parent = etree.SubElement(parent, 'validate')
 
         if self._force:
-            s += '<force>'
+            parent = etree.SubElement(parent, 'force')
 
         if self.partial:
-            s += '<partial>'
-        for part in self.partial:
-            if part in _part_xml:
+            partial = etree.SubElement(parent, 'partial')
+
+            for part in self.partial:
                 if part == 'vsys':
-                    s += '<vsys>'
+                    vsys = etree.SubElement(partial, 'vsys')
                     for name in self._vsys:
-                        xml_vsys = _part_xml[part] % name
-                        s += xml_vsys
-                    s += '</vsys>'
-                else:
-                    s += _part_xml[part]
-        if self.partial:
-            s += '</partial>'
+                        etree.SubElement(vsys, 'member').text = name
+                elif part == 'device-and-network-excluded':
+                    x = etree.SubElement(partial, 'device-and-network')
+                    x.text = 'excluded'
+                elif part == 'policy-and-objects-excluded':
+                    x = etree.SubElement(partial, 'policy-and-objects')
+                    x.text = 'excluded'
+                elif part == 'shared-object-excluded':
+                    x = etree.SubElement(partial, 'shared-object')
+                    x.text = 'excluded'
+                elif part == 'no-vsys':
+                    etree.SubElement(partial, 'no-vsys')
 
-        if self._force:
-            s += '</force>'
-
-        if self._validate:
-            s += '</validate>'
-
-        s += '</commit>'
-
+        s = etree.tostring(root, encoding='unicode')
         self._log(DEBUG1, 'commit cmd: %s', s)
 
         return s
 
 
 if __name__ == '__main__':
+    # python3 -m pan.commit
     import pan.commit
 
     c = pan.commit.PanCommit()
@@ -184,4 +162,9 @@ if __name__ == '__main__':
     c.policy_and_objects_excluded()
     c.shared_object_excluded()
     c.vsys(['vsys4', 'vsys5'])
+    print('cmd:', c.cmd())
+
+    c = pan.commit.PanCommit(commit_all=True,
+                             merge_with_candidate=True)
+    c.device_group('pan-device-group')
     print('cmd:', c.cmd())
