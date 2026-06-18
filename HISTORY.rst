@@ -1,6 +1,22 @@
 Release History
 ===============
 
+0.26.0 (2026-06-18)
+-------------------
+
+- pan.config: Support 11.2.0 and 12.1.0 config for set format.
+
+- pan.commit: Use xml.etree.ElementTree to construct XML documents.
+
+- pan.xapi: Fix to address PR #55 issue.
+  Clear password from query object immediately after use.
+
+- tests/test_xapi_fw_tgt_pano_op.py: handle signed fix
+
+- pan.xapi: Fix too restrictive pattern for content-disposition
+  filename.  Discovered when exporting certificate with parentheses in
+  name.
+
 0.25.0 (2024-01-06)
 -------------------
 
